@@ -1137,3 +1137,6 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 
 .progresso-cartao .progresso-barra { height: 10px; }
 .progresso-cartao .andamento-num { font-weight: 800; color: var(--texto); }
+
+.lateral-marcas img.sistema { width: 180px; height: auto; aspect-ratio: 900 / 331; }
+.admin .lateral-marcas img.sistema { width: 175px; }

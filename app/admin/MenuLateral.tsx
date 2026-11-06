@@ -50,9 +50,7 @@ export default function MenuLateral() {
 
       <div className="lateral-marcas">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/marcas/faec-branca.png" alt="FAEC - Federação da Agricultura e Pecuária do Ceará" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/marcas/senar-branca.png" alt="SENAR Ceará" />
+        <img className="sistema" src="/marcas/sistema-todo-branco.png" alt="Sistema FAEC, SENAR Ceará e Sindicato Rural" width={900} height={331} />
       </div>
     </aside>
   );
