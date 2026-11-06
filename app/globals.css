@@ -1186,12 +1186,15 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 /* ---------- Painel: cabe numa tela só no computador (mesmo conteúdo, menos sobra) ---------- */
 @media (min-width: 1200px) {
   .admin .admin-principal { padding-top: 14px; padding-bottom: 14px; }
-  .admin .admin-cab { margin-bottom: 12px; }
-  .admin .kpis { gap: 12px; margin-bottom: 12px; }
-  .admin .painel-grade { gap: 12px; margin-bottom: 12px; }
+  .admin .kpis { gap: 12px; }
+  .admin .painel-grade { gap: 12px; }
   .admin .coluna-graficos { gap: 12px; }
   .admin .tabela-simples td, .admin .tabela-simples th { padding-top: 5px; padding-bottom: 5px; }
   .admin .progresso-cartoes { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .admin .progresso-cartao { padding: 10px 12px; }
-  .admin .evolucao { max-height: 11rem; }
+  .admin .evolucao { max-height: 9rem; }
+  .admin .rosca svg { width: 9rem; height: 9rem; }
+  .admin .progresso-cartao { padding: 8px 12px; }
+  .admin .progresso-cartao .progresso-foto { width: 2.9rem; height: 2.9rem; }
+  .admin .kpi { padding: 12px 14px; }
+  .admin .kpis, .admin .painel-grade, .admin .admin-cab { margin-bottom: 10px; }
 }
