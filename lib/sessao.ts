@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "crypto";
+import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { lerVotacao, sql } from "./db";
 
@@ -11,10 +11,17 @@ export class FaltaSegredoError extends Error {
   }
 }
 
-/** Segredo que assina os cookies. Null quando o servidor ainda não foi configurado. */
+/**
+ * Segredo que assina os cookies. Usa SESSION_SECRET (ou SECRET_KEY) se existir; senão, é derivado da
+ * conexão do banco, que também é secreta e só existe no servidor. Assim não é preciso configurar
+ * uma variável a mais no Vercel. Null só quando nem o banco está configurado.
+ */
 function lerSegredo(): string | null {
   const s = process.env.SESSION_SECRET || process.env.SECRET_KEY;
-  return s && s.length >= 16 ? s : null;
+  if (s && s.length >= 16) return s;
+  const banco = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+  if (banco) return createHash("sha256").update(`sessao-circuito|${banco}`).digest("base64url");
+  return null;
 }
 
 export function segredoConfigurado() {

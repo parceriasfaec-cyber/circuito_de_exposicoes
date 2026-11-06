@@ -17,7 +17,7 @@ export async function entrarAdmin(_: EstadoLogin, form: FormData): Promise<Estad
   const senha = String(form.get("senha") ?? "");
   if (!usuario || !senha) return { erro: "Digite o usuário e a senha." };
   if (!segredoConfigurado()) {
-    return { erro: "O servidor ainda não está configurado: falta a variável SESSION_SECRET no Vercel. Adicione e faça o Redeploy." };
+    return { erro: "O servidor ainda não está configurado: falta a variável SUPABASE_DB_URL no Vercel." };
   }
 
   const db = sql();

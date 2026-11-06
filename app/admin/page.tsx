@@ -1,7 +1,7 @@
 import Link from "next/link";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
-import { FaixaTitulo, LogoCircuito } from "@/components/Marca";
+import { FaixaTitulo } from "@/components/Marca";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { encerrarVotacao, liberarVotacao } from "./actions";
@@ -22,7 +22,6 @@ export default async function Admin() {
   if (!(await ehAdmin())) {
     return (
       <>
-        <LogoCircuito compacto />
         <FaixaTitulo>Painel do Organizador</FaixaTitulo>
         <div className="estreito" style={{ maxWidth: 520 }}>
           <p className="intro">Entre com o seu usuário e senha para liberar a votação e acompanhar os resultados.</p>
