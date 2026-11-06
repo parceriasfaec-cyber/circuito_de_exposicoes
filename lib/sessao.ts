@@ -5,19 +5,32 @@ import { lerVotacao, sql } from "./db";
 const COOKIE_PRODUTOR = "produtor";
 const COOKIE_ADMIN = "admin";
 
-function segredo() {
+export class FaltaSegredoError extends Error {
+  constructor() {
+    super("SESSION_SECRET não configurado no servidor (mínimo 16 caracteres)");
+  }
+}
+
+/** Segredo que assina os cookies. Null quando o servidor ainda não foi configurado. */
+function lerSegredo(): string | null {
   const s = process.env.SESSION_SECRET || process.env.SECRET_KEY;
-  if (!s || s.length < 16) throw new Error("SESSION_SECRET (ou SECRET_KEY) não configurado (mínimo 16 caracteres)");
-  return s;
+  return s && s.length >= 16 ? s : null;
+}
+
+export function segredoConfigurado() {
+  return lerSegredo() !== null;
 }
 
 function assinar(valor: string) {
-  const mac = createHmac("sha256", segredo()).update(valor).digest("base64url");
+  const s = lerSegredo();
+  if (!s) throw new FaltaSegredoError();
+  const mac = createHmac("sha256", s).update(valor).digest("base64url");
   return `${valor}.${mac}`;
 }
 
 function verificar(token: string | undefined): string | null {
-  if (!token) return null;
+  // Sem segredo configurado nenhum cookie é válido (e a página não quebra).
+  if (!token || !segredoConfigurado()) return null;
   const i = token.lastIndexOf(".");
   if (i < 0) return null;
   const valor = token.slice(0, i);

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
 import { conferirSenha } from "@/lib/senha";
-import { ehAdmin, iniciarSessaoAdmin, sairAdmin } from "@/lib/sessao";
+import { ehAdmin, iniciarSessaoAdmin, sairAdmin, segredoConfigurado } from "@/lib/sessao";
 
 export type EstadoLogin = { erro?: string };
 
@@ -16,6 +16,9 @@ export async function entrarAdmin(_: EstadoLogin, form: FormData): Promise<Estad
   const usuario = String(form.get("usuario") ?? "").trim();
   const senha = String(form.get("senha") ?? "");
   if (!usuario || !senha) return { erro: "Digite o usuário e a senha." };
+  if (!segredoConfigurado()) {
+    return { erro: "O servidor ainda não está configurado: falta a variável SESSION_SECRET no Vercel. Adicione e faça o Redeploy." };
+  }
 
   const db = sql();
   const [a] = await db<{ id: string; senha_hash: string }[]>`

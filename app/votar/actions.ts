@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { lerVotacao, sql } from "@/lib/db";
-import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao } from "@/lib/sessao";
+import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao, segredoConfigurado } from "@/lib/sessao";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
 
 export type EstadoEntrada = { erro?: string };
@@ -19,6 +19,7 @@ async function ipDoCliente() {
 export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEntrada> {
   const votacao = await lerVotacao();
   if (!votacao.aberta || !votacao.aberta_em) return { erro: "A votação não está liberada agora." };
+  if (!segredoConfigurado()) return { erro: "O sistema ainda está sendo configurado. Procure a organização." };
 
   const db = sql();
   const ip = await ipDoCliente();
