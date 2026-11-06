@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eaf4fb"/>
+      <stop offset="0.55" stop-color="#f6fbef"/>
+      <stop offset="1" stop-color="#e9f3dc"/>
+    </linearGradient>
+    <radialGradient id="sol" cx="0.12" cy="0.38" r="0.35">
+      <stop offset="0" stop-color="#fff6d6" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#fff1c2" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#fff1c2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="colina1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9dc8e"/>
+      <stop offset="1" stop-color="#9ccc6a"/>
+    </linearGradient>
+    <linearGradient id="colina2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a5d175"/>
+      <stop offset="1" stop-color="#7fb64e"/>
+    </linearGradient>
+    <linearGradient id="gramado" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fcd68"/>
+      <stop offset="1" stop-color="#78b043"/>
+    </linearGradient>
+    <linearGradient id="nevoa" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.85"/>
+    </linearGradient>
+    <g id="arvore">
+      <rect x="-5" y="-10" width="10" height="46" rx="3" fill="#6b4a2b"/>
+      <ellipse cx="0" cy="-34" rx="40" ry="30" fill="#4f8f34"/>
+      <ellipse cx="-24" cy="-22" rx="26" ry="20" fill="#5c9c3b"/>
+      <ellipse cx="24" cy="-22" rx="26" ry="20" fill="#5a983a"/>
+      <ellipse cx="6" cy="-50" rx="26" ry="18" fill="#67a845"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#ceu)"/>
+  <rect width="1600" height="900" fill="url(#sol)"/>
+
+  <!-- nuvens suaves -->
+  <g fill="#ffffff" opacity="0.8">
+    <ellipse cx="520" cy="160" rx="120" ry="26"/>
+    <ellipse cx="600" cy="145" rx="80" ry="24"/>
+    <ellipse cx="1180" cy="210" rx="140" ry="28"/>
+    <ellipse cx="1260" cy="196" rx="90" ry="24"/>
+  </g>
+
+  <!-- colinas ao fundo -->
+  <path d="M0 560 C 220 500, 420 520, 640 545 C 880 572, 1100 505, 1320 520 C 1460 530, 1540 545, 1600 540 L1600 900 L0 900 Z" fill="url(#colina1)"/>
+  <g transform="translate(90 560) scale(0.8)"><use href="#arvore"/></g>
+  <g transform="translate(170 548) scale(1.05)"><use href="#arvore"/></g>
+  <g transform="translate(260 566) scale(0.7)"><use href="#arvore"/></g>
+  <g transform="translate(1330 536) scale(0.9)"><use href="#arvore"/></g>
+  <g transform="translate(1440 548) scale(1.2)"><use href="#arvore"/></g>
+  <g transform="translate(1530 540) scale(0.8)"><use href="#arvore"/></g>
+
+  <path d="M0 620 C 260 585, 520 610, 800 625 C 1080 640, 1340 600, 1600 610 L1600 900 L0 900 Z" fill="url(#colina2)"/>
+  <path d="M0 680 C 300 660, 700 690, 1000 684 C 1260 680, 1440 670, 1600 676 L1600 900 L0 900 Z" fill="url(#gramado)"/>
+
+  <!-- cerca de madeira à direita -->
+  <g fill="#8a6a45">
+    <rect x="1120" y="610" width="1000" height="10" rx="3" transform="rotate(-2 1120 610)"/>
+    <rect x="1120" y="648" width="1000" height="10" rx="3" transform="rotate(-2 1120 648)"/>
+    <rect x="1135" y="590" width="12" height="96" rx="3"/>
+    <rect x="1265" y="584" width="12" height="98" rx="3"/>
+    <rect x="1395" y="578" width="12" height="100" rx="3"/>
+    <rect x="1525" y="572" width="12" height="102" rx="3"/>
+  </g>
+
+  <!-- boi branco estilizado (nelore), olhando para a frente -->
+  <g transform="translate(1390 470)">
+    <ellipse cx="40" cy="250" rx="150" ry="16" fill="#5f8f37" opacity="0.35"/>
+    <!-- corpo -->
+    <path d="M-60 60 C -80 20, -30 -10, 40 -6 C 120 -2, 170 20, 180 70 C 188 120, 170 160, 150 175 L 140 240 L 118 240 L 112 182 C 80 190, 20 190, -10 184 L -18 240 L -40 240 L -44 170 C -64 150, -66 100, -60 60 Z" fill="#f4f2ec"/>
+    <path d="M-30 20 C -10 0, 30 -8, 60 -4 C 40 10, 10 30, -6 60 C -16 50, -26 36, -30 20 Z" fill="#e6e2d8"/>
+    <!-- giba -->
+    <path d="M-20 10 C -10 -30, 30 -36, 50 -12 C 30 -8, 4 0, -20 10 Z" fill="#ebe7dd"/>
+    <!-- cabeça -->
+    <path d="M-120 20 C -128 -10, -110 -40, -80 -44 C -54 -46, -34 -26, -34 0 C -34 30, -50 66, -70 86 C -84 98, -104 96, -112 82 C -122 64, -116 44, -120 20 Z" fill="#f7f5f0"/>
+    <!-- orelhas -->
+    <path d="M-118 -18 C -150 -30, -170 -14, -176 -2 C -156 2, -134 0, -116 -6 Z" fill="#efe9e0"/>
+    <path d="M-150 -16 C -160 -14, -166 -8, -168 -3 C -156 -2, -146 -4, -138 -8 Z" fill="#c98f6e"/>
+    <path d="M-40 -26 C -12 -44, 12 -36, 22 -24 C 2 -16, -20 -14, -38 -14 Z" fill="#efe9e0"/>
+    <path d="M-30 -26 C -14 -34, 0 -32, 8 -26 C -4 -22, -18 -20, -28 -20 Z" fill="#c98f6e"/>
+    <!-- chifres curtos -->
+    <path d="M-102 -38 C -106 -52, -98 -60, -90 -60 C -92 -52, -92 -46, -88 -40 Z" fill="#cfc3ad"/>
+    <path d="M-62 -42 C -58 -56, -66 -64, -74 -64 C -72 -56, -72 -50, -76 -42 Z" fill="#cfc3ad"/>
+    <!-- olhos e focinho -->
+    <ellipse cx="-100" cy="4" rx="5" ry="6" fill="#2b2620"/>
+    <ellipse cx="-52" cy="0" rx="5" ry="6" fill="#2b2620"/>
+    <path d="M-106 64 C -106 50, -94 44, -78 44 C -62 44, -52 52, -54 66 C -56 82, -70 90, -82 90 C -96 90, -106 80, -106 64 Z" fill="#8e8378"/>
+    <ellipse cx="-92" cy="66" rx="5" ry="4" fill="#3a332c"/>
+    <ellipse cx="-68" cy="66" rx="5" ry="4" fill="#3a332c"/>
+    <!-- barbela -->
+    <path d="M-80 92 C -70 120, -50 150, -30 172 C -40 140, -46 112, -52 84 Z" fill="#ebe7dd"/>
+  </g>
+
+  <!-- névoa clara para o cartão se destacar -->
+  <rect y="560" width="1600" height="340" fill="url(#nevoa)"/>
+  <rect width="1600" height="900" fill="#ffffff" opacity="0.18"/>
+</svg>
