@@ -1165,3 +1165,11 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
   .pergunta-cartao { grid-template-columns: auto 1fr; }
   .pergunta-media { grid-column: 1 / -1; grid-auto-flow: column; justify-content: center; gap: 10px; align-items: baseline; }
 }
+
+/* ---------- Menu lateral: itens no meio da altura (só no computador) ---------- */
+@media (min-width: 861px) {
+  .lateral-menu { flex: 1; justify-content: center; }
+}
+@media (max-width: 860px) {
+  .admin .lateral { width: 100%; }
+}
