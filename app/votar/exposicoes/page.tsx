@@ -23,6 +23,7 @@ export default async function MinhasExposicoes({ searchParams }: { searchParams:
     select e.id, e.nome, e.data_inicio, e.data_fim, (a.produtor_id is not null) avaliada
     from participacoes pa
     join exposicoes e on e.id = pa.exposicao_id
+    join ciclos c on c.id = e.ciclo_id and c.ativo
     left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
     where pa.produtor_id = ${s.produtorId}
     order by e.data_inicio`;

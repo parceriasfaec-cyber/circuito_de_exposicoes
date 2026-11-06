@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { salvarExposicao, type EstadoForm } from "../../cadastros-actions";
 
-type Dados = { id: string; nome: string; municipio: string; local: string; data_inicio: string; data_fim: string; perguntas: string[] };
+type Dados = { id: string; ciclo_id: string; nome: string; municipio: string; local: string; data_inicio: string; data_fim: string; perguntas: string[] };
 
 export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; avaliacoes: number }) {
   const [estado, acao, salvando] = useActionState<EstadoForm, FormData>(salvarExposicao, {});
@@ -13,6 +13,7 @@ export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; ava
   return (
     <form action={acao} className="bloco" style={{ paddingTop: 6 }}>
       <input type="hidden" name="id" value={dados.id} />
+      <input type="hidden" name="ciclo_id" value={dados.ciclo_id} />
       <div className="form-grade">
         <div style={{ gridColumn: "1 / -1" }}>
           <label htmlFor="nome">Nome da exposição</label>

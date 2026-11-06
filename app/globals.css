@@ -1102,3 +1102,24 @@ html:has(.admin) { font-size: 15px; }
 .admin .lateral-menu a { font-size: 0.95rem; padding: 10px 20px; }
 .admin .lateral { width: 220px; }
 .admin .lateral-marca img { width: 160px; }
+
+/* ---------- Seletor de ciclo ---------- */
+.admin-cab-dir { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.seletor-ciclo { display: inline-flex; align-items: center; gap: 8px; margin: 0; background: #fff; border: 1.5px solid var(--borda); border-radius: 12px; padding: 4px 6px 4px 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); }
+.seletor-ciclo span { font-weight: 800; color: var(--verde-escuro); font-size: 0.9rem; }
+.seletor-ciclo select { width: auto; border: 0; padding: 6px 8px; font-weight: 700; color: var(--verde-escuro); background: var(--verde-claro); border-radius: 8px; font-size: 0.95rem; }
+.aviso-ciclo { background: #fff6dc; color: #8a5a00; border: 1.5px solid #f3d27a; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-weight: 600; }
+
+/* ---------- Progresso por exposição em cartões ---------- */
+.progresso-cartoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0; margin: 4px -4px 0; }
+.progresso-cartao { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-right: 1px solid var(--borda); border-bottom: 1px solid var(--borda); }
+.progresso-foto {
+  flex: none; width: 3.4rem; height: 3.4rem; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 1.05rem; letter-spacing: 0.5px;
+  background: radial-gradient(circle at 30% 30%, #7cc242 0%, #2a7a3b 70%);
+  box-shadow: 0 2px 6px rgba(29, 94, 44, 0.25);
+}
+.progresso-info { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.progresso-info strong { color: var(--verde-escuro); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progresso-info small { font-size: 0.78rem; }
+.progresso-barra.escura span { background: var(--verde-escuro); }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
+import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarData, mascararDocumento } from "@/lib/texto";
@@ -20,10 +21,12 @@ type Exp = {
 
 const classeNota = (n: number) => (n <= 6 ? "baixa" : n <= 8 ? "media" : "");
 
-export default async function DetalheProdutor({ params }: { params: Promise<{ id: string }> }) {
+export default async function DetalheProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ ciclo?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  const { ciclo, ciclos } = await cicloEscolhido((await searchParams).ciclo);
+  const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const db = sql();
   const [p] = await db<{ nome: string; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null }[]>`
@@ -39,7 +42,7 @@ export default async function DetalheProdutor({ params }: { params: Promise<{ id
              where q.exposicao_id = e.id
            ), '[]') respostas
     from participacoes pa
-    join exposicoes e on e.id = pa.exposicao_id
+    join exposicoes e on e.id = pa.exposicao_id and e.ciclo_id = ${cid}
     left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
     where pa.produtor_id = ${id}
     order by e.data_inicio`;
@@ -49,10 +52,10 @@ export default async function DetalheProdutor({ params }: { params: Promise<{ id
 
   return (
     <>
-      <CabecalhoAdmin titulo={p.nome} subtitulo="Detalhes da avaliação do produtor." />
+      <CabecalhoAdmin titulo={p.nome} subtitulo="Detalhes da avaliação do produtor." ciclos={ciclos} ciclo={ciclo} />
 
       <div className="barra">
-        <Link href="/admin/avaliacoes" className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Quem já avaliou</Link>
+        <Link href={`/admin/avaliacoes?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Quem já avaliou</Link>
       </div>
 
       <div className="kpis" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>

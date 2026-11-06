@@ -20,7 +20,7 @@ const ATIVIDADES = [
   "Avicultura", "Suinocultura", "Apicultura", "Agricultura familiar", "Fruticultura",
 ];
 
-export default function FormProdutor({ dados, exposicoes }: { dados: Dados; exposicoes: { id: string; nome: string }[] }) {
+export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: { dados: Dados; exposicoes: { id: string; nome: string }[]; cicloId: string; cicloNome: string }) {
   const [estado, acao, salvando] = useActionState<EstadoForm, FormData>(salvarProdutor, {});
   const [tipo, setTipo] = useState(dados.tipo_documento);
   const novo = !dados.id;
@@ -30,6 +30,7 @@ export default function FormProdutor({ dados, exposicoes }: { dados: Dados; expo
   return (
     <form action={acao} className="bloco" style={{ paddingTop: 6 }}>
       <input type="hidden" name="id" value={dados.id} />
+      <input type="hidden" name="ciclo_id" value={cicloId} />
       <div className="form-grade">
         <div style={{ gridColumn: "1 / -1" }}>
           <label htmlFor="nome">Nome completo</label>
@@ -64,7 +65,7 @@ export default function FormProdutor({ dados, exposicoes }: { dados: Dados; expo
       </div>
       {!tipo && <p className="suave" style={{ marginTop: 8 }}>Sem documento, o produtor se identifica escolhendo o próprio nome na lista (e o município, se houver nome igual).</p>}
 
-      <h3 style={{ margin: "22px 0 4px", color: "var(--verde-escuro)" }}>Exposições em que participou</h3>
+      <h3 style={{ margin: "22px 0 4px", color: "var(--verde-escuro)" }}>Exposições em que participou no {cicloNome}</h3>
       <p className="suave" style={{ margin: 0 }}>O produtor só avalia as exposições marcadas aqui.</p>
       <div className="marcar">
         {exposicoes.map((e) => {

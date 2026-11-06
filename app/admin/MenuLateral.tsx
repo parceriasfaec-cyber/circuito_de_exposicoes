@@ -7,6 +7,7 @@ import Icone, { type NomeIcone } from "@/components/Icone";
 
 const ITENS: { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean }[] = [
   { href: "/admin", rotulo: "Painel", icone: "painel" },
+  { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
   { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
   { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
   { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },

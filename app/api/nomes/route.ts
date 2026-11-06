@@ -14,7 +14,15 @@ export async function GET(req: Request) {
   const votacao = await lerVotacao();
   if (!votacao.aberta) return NextResponse.json([]);
 
-  const todos = await sql()<Linha[]>`select id, nome, municipio from produtores order by nome, municipio`;
+  // Só quem está na lista de alguma exposição do ciclo ativo.
+  const todos = await sql()<Linha[]>`
+    select p.id, p.nome, p.municipio from produtores p
+    where exists (
+      select 1 from participacoes pa
+      join exposicoes e on e.id = pa.exposicao_id
+      join ciclos c on c.id = e.ciclo_id and c.ativo
+      where pa.produtor_id = p.id)
+    order by p.nome, p.municipio`;
   const contagem = new Map<string, number>();
   for (const p of todos) contagem.set(normalizar(p.nome), (contagem.get(normalizar(p.nome)) ?? 0) + 1);
 

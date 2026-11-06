@@ -2,6 +2,7 @@ import Link from "next/link";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
 import { FaixaTitulo } from "@/components/Marca";
+import { cicloEscolhido } from "@/lib/ciclo";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { encerrarVotacao, liberarVotacao } from "./actions";
@@ -18,7 +19,7 @@ const curto = (nome: string) => nome.replace("Exposição Agropecuária de ", ""
 const dataHora = (d: Date | null) =>
   d ? d.toLocaleString("pt-BR", { timeZone: TZ, dateStyle: "short", timeStyle: "short" }).replace(",", " às") : "—";
 
-export default async function Admin() {
+export default async function Admin({ searchParams }: { searchParams: Promise<{ ciclo?: string }> }) {
   if (!(await ehAdmin())) {
     return (
       <>
@@ -31,29 +32,46 @@ export default async function Admin() {
     );
   }
 
+  const { ciclo, ciclos } = await cicloEscolhido((await searchParams).ciclo);
+  const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
+
   const db = sql();
   // Uma consulta de cada vez, para não ocupar várias conexões do pooler ao mesmo tempo.
   const votacao = await lerVotacao();
-  const progresso = await db<Progresso[]>`select nome, na_lista::int, responderam::int from v_progresso order by nome`;
-  const ranking = await db<Ranking[]>`select posicao::int, nome, questionarios::int, pontuacao_final::int from v_ranking order by posicao, nome`;
+  const progresso = await db<Progresso[]>`
+    select nome, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
+  const ranking = await db<Ranking[]>`
+    select posicao::int, nome, questionarios::int, pontuacao_final::int from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
   const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
-    select (select count(*)::int from produtores where exists (select 1 from participacoes x where x.produtor_id = produtores.id)) produtores,
-           (select count(*)::int from participacoes) questionarios,
-           (select count(*)::int from avaliacoes) respondidos,
+    with pa as (
+      select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}
+    )
+    select (select count(distinct produtor_id)::int from pa) produtores,
+           (select count(*)::int from pa) questionarios,
+           (select count(*)::int from avaliacoes a join pa on pa.produtor_id = a.produtor_id and pa.exposicao_id = a.exposicao_id) respondidos,
            (select count(*)::int from (
-              select pa.produtor_id from participacoes pa
+              select pa.produtor_id from pa
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
               group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`;
   const dias = await db<Dia[]>`
-    select to_char((enviada_em at time zone ${TZ})::date, 'YYYY-MM-DD') dia, count(*)::int quantidade
-    from avaliacoes group by 1 order by 1`;
+    select to_char((a.enviada_em at time zone ${TZ})::date, 'YYYY-MM-DD') dia, count(*)::int quantidade
+    from avaliacoes a join exposicoes e on e.id = a.exposicao_id
+    where e.ciclo_id = ${cid} group by 1 order by 1`;
 
   const agora = new Date();
   const pct = t.questionarios ? Math.round((t.respondidos / t.questionarios) * 1000) / 10 : 0;
 
   return (
     <>
-      <CabecalhoAdmin titulo="Painel do Organizador" subtitulo="Acompanhe a votação e o ranking das exposições." />
+      <CabecalhoAdmin titulo="Painel do Organizador" subtitulo="Acompanhe a votação e o ranking das exposições." ciclos={ciclos} ciclo={ciclo} />
+
+      {ciclo && !ciclo.ativo && (
+        <div className="aviso-ciclo">
+          Você está vendo o <strong>{ciclo.nome}</strong>, que não é o ciclo ativo. A votação mostrada abaixo vale para o ciclo
+          ativo. Para trocar, vá em <Link href="/admin/ciclos">Ciclos</Link>.
+        </div>
+      )}
+      {!ciclo && <div className="aviso-ciclo">Nenhum ciclo cadastrado. Crie um em <Link href="/admin/ciclos">Ciclos</Link>.</div>}
 
       <div className="kpis">
         <div className="kpi">
@@ -154,32 +172,32 @@ export default async function Admin() {
 
       <section className="bloco">
         <h2 className="bloco-titulo"><Icone nome="checkCirculo" tamanho={22} /> Progresso por Exposição</h2>
-        <div className="tabela">
-          <table className="tabela-simples">
-            <thead>
-              <tr><th>Exposição</th><th className="num">Na lista</th><th className="num">Responderam</th><th className="num">Faltam</th><th style={{ width: "28%" }}>Andamento</th></tr>
-            </thead>
-            <tbody>
-              {progresso.map((p) => {
-                const v = p.na_lista ? Math.round((p.responderam / p.na_lista) * 100) : 0;
+        {progresso.length === 0 ? (
+          <p className="suave">Nenhuma exposição neste ciclo.</p>
+        ) : (
+          <div className="progresso-cartoes">
+            {[...progresso]
+              .map((p) => ({ ...p, v: p.na_lista ? Math.round((p.responderam / p.na_lista) * 100) : 0 }))
+              .sort((a, b) => b.v - a.v || a.nome.localeCompare(b.nome))
+              .map((p) => {
+                const nome = curto(p.nome);
+                const iniciais = nome.split(" ").filter((x) => x.length > 2).map((x) => x[0]).join("").slice(0, 2).toUpperCase() || nome.slice(0, 2).toUpperCase();
                 return (
-                  <tr key={p.nome}>
-                    <td title={p.nome}><strong>{curto(p.nome)}</strong></td>
-                    <td className="num">{p.na_lista}</td>
-                    <td className="num">{p.responderam}</td>
-                    <td className="num">{p.na_lista - p.responderam}</td>
-                    <td>
+                  <div key={p.nome} className="progresso-cartao" title={`${p.nome}: ${p.responderam} de ${p.na_lista} responderam`}>
+                    <span className="progresso-foto">{iniciais}</span>
+                    <div className="progresso-info">
+                      <strong>{nome}</strong>
                       <div className="andamento">
-                        <div className="progresso-barra"><span style={{ width: `${v}%` }} /></div>
-                        <span className="andamento-num">{v}%</span>
+                        <div className="progresso-barra escura"><span style={{ width: `${p.v}%` }} /></div>
+                        <span className="andamento-num">{p.v}%</span>
                       </div>
-                    </td>
-                  </tr>
+                      <small className="suave">{p.responderam} de {p.na_lista} responderam</small>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
+          </div>
+        )}
       </section>
     </>
   );

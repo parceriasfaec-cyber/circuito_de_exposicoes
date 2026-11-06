@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone, { type NomeIcone } from "@/components/Icone";
+import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { mascararDocumento, normalizar } from "@/lib/texto";
@@ -33,12 +34,14 @@ const curto = (nome: string) => nome.replace("Exposição Agropecuária de ", ""
 export default async function Avaliacoes({
   searchParams,
 }: {
-  searchParams: Promise<{ filtro?: string; q?: string; pagina?: string }>;
+  searchParams: Promise<{ filtro?: string; q?: string; pagina?: string; ciclo?: string }>;
 }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const filtro: Filtro = params.filtro && params.filtro in FILTROS ? params.filtro : "todos";
   const busca = (params.q ?? "").trim();
+  const { ciclo, ciclos } = await cicloEscolhido(params.ciclo);
+  const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const linhas = await sql()<Linha[]>`
     select p.id, p.nome, p.municipio, p.tipo_documento, p.documento,
@@ -48,7 +51,7 @@ export default async function Avaliacoes({
                     order by e.data_inicio) itens
     from produtores p
     join participacoes pa on pa.produtor_id = p.id
-    join exposicoes e on e.id = pa.exposicao_id
+    join exposicoes e on e.id = pa.exposicao_id and e.ciclo_id = ${cid}
     left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
     group by p.id
     order by p.nome, p.municipio`;
@@ -77,13 +80,14 @@ export default async function Avaliacoes({
     const sp = new URLSearchParams();
     sp.set("filtro", mudar.filtro ?? filtro);
     if (busca) sp.set("q", busca);
+    if (params.ciclo) sp.set("ciclo", params.ciclo);
     if (mudar.pagina && mudar.pagina > 1) sp.set("pagina", String(mudar.pagina));
     return `/admin/avaliacoes?${sp}`;
   };
 
   return (
     <>
-      <CabecalhoAdmin titulo="Quem já avaliou" subtitulo="Cada produtor avalia uma única vez as exposições em que participou." />
+      <CabecalhoAdmin titulo="Quem já avaliou" subtitulo="Cada produtor avalia uma única vez as exposições em que participou." ciclos={ciclos} ciclo={ciclo} />
 
       <div className="barra">
         <div className="filtros">
@@ -101,6 +105,7 @@ export default async function Avaliacoes({
 
       <form className="busca" action="/admin/avaliacoes">
         <input type="hidden" name="filtro" value={filtro} />
+        {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
         <div className="busca-campo">
           <Icone nome="busca" tamanho={20} />
           <input type="text" name="q" defaultValue={busca} placeholder="Buscar por nome, município ou documento..." />
@@ -151,7 +156,7 @@ export default async function Avaliacoes({
                     </ul>
                   </td>
                   <td className="c-acoes" style={{ textAlign: "center" }}>
-                    <Link href={`/admin/avaliacoes/${l.id}`} className="botao-detalhes">
+                    <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes">
                       <Icone nome="olho" tamanho={16} /> Ver detalhes
                     </Link>
                   </td>

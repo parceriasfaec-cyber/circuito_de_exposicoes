@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
+import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { excluirProdutor } from "../../cadastros-actions";
@@ -9,15 +10,17 @@ import FormProdutor from "./FormProdutor";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditarProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string }> }) {
+export default async function EditarProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const { id } = await params;
-  const { erro } = await searchParams;
+  const { erro, ciclo: cicloParam } = await searchParams;
+  const { ciclo, ciclos } = await cicloEscolhido(cicloParam);
+  const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
   const novo = id === "novo";
   if (!novo && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const db = sql();
-  const exposicoes = await db<{ id: string; nome: string }[]>`select id, nome from exposicoes order by data_inicio, nome`;
+  const exposicoes = await db<{ id: string; nome: string }[]>`select id, nome from exposicoes where ciclo_id = ${cid} order by data_inicio, nome`;
 
   let dados = { id: "", nome: "", municipio: "", atividade: "", tipo_documento: "CPF", documento: "", participa: [] as string[], avaliadas: [] as string[] };
   if (!novo) {
@@ -40,15 +43,15 @@ export default async function EditarProdutor({ params, searchParams }: { params:
 
   return (
     <>
-      <CabecalhoAdmin titulo={novo ? "Novo produtor" : dados.nome} subtitulo={novo ? "Cadastre um participante da lista de votação." : "Edite os dados e as exposições em que o produtor participou."} />
+      <CabecalhoAdmin titulo={novo ? "Novo produtor" : dados.nome} subtitulo={novo ? "Cadastre um participante da lista de votação." : "Edite os dados e as exposições em que o produtor participou."} ciclos={ciclos} ciclo={ciclo} />
       <div className="barra">
-        <Link href="/admin/produtores" className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Produtores</Link>
-        {!novo && <Link href={`/admin/avaliacoes/${id}`} className="acao-link"><Icone nome="olho" tamanho={18} /> Ver avaliação</Link>}
+        <Link href={`/admin/produtores?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Produtores</Link>
+        {!novo && <Link href={`/admin/avaliacoes/${id}?ciclo=${cid}`} className="acao-link"><Icone nome="olho" tamanho={18} /> Ver avaliação</Link>}
       </div>
 
       {erro === "avaliou" && <div className="erro" style={{ marginBottom: 14 }}>Este produtor já avaliou e não pode ser excluído.</div>}
 
-      <FormProdutor dados={dados} exposicoes={exposicoes} />
+      <FormProdutor dados={dados} exposicoes={exposicoes} cicloId={cid} cicloNome={ciclo?.nome ?? ""} />
 
       {!novo && (
         <section className="bloco" style={{ paddingTop: 14 }}>

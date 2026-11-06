@@ -66,6 +66,14 @@ export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEn
     return { erro: "Escolha como quer se identificar." };
   }
 
+  // Só entra quem está na lista de alguma exposição do ciclo ativo (o Circuito deste ano).
+  const [{ n }] = await db<{ n: number }[]>`
+    select count(*)::int n from participacoes pa
+    join exposicoes e on e.id = pa.exposicao_id
+    join ciclos c on c.id = e.ciclo_id and c.ativo
+    where pa.produtor_id = ${produtorId}`;
+  if (n === 0) return { erro: "Você não está na lista de participantes das exposições deste ano. Procure a organização." };
+
   await iniciarSessaoProdutor(produtorId, votacao.aberta_em);
   redirect("/votar/exposicoes");
 }
@@ -89,6 +97,8 @@ export async function avaliarTudo(_: EstadoAvaliacao, form: FormData): Promise<E
   const pendentes = await db<{ exposicao_id: string }[]>`
     select pa.exposicao_id
     from participacoes pa
+    join exposicoes e on e.id = pa.exposicao_id
+    join ciclos c on c.id = e.ciclo_id and c.ativo
     left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
     where pa.produtor_id = ${s.produtorId} and a.produtor_id is null`;
   if (pendentes.length === 0) redirect("/votar/exposicoes?ja=1");
