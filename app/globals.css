@@ -1140,3 +1140,28 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 
 .lateral-marcas img.sistema { width: 180px; height: auto; aspect-ratio: 900 / 331; }
 .admin .lateral-marcas img.sistema { width: 175px; }
+
+/* ---------- Perguntas da avaliação ---------- */
+.perguntas-lista { display: grid; gap: 12px; margin-bottom: 10px; }
+.pergunta-cartao {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center;
+  background: #fff; border: 1.5px solid var(--borda); border-radius: 16px; padding: 14px 18px;
+}
+.pergunta-num {
+  width: 2.6rem; height: 2.6rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--verde-escuro); color: #fff; font-weight: 900; font-size: 1.15rem;
+}
+.pergunta-texto { margin: 0 0 8px; font-weight: 700; color: var(--texto); }
+.pergunta-dist { display: flex; gap: 8px; align-items: flex-end; }
+.dist-col { display: grid; justify-items: center; gap: 2px; width: 2.4rem; }
+.dist-qtd { font-size: 0.75rem; color: var(--suave); font-variant-numeric: tabular-nums; }
+.dist-barra { width: 100%; height: 2.6rem; background: var(--verde-claro); border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden; }
+.dist-barra span { display: block; width: 100%; background: var(--verde); border-radius: 6px 6px 0 0; }
+.dist-nota { font-size: 0.8rem; font-weight: 800; color: var(--verde-escuro); }
+.pergunta-media { display: grid; justify-items: center; min-width: 6rem; background: var(--verde-claro); border-radius: 14px; padding: 10px 14px; }
+.pergunta-media strong { font-size: 1.9rem; color: var(--verde-escuro); line-height: 1.1; }
+.pergunta-media .suave { font-size: 0.78rem; }
+@media (max-width: 760px) {
+  .pergunta-cartao { grid-template-columns: auto 1fr; }
+  .pergunta-media { grid-column: 1 / -1; grid-auto-flow: column; justify-content: center; gap: 10px; align-items: baseline; }
+}

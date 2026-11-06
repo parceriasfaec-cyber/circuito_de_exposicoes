@@ -10,6 +10,7 @@ const ITENS: { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean
   { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
   { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
   { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
+  { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
   { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
   { href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true },
 ];

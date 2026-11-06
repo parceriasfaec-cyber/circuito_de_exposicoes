@@ -218,3 +218,25 @@ export async function ativarCiclo(form: FormData) {
   revalidatePath("/admin");
   redirect("/admin/ciclos?ativado=1");
 }
+
+/* ------------------------------ Perguntas do ciclo ------------------------------ */
+
+export async function salvarPerguntasCiclo(_: EstadoForm, form: FormData): Promise<EstadoForm> {
+  await exigirAdmin();
+  const cicloId = texto(form, "ciclo_id");
+  const perguntas = [1, 2, 3, 4, 5].map((i) => texto(form, `pergunta_${i}`));
+  if (!UUID.test(cicloId)) return { erro: "Ciclo inválido." };
+  if (perguntas.some((p) => p.length < 5)) return { erro: "As 5 perguntas precisam ter texto." };
+
+  const db = sql();
+  await db.begin(async (tx) => {
+    for (let i = 0; i < 5; i++) {
+      await tx`update perguntas q set texto = ${perguntas[i]}
+               from exposicoes e where e.id = q.exposicao_id and e.ciclo_id = ${cicloId} and q.ordem = ${i + 1}`;
+      // vale também para as próximas exposições cadastradas
+      await tx`update perguntas_padrao set texto = ${perguntas[i]} where ordem = ${i + 1}`;
+    }
+  });
+  revalidatePath("/admin");
+  redirect(`/admin/perguntas?ok=1&ciclo=${cicloId}`);
+}
