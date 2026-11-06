@@ -40,10 +40,10 @@ export default async function Exposicoes({ searchParams }: { searchParams: Promi
           <tr>
             <th><span><Icone nome="trofeu" tamanho={18} /> Exposição</span></th>
             <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
-            <th>Período</th>
-            <th className="num">Participantes</th>
-            <th className="num">Avaliações</th>
-            <th style={{ textAlign: "center" }}>Ações</th>
+            <th><span><Icone nome="calendario" tamanho={18} /> Período</span></th>
+            <th className="centro"><span><Icone nome="usuarios" tamanho={18} /> Participantes</span></th>
+            <th className="centro"><span><Icone nome="estrela" tamanho={18} /> Avaliações</span></th>
+            <th className="centro"><span><Icone nome="engrenagem" tamanho={18} /> Ações</span></th>
           </tr>
         </thead>
         <tbody>
@@ -54,11 +54,11 @@ export default async function Exposicoes({ searchParams }: { searchParams: Promi
                 {e.local && <div className="doc">{e.local}</div>}
               </td>
               <td className="c-municipio"><span className="municipio"><Icone nome="local" tamanho={16} />{e.municipio}</span></td>
-              <td className="c-exposicoes">{formatarData(e.data_inicio)} a {formatarData(e.data_fim)}</td>
-              <td className="num c-exposicoes">{e.participantes}</td>
-              <td className="num c-exposicoes">{e.avaliacoes}</td>
-              <td className="c-acoes" style={{ textAlign: "center" }}>
-                <Link href={`/admin/exposicoes/${e.id}`} className="botao-detalhes">Editar</Link>
+              <td className="c-exposicoes"><span className="rotulo-celular"><Icone nome="calendario" tamanho={16} /></span>{formatarData(e.data_inicio)} a {formatarData(e.data_fim)}</td>
+              <td className="centro c-exposicoes"><span className="rotulo-celular"><Icone nome="usuarios" tamanho={16} /> Participantes:</span>{e.participantes}</td>
+              <td className="centro c-exposicoes"><span className="rotulo-celular"><Icone nome="estrela" tamanho={16} /> Avaliações:</span>{e.avaliacoes}</td>
+              <td className="centro c-acoes">
+                <Link href={`/admin/exposicoes/${e.id}`} className="botao-detalhes"><Icone nome="lapis" tamanho={16} /> Editar</Link>
               </td>
             </tr>
           ))}
