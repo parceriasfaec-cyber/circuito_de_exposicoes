@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { FOTOS } from "@/lib/fotos";
 import { salvarExposicao, type EstadoForm } from "../../cadastros-actions";
 
-type Dados = { id: string; ciclo_id: string; nome: string; municipio: string; local: string; data_inicio: string; data_fim: string; perguntas: string[] };
+type Dados = { id: string; ciclo_id: string; foto: string; nome: string; municipio: string; local: string; data_inicio: string; data_fim: string; perguntas: string[] };
 
 export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; avaliacoes: number }) {
   const [estado, acao, salvando] = useActionState<EstadoForm, FormData>(salvarExposicao, {});
@@ -35,6 +36,22 @@ export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; ava
           <label htmlFor="data_fim">Fim</label>
           <input id="data_fim" name="data_fim" type="date" defaultValue={dados.data_fim} required />
         </div>
+      </div>
+
+      <h3 style={{ margin: "22px 0 4px", color: "var(--verde-escuro)" }}>Foto da exposição</h3>
+      <p className="suave" style={{ margin: 0 }}>Aparece no painel, em Progresso por Exposição.</p>
+      <div className="escolher-foto">
+        <label>
+          <input type="radio" name="foto" value="" defaultChecked={!dados.foto} />
+          <span className="foto-opcao sem">Sem foto</span>
+        </label>
+        {FOTOS.map((f) => (
+          <label key={f.id} title={f.rotulo}>
+            <input type="radio" name="foto" value={f.id} defaultChecked={dados.foto === f.id} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="foto-opcao" src={`/exposicoes/${f.id}.png`} alt={f.rotulo} width={160} height={160} />
+          </label>
+        ))}
       </div>
 
       {!nova && (

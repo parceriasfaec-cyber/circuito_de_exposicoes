@@ -10,7 +10,7 @@ import Login from "./Login";
 
 export const dynamic = "force-dynamic";
 
-type Progresso = { nome: string; na_lista: number; responderam: number };
+type Progresso = { nome: string; foto: string | null; na_lista: number; responderam: number };
 type Ranking = { posicao: number; nome: string; questionarios: number; pontuacao_final: number };
 type Dia = { dia: string; quantidade: number };
 
@@ -39,7 +39,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   // Uma consulta de cada vez, para não ocupar várias conexões do pooler ao mesmo tempo.
   const votacao = await lerVotacao();
   const progresso = await db<Progresso[]>`
-    select nome, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
+    select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
   const ranking = await db<Ranking[]>`
     select posicao::int, nome, questionarios::int, pontuacao_final::int from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
   const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
@@ -184,7 +184,12 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                 const iniciais = nome.split(" ").filter((x) => x.length > 2).map((x) => x[0]).join("").slice(0, 2).toUpperCase() || nome.slice(0, 2).toUpperCase();
                 return (
                   <div key={p.nome} className="progresso-cartao" title={`${p.nome}: ${p.responderam} de ${p.na_lista} responderam`}>
-                    <span className="progresso-foto">{iniciais}</span>
+                    {p.foto ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img className="progresso-foto" src={`/exposicoes/${p.foto}.png`} alt="" width={160} height={160} />
+                    ) : (
+                      <span className="progresso-foto">{iniciais}</span>
+                    )}
                     <div className="progresso-info">
                       <strong>{nome}</strong>
                       <div className="andamento">

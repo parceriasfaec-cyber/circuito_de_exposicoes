@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
+import { ehFoto } from "@/lib/fotos";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
 
 export type EstadoForm = { erro?: string };
@@ -21,6 +22,8 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
   await exigirAdmin();
   const id = texto(form, "id");
   const cicloId = texto(form, "ciclo_id");
+  const fotoTxt = texto(form, "foto");
+  const foto = ehFoto(fotoTxt) ? fotoTxt : null;
   const nome = texto(form, "nome");
   const municipio = texto(form, "municipio");
   const local = texto(form, "local") || null;
@@ -39,7 +42,7 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
     if (id) {
       if (!UUID.test(id)) return { erro: "Exposição inválida." };
       await db.begin(async (tx) => {
-        await tx`update exposicoes set nome = ${nome}, municipio = ${municipio}, local = ${local},
+        await tx`update exposicoes set nome = ${nome}, municipio = ${municipio}, local = ${local}, foto = ${foto},
                  data_inicio = ${inicio}, data_fim = ${fim} where id = ${id}`;
         for (let i = 0; i < 5; i++) {
           await tx`update perguntas set texto = ${perguntas[i]} where exposicao_id = ${id} and ordem = ${i + 1}`;
@@ -47,8 +50,8 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
       });
     } else {
       // As 5 perguntas padrão são copiadas pelo próprio banco (gatilho) ao criar a exposição.
-      await db`insert into exposicoes (ciclo_id, nome, municipio, local, data_inicio, data_fim)
-               values (${cicloId}, ${nome}, ${municipio}, ${local}, ${inicio}, ${fim})`;
+      await db`insert into exposicoes (ciclo_id, nome, municipio, local, foto, data_inicio, data_fim)
+               values (${cicloId}, ${nome}, ${municipio}, ${local}, ${foto}, ${inicio}, ${fim})`;
     }
   } catch (e) {
     if ((e as { code?: string }).code === "23505") return { erro: "Já existe uma exposição com esse nome neste ciclo." };
@@ -185,8 +188,8 @@ export async function criarCiclo(_: EstadoForm, form: FormData): Promise<EstadoF
       if (copiarDe) {
         // Copia as exposições do outro ciclo, com as datas no novo ano. As perguntas padrão entram pelo gatilho.
         await tx`
-          insert into exposicoes (ciclo_id, nome, municipio, local, data_inicio, data_fim)
-          select ${novoId}::uuid, e.nome, e.municipio, e.local,
+          insert into exposicoes (ciclo_id, nome, municipio, local, foto, data_inicio, data_fim)
+          select ${novoId}::uuid, e.nome, e.municipio, e.local, e.foto,
                  (e.data_inicio + make_interval(years => ${ano} - extract(year from e.data_inicio)::int))::date,
                  (e.data_fim + make_interval(years => ${ano} - extract(year from e.data_inicio)::int))::date
           from exposicoes e where e.ciclo_id = ${copiarDe}`;

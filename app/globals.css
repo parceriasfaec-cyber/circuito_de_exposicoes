@@ -1123,3 +1123,17 @@ html:has(.admin) { font-size: 15px; }
 .progresso-info strong { color: var(--verde-escuro); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .progresso-info small { font-size: 0.78rem; }
 .progresso-barra.escura span { background: var(--verde-escuro); }
+
+/* ---------- Fotos das exposições ---------- */
+img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(29, 94, 44, 0.25); }
+.progresso-cartao { padding: 14px 16px; }
+.escolher-foto { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+.escolher-foto label { margin: 0; cursor: pointer; position: relative; }
+.escolher-foto input { position: absolute; opacity: 0; pointer-events: none; }
+.foto-opcao { display: grid; place-items: center; width: 4.6rem; height: 4.6rem; border-radius: 50%; object-fit: cover; border: 3px solid transparent; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); }
+.foto-opcao.sem { background: #f1f3ef; color: var(--suave); font-size: 0.78rem; font-weight: 700; text-align: center; }
+.escolher-foto input:checked + .foto-opcao { border-color: var(--verde-escuro); box-shadow: 0 0 0 3px var(--verde-vivo); }
+.escolher-foto input:focus-visible + .foto-opcao { outline: 2px solid var(--verde); outline-offset: 2px; }
+
+.progresso-cartao .progresso-barra { height: 10px; }
+.progresso-cartao .andamento-num { font-weight: 800; color: var(--texto); }
