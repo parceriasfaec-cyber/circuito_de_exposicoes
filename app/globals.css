@@ -1200,7 +1200,7 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 }
 
 /* ---------- Toques laranja (cor da logo) no Painel ---------- */
-.admin .bloco-titulo:not(.claro) { border-bottom: 4px solid var(--laranja); }
-.admin .painel-grade .tabela-simples td:last-child strong { color: #c45f00; }
-.admin .progresso-cartao .progresso-barra { background: #fde8d3; }
-.admin .progresso-cartao .progresso-barra span { background: var(--laranja); }
+.admin .bloco-titulo:not(.claro) { border-bottom: 4px solid #d96200; }
+.admin .painel-grade .tabela-simples td:last-child strong { color: #a84b00; }
+.admin .progresso-cartao .progresso-barra { background: #f7d2b0; }
+.admin .progresso-cartao .progresso-barra span { background: #d96200; }
