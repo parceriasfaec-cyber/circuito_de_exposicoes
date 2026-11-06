@@ -8,3 +8,7 @@ next-env.d.ts
 admin-teste.txt
 bloco.txt
 *.bak*
+
+.vercel
+.env*
+segredo-vercel.txt
