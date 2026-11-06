@@ -1182,3 +1182,16 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 @media (max-width: 860px) {
   .rotulo-celular { display: inline-flex; align-items: center; gap: 6px; margin-right: 6px; color: var(--verde-escuro); font-weight: 700; }
 }
+
+/* ---------- Painel: cabe numa tela só no computador (mesmo conteúdo, menos sobra) ---------- */
+@media (min-width: 1200px) {
+  .admin .admin-principal { padding-top: 14px; padding-bottom: 14px; }
+  .admin .admin-cab { margin-bottom: 12px; }
+  .admin .kpis { gap: 12px; margin-bottom: 12px; }
+  .admin .painel-grade { gap: 12px; margin-bottom: 12px; }
+  .admin .coluna-graficos { gap: 12px; }
+  .admin .tabela-simples td, .admin .tabela-simples th { padding-top: 5px; padding-bottom: 5px; }
+  .admin .progresso-cartoes { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .admin .progresso-cartao { padding: 10px 12px; }
+  .admin .evolucao { max-height: 11rem; }
+}
