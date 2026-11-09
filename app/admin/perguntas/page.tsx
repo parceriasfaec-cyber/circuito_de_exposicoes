@@ -4,6 +4,7 @@ import Icone from "@/components/Icone";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
+import { NOTAS, QTD_PERGUNTAS, ROTULO_NOTA, partesPergunta } from "@/lib/escala";
 import FormPerguntas from "./FormPerguntas";
 
 export const dynamic = "force-dynamic";
@@ -16,8 +17,6 @@ type Linha = {
   media: number | null;
   dist: Record<string, number> | null;
 };
-
-const NOTAS = [5, 6, 7, 8, 9, 10];
 
 export default async function Perguntas({ searchParams }: { searchParams: Promise<{ ciclo?: string; ok?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
@@ -48,7 +47,7 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
     <>
       <CabecalhoAdmin
         titulo="Perguntas da avaliação"
-        subtitulo="As mesmas 5 perguntas valem para todas as exposições do ciclo. Veja a média de cada uma."
+        subtitulo={`As mesmas ${QTD_PERGUNTAS} perguntas valem para todas as exposições do ciclo. Veja a média de cada uma.`}
         ciclos={ciclos}
         ciclo={ciclo}
       />
@@ -66,7 +65,7 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
                 <section key={l.ordem} className="pergunta-cartao">
                   <div className="pergunta-num">{l.ordem}</div>
                   <div className="pergunta-corpo">
-                    <p className="pergunta-texto">{l.texto}</p>
+                    <PerguntaTexto texto={l.texto} />
                     {l.textos > 1 && (
                       <p className="aviso-mini" style={{ marginTop: 6 }}>Atenção: esta pergunta tem textos diferentes em algumas exposições.</p>
                     )}
@@ -74,7 +73,7 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
                       {NOTAS.map((n) => {
                         const c = l.dist?.[n] ?? 0;
                         return (
-                          <div key={n} className="dist-col" title={`Nota ${n}: ${c} ${c === 1 ? "vez" : "vezes"}`}>
+                          <div key={n} className="dist-col" title={`Nota ${n} (${ROTULO_NOTA[n]}): ${c} ${c === 1 ? "vez" : "vezes"}`}>
                             <span className="dist-qtd">{c}</span>
                             <span className="dist-barra"><span style={{ height: `${(c / maior) * 100}%` }} /></span>
                             <span className="dist-nota">{n}</span>
@@ -93,7 +92,7 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
             })}
           </div>
           <p className="suave">
-            Notas de 5 (ruim) a 10 (excelente). {totalRespostas > 0 ? `Total de ${totalRespostas} respostas no ${ciclo?.nome}.` : "Ainda não há respostas neste ciclo."}
+            Notas de 1 (muito ruim) a 5 (excelente). {totalRespostas > 0 ? `Total de ${totalRespostas} respostas no ${ciclo?.nome}.` : "Ainda não há respostas neste ciclo."}
           </p>
 
           <section className="bloco" style={{ paddingTop: 6 }}>
@@ -103,5 +102,16 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
         </>
       )}
     </>
+  );
+}
+
+function PerguntaTexto({ texto }: { texto: string }) {
+  const { titulo, pergunta } = partesPergunta(texto);
+  if (!titulo) return <p className="pergunta-texto">{pergunta}</p>;
+  return (
+    <p className="pergunta-texto">
+      <strong>{titulo}</strong>
+      <span className="pergunta-sub">{pergunta}</span>
+    </p>
   );
 }

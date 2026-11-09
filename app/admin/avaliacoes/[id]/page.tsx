@@ -6,6 +6,7 @@ import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarData, mascararDocumento } from "@/lib/texto";
+import { formatarMedia } from "@/lib/escala";
 
 export const dynamic = "force-dynamic";
 
@@ -14,12 +15,12 @@ type Exp = {
   nome: string;
   data_inicio: Date;
   data_fim: Date;
-  nota_total: number | null;
+  media: string | null;
   enviada_em: Date | null;
   respostas: { ordem: number; texto: string; nota: number | null }[];
 };
 
-const classeNota = (n: number) => (n <= 6 ? "baixa" : n <= 8 ? "media" : "");
+const classeNota = (n: number) => (n <= 2 ? "baixa" : n === 3 ? "media" : "");
 
 export default async function DetalheProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ ciclo?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
@@ -34,7 +35,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
   if (!p) notFound();
 
   const exposicoes = await db<Exp[]>`
-    select e.id, e.nome, e.data_inicio, e.data_fim, a.nota_total, a.enviada_em,
+    select e.id, e.nome, e.data_inicio, e.data_fim, a.media, a.enviada_em,
            coalesce((
              select json_agg(json_build_object('ordem', q.ordem, 'texto', q.texto, 'nota', r.nota) order by q.ordem)
              from perguntas q
@@ -47,7 +48,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
     where pa.produtor_id = ${id}
     order by e.data_inicio`;
 
-  const avaliou = exposicoes.some((e) => e.nota_total !== null);
+  const avaliou = exposicoes.some((e) => e.media !== null);
   const enviada = exposicoes.find((e) => e.enviada_em)?.enviada_em ?? null;
 
   return (
@@ -93,7 +94,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
           <h2 className="bloco-titulo">
             <Icone nome="trofeu" tamanho={22} /> {e.nome}
             <span style={{ marginLeft: "auto", fontWeight: 700, fontSize: "0.95rem" }}>
-              {e.nota_total !== null ? `${e.nota_total} de 50 pontos` : "Pendente"}
+              {e.media !== null ? `Média ${formatarMedia(e.media)} de 5` : "Pendente"}
             </span>
           </h2>
           <p className="suave" style={{ margin: "0 0 8px" }}>{formatarData(e.data_inicio)} a {formatarData(e.data_fim)}</p>

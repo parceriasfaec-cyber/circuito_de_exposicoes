@@ -256,7 +256,9 @@ input:focus { outline: 2px solid var(--verde-vivo); outline-offset: 1px; border-
 
 .pergunta { margin: 0 0 20px; border: 0; padding: 0; }
 .pergunta legend { font-weight: 700; margin-bottom: 8px; padding: 0; }
-.notas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.notas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.pergunta-titulo { display: block; }
+.pergunta-sub { display: block; font-weight: 400; font-size: 0.92em; color: var(--suave); margin-top: 3px; }
 .notas label { margin: 0; }
 .notas input { position: absolute; opacity: 0; pointer-events: none; }
 .notas span {
@@ -1216,3 +1218,5 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .telao .qr svg { width: min(36vh, 440px); }
 .telao .codigo { font-size: clamp(3rem, 8vh, 6.5rem); line-height: 1; }
 @media (min-width: 861px) and (max-height: 760px) { .telao .logo-faixa { display: none; } }
+
+.desempate { font-size: 0.75rem; font-weight: 600; color: var(--suave); white-space: nowrap; }

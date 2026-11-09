@@ -25,7 +25,7 @@ export default async function Exposicoes({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <CabecalhoAdmin titulo="Exposições" subtitulo="Cadastre as exposições do Circuito. Cada nova exposição já vem com as 5 perguntas padrão." ciclos={ciclos} ciclo={ciclo} />
+      <CabecalhoAdmin titulo="Exposições" subtitulo="Cadastre as exposições do Circuito. Cada nova exposição já vem com as 10 perguntas padrão." ciclos={ciclos} ciclo={ciclo} />
 
       {params.ok && <div className="ok">Exposição salva.</div>}
       {params.excluida && <div className="ok">Exposição excluída.</div>}

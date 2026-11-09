@@ -1,9 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { NOTAS, ROTULO_NOTA, partesPergunta } from "@/lib/escala";
 import { avaliarTudo, type EstadoAvaliacao } from "../actions";
-
-const NOTAS = [5, 6, 7, 8, 9, 10];
 
 export type ExposicaoQuestionario = {
   id: string;
@@ -34,7 +33,7 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
     topoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // Ao terminar as 5 perguntas de uma exposição, vai para a próxima que ainda falta.
+  // Ao terminar as perguntas de uma exposição, vai para a próxima que ainda falta.
   const ultimaResposta = useRef<string | null>(null);
   useEffect(() => {
     const e = exposicoes[ativa];
@@ -76,12 +75,22 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
 
           {e.perguntas.map((p) => {
             const chave = `${e.id}_${p.ordem}`;
+            const { titulo, pergunta } = partesPergunta(p.texto);
             return (
               <fieldset key={chave} className="pergunta">
-                <legend>{p.ordem}. {p.texto}</legend>
+                <legend>
+                  {titulo ? (
+                    <>
+                      <strong className="pergunta-titulo">{p.ordem}. {titulo}</strong>
+                      <span className="pergunta-sub">{pergunta}</span>
+                    </>
+                  ) : (
+                    <>{p.ordem}. {pergunta}</>
+                  )}
+                </legend>
                 <div className="notas">
                   {NOTAS.map((n) => (
-                    <label key={n}>
+                    <label key={n} title={ROTULO_NOTA[n]}>
                       <input
                         type="radio"
                         name={`nota_${chave}`}
@@ -95,7 +104,7 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
                     </label>
                   ))}
                 </div>
-                <div className="escala"><span>ruim</span><span>excelente</span></div>
+                <div className="escala"><span>1 = muito ruim</span><span>5 = excelente</span></div>
               </fieldset>
             );
           })}

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { lerVotacao, sql } from "@/lib/db";
 import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao, segredoConfigurado } from "@/lib/sessao";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
+import { QTD_PERGUNTAS } from "@/lib/escala";
 
 export type EstadoEntrada = { erro?: string };
 
@@ -106,10 +107,10 @@ export async function avaliarTudo(_: EstadoAvaliacao, form: FormData): Promise<E
   const envio: { exposicaoId: string; notas: number[] }[] = [];
   for (const { exposicao_id } of pendentes) {
     const notas: number[] = [];
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= QTD_PERGUNTAS; i++) {
       const n = Number(form.get(`nota_${exposicao_id}_${i}`));
-      if (!Number.isInteger(n) || n < 5 || n > 10) {
-        return { erro: "Responda todas as perguntas de todas as exposições, com nota de 5 a 10." };
+      if (!Number.isInteger(n) || n < 1 || n > 5) {
+        return { erro: "Responda todas as perguntas de todas as exposições, com nota de 1 a 5." };
       }
       notas.push(n);
     }

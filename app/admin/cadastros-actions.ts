@@ -6,6 +6,7 @@ import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { ehFoto } from "@/lib/fotos";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
+import { QTD_PERGUNTAS } from "@/lib/escala";
 
 export type EstadoForm = { erro?: string };
 
@@ -29,13 +30,13 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
   const local = texto(form, "local") || null;
   const inicio = texto(form, "data_inicio");
   const fim = texto(form, "data_fim");
-  const perguntas = [1, 2, 3, 4, 5].map((i) => texto(form, `pergunta_${i}`));
+  const perguntas = Array.from({ length: QTD_PERGUNTAS }, (_, i) => texto(form, `pergunta_${i + 1}`));
 
   if (!nome || !municipio) return { erro: "Preencha o nome e o município." };
   if (!id && !UUID.test(cicloId)) return { erro: "Escolha o ciclo da exposição." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(inicio) || !/^\d{4}-\d{2}-\d{2}$/.test(fim)) return { erro: "Preencha as datas de início e fim." };
   if (fim < inicio) return { erro: "A data de fim não pode ser antes da data de início." };
-  if (id && perguntas.some((p) => !p)) return { erro: "As 5 perguntas precisam ter texto." };
+  if (id && perguntas.some((p) => !p)) return { erro: `As ${QTD_PERGUNTAS} perguntas precisam ter texto.` };
 
   const db = sql();
   try {
@@ -44,12 +45,12 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
       await db.begin(async (tx) => {
         await tx`update exposicoes set nome = ${nome}, municipio = ${municipio}, local = ${local}, foto = ${foto},
                  data_inicio = ${inicio}, data_fim = ${fim} where id = ${id}`;
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < QTD_PERGUNTAS; i++) {
           await tx`update perguntas set texto = ${perguntas[i]} where exposicao_id = ${id} and ordem = ${i + 1}`;
         }
       });
     } else {
-      // As 5 perguntas padrão são copiadas pelo próprio banco (gatilho) ao criar a exposição.
+      // As perguntas padrão são copiadas pelo próprio banco (gatilho) ao criar a exposição.
       await db`insert into exposicoes (ciclo_id, nome, municipio, local, foto, data_inicio, data_fim)
                values (${cicloId}, ${nome}, ${municipio}, ${local}, ${foto}, ${inicio}, ${fim})`;
     }
@@ -224,13 +225,13 @@ export async function ativarCiclo(form: FormData) {
 export async function salvarPerguntasCiclo(_: EstadoForm, form: FormData): Promise<EstadoForm> {
   await exigirAdmin();
   const cicloId = texto(form, "ciclo_id");
-  const perguntas = [1, 2, 3, 4, 5].map((i) => texto(form, `pergunta_${i}`));
+  const perguntas = Array.from({ length: QTD_PERGUNTAS }, (_, i) => texto(form, `pergunta_${i + 1}`));
   if (!UUID.test(cicloId)) return { erro: "Ciclo inválido." };
-  if (perguntas.some((p) => p.length < 5)) return { erro: "As 5 perguntas precisam ter texto." };
+  if (perguntas.some((p) => p.length < 5)) return { erro: `As ${QTD_PERGUNTAS} perguntas precisam ter texto.` };
 
   const db = sql();
   await db.begin(async (tx) => {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < QTD_PERGUNTAS; i++) {
       await tx`update perguntas q set texto = ${perguntas[i]}
                from exposicoes e where e.id = q.exposicao_id and e.ciclo_id = ${cicloId} and q.ordem = ${i + 1}`;
       // vale também para as próximas exposições cadastradas

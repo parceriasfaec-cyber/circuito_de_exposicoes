@@ -71,7 +71,7 @@ export default async function MinhasExposicoes({ searchParams }: { searchParams:
         <>
           <p className="intro" style={{ marginTop: 0 }}>
             Você participou de <strong>{pendentes.length}</strong> {pendentes.length === 1 ? "exposição" : "exposições"}.
-            Responda as 5 perguntas de {pendentes.length === 1 ? "cada uma" : "todas"} e envie no final. A avaliação é
+            Responda as 10 perguntas de {pendentes.length === 1 ? "cada uma" : "todas"} e envie no final. A avaliação é
             obrigatória e só pode ser feita uma vez.
           </p>
           <Questionario exposicoes={questionarios} />

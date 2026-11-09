@@ -1,6 +1,6 @@
 # Sistema de avaliação das exposições
 
-Circuito Cearense de Exposição. Os produtores avaliam as exposições em que participaram e o sistema gera o ranking pela soma das notas.
+Circuito Cearense de Exposição. Os produtores avaliam as exposições em que participaram e o sistema gera o ranking pela média das notas (de 1 a 5).
 
 Banco: Supabase, projeto **Parcerias**, schema `exposicao_cearense`.
 
@@ -47,7 +47,7 @@ Para testar pelo celular na mesma rede Wi-Fi, rode `npm run dev -- -H 0.0.0.0` e
 |---|---|---|
 | `/votar` | Produtor | Identificação (documento, ou nome + município) e código do dia |
 | `/votar/exposicoes` | Produtor | Lista as exposições em que participou, com o que falta avaliar |
-| `/votar/exposicoes/[id]` | Produtor | Questionário de 5 perguntas, notas de 5 a 10 |
+| `/votar/exposicoes/[id]` | Produtor | Questionário de 10 perguntas, notas de 1 (muito ruim) a 5 (excelente) |
 | `/admin` | Organizador | Liberar e encerrar a votação, código do dia, ranking, progresso e pendências |
 | `/admin/telao` | Organizador | QR Code e código do dia em tela cheia, para o telão |
 
