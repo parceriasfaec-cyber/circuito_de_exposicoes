@@ -41,6 +41,14 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
     }
   }
 
+  // Cada pessoa (CPF) só pode credenciar um município.
+  const [jaFeito] = await sql()<{ municipio: string }[]>`
+    select m.nome municipio from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
+    where c.ano = ${ANO_CREDENCIAMENTO} and c.cpf = ${cpf}`;
+  if (jaFeito) {
+    return { erro: `Este CPF já credenciou o município de ${jaFeito.municipio}. Cada pessoa só pode credenciar um município.` };
+  }
+
   // Confere de novo no servidor: o município pode ter sido escolhido por outra pessoa enquanto a página estava aberta.
   const disponiveis = await municipiosDisponiveis();
   const municipio = disponiveis.find((m) => m.codigo === codigo);
@@ -53,7 +61,11 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
       values (${ANO_CREDENCIAMENTO}, ${codigo}, ${responsavel}, ${cpf}, ${email}, ${funcao}, ${instituicao},
               ${p1i}, ${p1f}, ${p2i}, ${p2f})`;
   } catch (e) {
-    if ((e as { code?: string }).code === "23505") {
+    const err = e as { code?: string; constraint_name?: string };
+    if (err.code === "23505" && err.constraint_name === "credenciamentos_cpf_ano_uk") {
+      return { erro: "Este CPF já credenciou um município. Cada pessoa só pode credenciar um município." };
+    }
+    if (err.code === "23505") {
       return { erro: "Este município acabou de ser credenciado por outra pessoa. Escolha outro na lista (atualize a página)." };
     }
     console.error(e);

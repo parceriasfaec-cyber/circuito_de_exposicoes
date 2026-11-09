@@ -49,8 +49,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                     <li>Ao final das apresentações, as cidades serão avaliadas e votadas.</li>
                   </ol>
                 </div>
-                <p className="suave" style={{ margin: "14px 0 0" }}>Em caso de dúvida, procure a organização do Circuito.</p>
-                <a className="botao secundario cred-sucesso-voltar" href="/credenciamento">Credenciar outro município</a>
+                <p className="suave" style={{ margin: "14px 0 0" }}>Cada pessoa só pode credenciar um município. Em caso de dúvida, procure a organização do Circuito.</p>
               </div>
             ) : !aberto ? (
               <Aviso titulo="O credenciamento está encerrado.">
