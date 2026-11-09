@@ -1522,3 +1522,10 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 
 button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
 .selo-apresentou:disabled { opacity: 0.6; cursor: wait; }
+
+/* Questionário: leva até a pergunta que falta e destaca em vermelho */
+.pergunta.falta { outline: 2px solid var(--alerta); outline-offset: 8px; border-radius: 6px; margin-top: 14px; margin-bottom: 30px; }
+.pergunta.falta legend .pergunta-titulo { color: var(--alerta); }
+.falta-aviso { color: var(--alerta); font-weight: 800; font-size: 0.9rem; margin-top: 6px; }
+.botao.entrar.incompleto { background: var(--laranja); }
+.pergunta { scroll-margin-top: 90px; }
