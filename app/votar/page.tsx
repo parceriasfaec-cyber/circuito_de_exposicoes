@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Votar() {
   const votacao = await lerVotacao();
-  if (votacao.aberta && (await produtorDaSessao())) redirect("/votar/exposicoes");
+  if (votacao.aberta && (await produtorDaSessao())) redirect(votacao.modo === "cidades" ? "/votar/cidades" : "/votar/exposicoes");
 
   if (!votacao.aberta) {
     return (

@@ -2,11 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
-import { ANO_CREDENCIAMENTO, diaMes, formatarCpf, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
-import { sql } from "@/lib/db";
+import RankingCidades, { empateNaVaga } from "@/components/RankingCidades";
+import { ANO_CREDENCIAMENTO, diaMes, formatarCpf, lerPrazo, municipiosDisponiveis, resultadoCidades } from "@/lib/credenciamento";
+import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarData } from "@/lib/texto";
-import { salvarPrazo } from "./actions";
+import { encerrarVotacao, liberarVotacao } from "../actions";
+import { salvarPrazo, salvarVagas } from "./actions";
 import BotaoExcluir from "./BotaoExcluir";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +28,7 @@ type Linha = {
   criado_em: Date;
 };
 
-export default async function Credenciamentos({ searchParams }: { searchParams: Promise<{ excluido?: string; prazo?: string }> }) {
+export default async function Credenciamentos({ searchParams }: { searchParams: Promise<{ excluido?: string; prazo?: string; vagas?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
 
@@ -38,6 +40,10 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
     order by c.criado_em`;
   const disponiveis = (await municipiosDisponiveis()).length;
   const { prazo, aberto, apresentacao } = await lerPrazo();
+  const votacao = await lerVotacao();
+  const votacaoCidades = votacao.aberta && votacao.modo === "cidades";
+  const resultado = await resultadoCidades();
+  const vagas = resultado.vagas;
   const periodo = (i: Date, f: Date) => `${formatarData(i)} a ${formatarData(f)}`;
 
   return (
@@ -71,6 +77,50 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
               : `Formulário encerrado: o prazo terminou em ${diaMes(prazo, true)}.`}
         </p>
         <p className="suave" style={{ margin: "6px 0 0" }}>As duas datas aparecem no quadro "Fique atento!" do formulário. Para reabrir o credenciamento, escolha um prazo novo; deixe em branco para ficar sem prazo.</p>
+      </section>
+
+      <section className="bloco">
+        <h2 className="bloco-titulo"><Icone nome="trofeu" tamanho={22} /> Votação das cidades</h2>
+        <p className="suave" style={{ marginTop: 0 }}>
+          No dia das apresentações, cada produtor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele entra do mesmo jeito
+          da votação das exposições: documento ou nome, mais o código do dia mostrado no telão.
+        </p>
+        {params.vagas && <div className="ok">Número de vagas salvo.</div>}
+        <div className="prazo-form" style={{ marginBottom: 14 }}>
+          <form action={salvarVagas} className="prazo-form">
+            <div>
+              <label htmlFor="vagas">Cidades que entram no Circuito {ANO_CREDENCIAMENTO}</label>
+              <input id="vagas" name="vagas" type="number" min={1} max={50} defaultValue={vagas ?? ""} placeholder="Ex.: 3" className="campo-numero" />
+            </div>
+            <button className="botao secundario">Salvar vagas</button>
+          </form>
+          {votacaoCidades ? (
+            <form action={encerrarVotacao}><button className="botao perigo">■ Encerrar votação das cidades</button></form>
+          ) : (
+            <form action={liberarVotacao}>
+              <input type="hidden" name="modo" value="cidades" />
+              <button className="botao" disabled={linhas.length < 2}>▶ Liberar votação das cidades</button>
+            </form>
+          )}
+          <Link className="botao secundario" href="/telao" target="_blank"><Icone nome="olho" tamanho={16} /> Tela do telão</Link>
+        </div>
+        <p className={votacaoCidades ? "status-aberta" : "status-fechada"} style={{ margin: "0 0 4px", fontWeight: 800 }}>
+          {votacaoCidades
+            ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}.`
+            : votacao.aberta
+              ? "Agora está liberada a votação das exposições. Ao liberar a das cidades, ela é encerrada e sai um código novo."
+              : linhas.length < 2
+                ? "Para liberar a votação, é preciso ter pelo menos 2 cidades credenciadas."
+                : "Votação das cidades fechada."}
+        </p>
+        <p className="suave" style={{ margin: "0 0 14px" }}>
+          {resultado.votantes} {resultado.votantes === 1 ? "produtor votou" : "produtores votaram"}.
+          {resultado.vagas ? ` As ${resultado.vagas} mais votadas aparecem como classificadas.` : " Defina as vagas para marcar as classificadas."}
+        </p>
+        {empateNaVaga(resultado.ranking, resultado.vagas) && (
+          <div className="aviso-mini" style={{ marginBottom: 12 }}>Há empate na última vaga. A organização precisa decidir o desempate.</div>
+        )}
+        <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} />
       </section>
 
       <div className="barra">

@@ -46,5 +46,19 @@ export const diaMes = (iso: string, comAno = false) => {
   return comAno ? `${d}/${m}/${a}` : `${d}/${m}`;
 };
 
+export type CidadeRanking = { posicao: number; municipio: string; instituicao: string; votos: number };
+
+/** Resultado da votação das cidades: ranking, vagas definidas no painel e quantos produtores já votaram. */
+export async function resultadoCidades() {
+  const db = sql();
+  const ranking = await db<CidadeRanking[]>`
+    select posicao::int, municipio, instituicao, votos::int from v_ranking_cidades
+    where ano = ${ANO_CREDENCIAMENTO} order by posicao, municipio`;
+  const [c] = await db<{ vagas: number | null; votantes: number }[]>`
+    select (select vagas from credenciamento_config where id = 1) vagas,
+           (select count(distinct produtor_id)::int from votos_cidades where ano = ${ANO_CREDENCIAMENTO}) votantes`;
+  return { ranking, vagas: c?.vagas ?? null, votantes: c?.votantes ?? 0 };
+}
+
 /** 12345678901 -> 123.456.789-01 */
 export const formatarCpf = (c: string) => c.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");

@@ -92,7 +92,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <div className="kpi-rotulo">Votação</div>
             <div className={`kpi-valor ${votacao.aberta ? "status-aberta" : "status-fechada"}`}>{votacao.aberta ? "Liberada" : "Fechada"}</div>
             <div className="kpi-nota">
-              {votacao.aberta ? `Liberada em ${dataHora(votacao.aberta_em)}` : `Encerrada em ${dataHora(votacao.fechada_em)}`}
+              {votacao.aberta ? `${votacao.modo === "cidades" ? "Votação das cidades · " : ""}Liberada em ${dataHora(votacao.aberta_em)}` : `Encerrada em ${dataHora(votacao.fechada_em)}`}
             </div>
           </div>
           <div className="kpi-acao">

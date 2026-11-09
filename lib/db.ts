@@ -26,11 +26,13 @@ export type Votacao = {
   codigo_do_dia: string | null;
   aberta_em: Date | null;
   fechada_em: Date | null;
+  /** Qual votação o código do dia libera: a das exposições ou a das cidades credenciadas. */
+  modo: "exposicoes" | "cidades";
 };
 
 export async function lerVotacao(): Promise<Votacao> {
   const [v] = await sql()<Votacao[]>`
-    select aberta, codigo_do_dia, aberta_em, fechada_em
+    select aberta, codigo_do_dia, aberta_em, fechada_em, modo
     from exposicao_cearense.votacao where id = 1`;
-  return v ?? { aberta: false, codigo_do_dia: null, aberta_em: null, fechada_em: null };
+  return v ?? { aberta: false, codigo_do_dia: null, aberta_em: null, fechada_em: null, modo: "exposicoes" };
 }

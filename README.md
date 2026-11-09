@@ -52,6 +52,7 @@ Para testar pelo celular na mesma rede Wi-Fi, rode `npm run dev -- -H 0.0.0.0` e
 | `/admin/telao` | Organizador | QR Code e código do dia em tela cheia, para o telão |
 | `/credenciamento` | Município (prefeitura ou associação) | Credenciamento para sediar uma etapa do Circuito 2027. Só aparecem municípios que não estão no Circuito 2026 e ainda não se credenciaram |
 | `/admin/credenciamentos` | Organizador | Lista dos municípios credenciados; excluir devolve o município para a lista |
+| `/votar/cidades` | Produtor | Votação das cidades credenciadas: escolhe 2 cidades (liberada em Credenciamento > Votação das cidades) |
 
 ## Segurança
 

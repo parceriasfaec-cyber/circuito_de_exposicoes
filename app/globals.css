@@ -1274,3 +1274,31 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .cred-item p { font-size: 0.95rem; }
 .cred-item.grande p { font-size: 1.15rem; }
 .cred-item p strong.sem-destaque { font-size: 1em; }
+
+/* Votação das cidades (produtor escolhe 2) */
+.cidades-lista { display: grid; gap: 10px; margin-bottom: 16px; }
+.cidade-opcao { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 16px; border: 2px solid var(--borda); border-radius: 16px; background: #fff; cursor: pointer; color: var(--texto); }
+.cidade-opcao input { position: absolute; opacity: 0; pointer-events: none; }
+.cidade-marca { flex: none; width: 30px; height: 30px; border-radius: 9px; border: 2px solid var(--verde-borda); display: grid; place-items: center; font-weight: 900; color: #fff; }
+.cidade-texto { display: grid; gap: 2px; }
+.cidade-texto strong { font-size: 1.12rem; color: var(--verde-escuro); }
+.cidade-texto small { color: var(--suave); font-weight: 600; }
+.cidade-opcao.marcada { border-color: var(--verde-escuro); background: var(--verde-claro); }
+.cidade-opcao.marcada .cidade-marca { background: var(--verde-escuro); border-color: var(--verde-escuro); }
+.cidade-opcao.travada { opacity: 0.5; cursor: not-allowed; }
+.cidade-opcao:has(input:focus-visible) { outline: 2px solid var(--verde-vivo); outline-offset: 2px; }
+
+/* Resultado das cidades (painel e telão) */
+.ranking-cidades { display: grid; gap: 8px; }
+.ranking-cidade { display: grid; grid-template-columns: 3rem minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 14px; background: #fff; }
+.ranking-cidade.classificada { border-color: var(--verde-escuro); background: var(--verde-claro); }
+.ranking-cidade .pos { font-weight: 900; font-size: 1.2rem; color: var(--verde-escuro); text-align: center; }
+.ranking-cidade .nome { font-weight: 800; }
+.ranking-cidade .barra-votos { height: 8px; border-radius: 6px; background: #e7efe2; margin-top: 6px; overflow: hidden; }
+.ranking-cidade .barra-votos span { display: block; height: 100%; background: var(--laranja); border-radius: 6px; }
+.ranking-cidade .votos { font-weight: 900; font-size: 1.15rem; color: var(--verde-escuro); white-space: nowrap; }
+.selo-classificada { display: inline-block; margin-left: 8px; font-size: 0.75rem; font-weight: 800; color: #fff; background: var(--verde-escuro); border-radius: 999px; padding: 2px 8px; vertical-align: middle; }
+.campo-numero { width: 140px; font: inherit; font-size: 1.05rem; padding: 11px 14px; border: 1.5px solid var(--borda); border-radius: 12px; background: #fff; }
+.telao-resultado { width: 100%; max-width: 900px; margin: 0 auto; text-align: left; }
+.telao-resultado .ranking-cidade .nome { font-size: 1.3rem; }
+.telao-resultado .ranking-cidade .votos { font-size: 1.4rem; }

@@ -17,6 +17,17 @@ export async function salvarPrazo(form: FormData) {
   redirect("/admin/credenciamentos?prazo=1");
 }
 
+/** Quantas cidades entram no Circuito (vazio = sem número definido). */
+export async function salvarVagas(form: FormData) {
+  if (!(await ehAdmin())) redirect("/admin");
+  const txt = String(form.get("vagas") ?? "").trim();
+  const n = Number(txt);
+  const vagas = txt && Number.isInteger(n) && n >= 1 && n <= 50 ? n : null;
+  await sql()`update credenciamento_config set vagas = ${vagas} where id = 1`;
+  revalidatePath("/telao");
+  redirect("/admin/credenciamentos?vagas=1");
+}
+
 /** Remove um credenciamento: o município volta para a lista do formulário público. */
 export async function excluirCredenciamento(form: FormData) {
   if (!(await ehAdmin())) redirect("/admin");

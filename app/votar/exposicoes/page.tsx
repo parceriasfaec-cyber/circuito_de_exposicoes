@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
-import { sql } from "@/lib/db";
+import { lerVotacao, sql } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 import { formatarData } from "@/lib/texto";
 import { sair } from "../actions";
@@ -13,6 +13,7 @@ type Linha = { id: string; nome: string; data_inicio: Date; data_fim: Date; aval
 export default async function MinhasExposicoes({ searchParams }: { searchParams: Promise<{ ok?: string; ja?: string }> }) {
   const s = await produtorDaSessao();
   if (!s) redirect("/votar");
+  if ((await lerVotacao()).modo === "cidades") redirect("/votar/cidades");
   const params = await searchParams;
 
   const db = sql();

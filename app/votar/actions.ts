@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { lerVotacao, sql } from "@/lib/db";
+import { lerVotacao, sql, type Votacao } from "@/lib/db";
 import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao, segredoConfigurado } from "@/lib/sessao";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
 import { QTD_PERGUNTAS } from "@/lib/escala";
@@ -17,7 +17,8 @@ async function ipDoCliente() {
   return (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || h.get("x-real-ip") || "desconhecido";
 }
 
-export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEntrada> {
+/** Confere se a votação está liberada e o código do dia (com limite de erros por IP). */
+async function conferirCodigo(form: FormData): Promise<{ erro: string } | { votacao: Votacao & { aberta_em: Date } }> {
   const votacao = await lerVotacao();
   if (!votacao.aberta || !votacao.aberta_em) return { erro: "A votação não está liberada agora." };
   if (!segredoConfigurado()) return { erro: "O sistema ainda está sendo configurado. Procure a organização." };
@@ -35,6 +36,27 @@ export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEn
     await db`insert into tentativas_codigo (ip) values (${ip})`;
     return { erro: "Código do dia incorreto. Confira o número que aparece no telão." };
   }
+  return { votacao: { ...votacao, aberta_em: votacao.aberta_em } };
+}
+
+/** Só entra quem está na lista de alguma exposição do ciclo ativo; depois vai para a votação liberada. */
+async function concluirEntrada(produtorId: string, votacao: Votacao & { aberta_em: Date }): Promise<EstadoEntrada> {
+  const [{ n }] = await sql()<{ n: number }[]>`
+    select count(*)::int n from participacoes pa
+    join exposicoes e on e.id = pa.exposicao_id
+    join ciclos c on c.id = e.ciclo_id and c.ativo
+    where pa.produtor_id = ${produtorId}`;
+  if (n === 0) return { erro: "Você não está na lista de participantes das exposições deste ano. Procure a organização." };
+
+  await iniciarSessaoProdutor(produtorId, votacao.aberta_em);
+  redirect(votacao.modo === "cidades" ? "/votar/cidades" : "/votar/exposicoes");
+}
+
+export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEntrada> {
+  const r = await conferirCodigo(form);
+  if ("erro" in r) return r;
+  const votacao = r.votacao;
+  const db = sql();
 
   const modo = String(form.get("modo") ?? "");
   let produtorId: string | null = null;
@@ -67,16 +89,7 @@ export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEn
     return { erro: "Escolha como quer se identificar." };
   }
 
-  // Só entra quem está na lista de alguma exposição do ciclo ativo (o Circuito deste ano).
-  const [{ n }] = await db<{ n: number }[]>`
-    select count(*)::int n from participacoes pa
-    join exposicoes e on e.id = pa.exposicao_id
-    join ciclos c on c.id = e.ciclo_id and c.ativo
-    where pa.produtor_id = ${produtorId}`;
-  if (n === 0) return { erro: "Você não está na lista de participantes das exposições deste ano. Procure a organização." };
-
-  await iniciarSessaoProdutor(produtorId, votacao.aberta_em);
-  redirect("/votar/exposicoes");
+  return concluirEntrada(produtorId, votacao);
 }
 
 export async function sair() {
