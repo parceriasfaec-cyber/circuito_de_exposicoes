@@ -29,14 +29,29 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
           <div className="cred-principal">
             <p className="lema">Cadastre o seu município para sediar uma etapa do Circuito Cearense de Exposição {ANO_CREDENCIAMENTO}.</p>
             {ok ? (
-              <Aviso titulo="Credenciamento enviado. Obrigado!" sucesso>
-                <p>
-                  O município de <strong>{ok}</strong> foi cadastrado para o Circuito {ANO_CREDENCIAMENTO}.
-                  {apresentacao
-                    ? ` Prepare o vídeo ou a apresentação para o dia ${diaMes(apresentacao, true)}.`
-                    : " A organização vai informar a data das apresentações."}
+              <div className="cred-sucesso" role="status">
+                <span className="cred-sucesso-check" aria-hidden="true">✓</span>
+                <h2>Credenciamento enviado!</h2>
+                <p className="cred-sucesso-texto">
+                  O município de <strong>{ok}</strong> está credenciado para o Circuito Cearense de Exposição {ANO_CREDENCIAMENTO}.
                 </p>
-              </Aviso>
+                <div className="cred-passos">
+                  <h3>Próximos passos</h3>
+                  <ol>
+                    <li>
+                      {apresentacao ? (
+                        <>Prepare o vídeo ou a apresentação para o dia <strong>{diaMes(apresentacao, true)}</strong>.</>
+                      ) : (
+                        <>Prepare o vídeo ou a apresentação. A organização vai informar a data.</>
+                      )}
+                    </li>
+                    <li>Destaque os motivos pelos quais a sua cidade merece sediar a exposição, em até <strong>30 minutos</strong>.</li>
+                    <li>Ao final das apresentações, as cidades serão avaliadas e votadas.</li>
+                  </ol>
+                </div>
+                <p className="suave" style={{ margin: "14px 0 0" }}>Em caso de dúvida, procure a organização do Circuito.</p>
+                <a className="botao secundario cred-sucesso-voltar" href="/credenciamento">Credenciar outro município</a>
+              </div>
             ) : !aberto ? (
               <Aviso titulo="O credenciamento está encerrado.">
                 <p>O prazo terminou em {diaMes(prazo!, true)}. Em caso de dúvida, procure a organização do Circuito.</p>
