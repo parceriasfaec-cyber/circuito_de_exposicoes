@@ -142,7 +142,6 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                           aria-label={`${l.municipio} fez a apresentação`}
                         />
                         <span className="marcar-apresentou-caixa" aria-hidden="true"><Icone nome="check" tamanho={18} /></span>
-                        <span className="marcar-apresentou-texto">{sim ? "Apresentou" : "Não"}</span>
                       </label>
                     </td>
                     <td style={{ textAlign: "center" }}>
