@@ -1447,3 +1447,8 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .selo-apresentou:hover { border-color: var(--verde); color: var(--verde-escuro); }
 .selo-apresentou.sim { background: var(--verde-escuro); border-color: var(--verde-escuro); color: #fff; }
 .tabela-org tr.linha-apresentou td { background: #f3faee; }
+
+/* Menu lateral em blocos (avaliação das exposições / exposições 2027) */
+.lateral-grupo { display: flex; flex-direction: column; gap: 4px; }
+.lateral-grupo + .lateral-grupo { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.15); }
+.lateral-grupo-titulo { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); padding: 2px 20px 4px; }

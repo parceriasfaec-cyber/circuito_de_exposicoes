@@ -5,15 +5,33 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Icone, { type NomeIcone } from "@/components/Icone";
 
-const ITENS: { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean }[] = [
-  { href: "/admin", rotulo: "Painel", icone: "painel" },
-  { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
-  { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
-  { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
-  { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
-  { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
-  { href: "/admin/credenciamentos", rotulo: "Credenciamento", icone: "calendario" },
-  { href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true },
+type Item = { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean; exato?: boolean };
+
+/** Dois blocos: a avaliação das exposições do ciclo atual e as exposições do próximo ano (credenciamento e votação das cidades). */
+const GRUPOS: { titulo: string; itens: Item[] }[] = [
+  {
+    titulo: "Avaliação das exposições",
+    itens: [
+      { href: "/admin", rotulo: "Painel", icone: "painel", exato: true },
+      { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
+      { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
+      { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
+      { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
+      { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
+    ],
+  },
+  {
+    titulo: "Exposições 2027",
+    itens: [
+      { href: "/admin/2027", rotulo: "Painel 2027", icone: "grafico", exato: true },
+      { href: "/admin/2027/credenciados", rotulo: "Credenciados", icone: "local" },
+      { href: "/admin/2027/prazos", rotulo: "Prazos", icone: "calendario" },
+    ],
+  },
+  {
+    titulo: "",
+    itens: [{ href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true }],
+  },
 ];
 
 export default function MenuLateral() {
@@ -33,21 +51,26 @@ export default function MenuLateral() {
       </div>
 
       <nav className="lateral-menu">
-        {ITENS.map((i) => {
-          const ativo = i.href === "/admin" ? caminho === "/admin" : caminho.startsWith(i.href);
-          return (
-            <Link
-              key={i.href}
-              href={i.href}
-              className={ativo ? "ativo" : undefined}
-              target={i.novaAba ? "_blank" : undefined}
-              onClick={() => setAberto(false)}
-            >
-              <Icone nome={i.icone} tamanho={20} />
-              {i.rotulo}
-            </Link>
-          );
-        })}
+        {GRUPOS.map((g, n) => (
+          <div key={n} className="lateral-grupo">
+            {g.titulo && <span className="lateral-grupo-titulo">{g.titulo}</span>}
+            {g.itens.map((i) => {
+              const ativo = i.exato ? caminho === i.href : caminho.startsWith(i.href);
+              return (
+                <Link
+                  key={i.href}
+                  href={i.href}
+                  className={ativo ? "ativo" : undefined}
+                  target={i.novaAba ? "_blank" : undefined}
+                  onClick={() => setAberto(false)}
+                >
+                  <Icone nome={i.icone} tamanho={20} />
+                  {i.rotulo}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       <div className="lateral-marcas">

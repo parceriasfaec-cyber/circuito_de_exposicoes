@@ -51,8 +51,10 @@ Para testar pelo celular na mesma rede Wi-Fi, rode `npm run dev -- -H 0.0.0.0` e
 | `/admin` | Organizador | Liberar e encerrar a votação, código do dia, ranking, progresso e pendências |
 | `/admin/telao` | Organizador | QR Code e código do dia em tela cheia, para o telão |
 | `/credenciamento` | Município (prefeitura ou associação) | Credenciamento para sediar uma etapa do Circuito 2027. Só aparecem municípios que não estão no Circuito 2026 e ainda não se credenciaram |
-| `/admin/credenciamentos` | Organizador | Lista dos municípios credenciados; excluir devolve o município para a lista |
-| `/votar/cidades` | Produtor | Votação das cidades credenciadas: escolhe 2 cidades (liberada em Credenciamento > Votação das cidades) |
+| `/admin/2027` | Organizador | Painel 2027: resumo, vagas, liberar/encerrar a votação das cidades e ranking |
+| `/admin/2027/credenciados` | Organizador | Municípios credenciados; marcar quem fez a apresentação; excluir devolve o município para a lista |
+| `/admin/2027/prazos` | Organizador | Prazo do credenciamento e dia das apresentações |
+| `/votar/cidades` | Produtor | Votação das cidades credenciadas: escolhe 2 cidades (liberada no Painel 2027; só municípios marcados como Apresentou) |
 
 ## Segurança
 
