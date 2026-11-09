@@ -43,3 +43,26 @@ export function formatarData(d: Date | string) {
   const dt = typeof d === "string" ? new Date(d.slice(0, 10) + "T00:00:00Z") : d;
   return dt.toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
+
+const MINUSCULAS = new Set(["a", "as", "o", "os", "e", "de", "da", "das", "do", "dos", "em", "na", "nas", "no", "nos", "para", "por", "com"]);
+
+/**
+ * Primeira letra de cada palavra em maiúscula e as demais em minúscula, deixando em minúscula
+ * as ligações (de, da, do, e...): "PREFEITURA municipal DE aiuaba" -> "Prefeitura Municipal de Aiuaba".
+ * Siglas curtas já todas em maiúscula (ex.: SDA, CE) são mantidas.
+ */
+export function maiusculaInicial(s: string) {
+  return s
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .map((palavra, i) => {
+      if (!palavra) return palavra;
+      const min = palavra.toLocaleLowerCase("pt-BR");
+      if (i > 0 && MINUSCULAS.has(min)) return min;
+      const letras = palavra.replace(/[^\p{L}]/gu, "");
+      if (letras.length >= 2 && letras.length <= 4 && letras === letras.toUpperCase() && /\p{Lu}/u.test(letras) && i > 0) return palavra;
+      return min.replace(/(^|[-'’])(\p{L})/gu, (_, sep: string, l: string) => sep + l.toLocaleUpperCase("pt-BR"));
+    })
+    .join(" ");
+}

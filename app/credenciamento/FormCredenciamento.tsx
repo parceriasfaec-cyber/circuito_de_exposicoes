@@ -2,6 +2,12 @@
 
 import { useActionState } from "react";
 import type { Municipio } from "@/lib/credenciamento";
+import { maiusculaInicial } from "@/lib/texto";
+
+/** Ao sair do campo: primeira letra de cada palavra em maiúscula e as demais em minúscula. */
+const ajustar = (e: React.FocusEvent<HTMLInputElement>) => {
+  e.currentTarget.value = maiusculaInicial(e.currentTarget.value);
+};
 import { credenciar, type EstadoCredenciamento } from "./actions";
 
 export default function FormCredenciamento({ municipios, ano }: { municipios: Municipio[]; ano: number }) {
@@ -22,16 +28,16 @@ export default function FormCredenciamento({ municipios, ano }: { municipios: Mu
           </select>
         </div>
         <div>
-          <label htmlFor="instituicao">Nome da prefeitura ou associação</label>
-          <input id="instituicao" name="instituicao" type="text" maxLength={150} required placeholder="Ex.: Prefeitura Municipal de ..." />
+          <label htmlFor="instituicao">Prefeitura ou associação</label>
+          <input id="instituicao" name="instituicao" type="text" maxLength={150} required placeholder="Ex.: Prefeitura Municipal de ..." onBlur={ajustar} autoCapitalize="words" />
         </div>
         <div>
           <label htmlFor="responsavel">Nome do responsável</label>
-          <input id="responsavel" name="responsavel" type="text" maxLength={150} autoComplete="name" required />
+          <input id="responsavel" name="responsavel" type="text" maxLength={150} autoComplete="name" required onBlur={ajustar} autoCapitalize="words" />
         </div>
         <div>
           <label htmlFor="funcao">Função</label>
-          <input id="funcao" name="funcao" type="text" maxLength={100} required placeholder="Ex.: Secretário de Agricultura" />
+          <input id="funcao" name="funcao" type="text" maxLength={100} required placeholder="Ex.: Secretário de Agricultura" onBlur={ajustar} autoCapitalize="words" />
         </div>
         <div>
           <label htmlFor="cpf">CPF</label>

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
 import { ANO_CREDENCIAMENTO, diaMes, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
-import { cpfValido, soDigitos } from "@/lib/texto";
+import { cpfValido, maiusculaInicial, soDigitos } from "@/lib/texto";
 
 export type EstadoCredenciamento = { erro?: string };
 
@@ -14,11 +14,11 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
   const { prazo, aberto } = await lerPrazo();
   if (!aberto) return { erro: `O prazo do credenciamento terminou em ${diaMes(prazo!, true)}.` };
   const codigo = Number(texto(form, "municipio"));
-  const responsavel = texto(form, "responsavel");
+  const responsavel = maiusculaInicial(texto(form, "responsavel"));
   const cpf = soDigitos(texto(form, "cpf"));
   const email = texto(form, "email").toLowerCase();
-  const funcao = texto(form, "funcao");
-  const instituicao = texto(form, "instituicao");
+  const funcao = maiusculaInicial(texto(form, "funcao"));
+  const instituicao = maiusculaInicial(texto(form, "instituicao"));
   const p1i = texto(form, "periodo1_inicio");
   const p1f = texto(form, "periodo1_fim");
   const p2i = texto(form, "periodo2_inicio");
