@@ -62,3 +62,7 @@ export async function resultadoCidades() {
 
 /** 12345678901 -> 123.456.789-01 */
 export const formatarCpf = (c: string) => c.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+
+/** 85999999999 -> (85) 99999-9999 */
+export const formatarTelefone = (t: string) =>
+  t.length === 11 ? `(${t.slice(0, 2)}) ${t.slice(2, 7)}-${t.slice(7)}` : t.length === 10 ? `(${t.slice(0, 2)}) ${t.slice(2, 6)}-${t.slice(6)}` : t;

@@ -1397,8 +1397,7 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
   .moldura-voto.larga .moldura-voto-topo { padding: 18px 20px; font-size: 2.1rem; }
   .moldura-voto.larga .moldura-voto-corpo { padding: 24px 44px 30px; }
   .moldura-voto.larga .lema { font-size: 1.25rem; margin-bottom: 14px; }
-  .cred-campos { gap: 4px 20px; }
-  .cred-campos .periodo { grid-column: 1 / -1; margin-top: 16px; }
+  .cred-campos { gap: 0 20px; }
   .form-credenciamento input[type="date"] { font-size: 1.05rem; padding: 11px 14px; }
   .form-credenciamento .botao.cheio { margin-top: 22px; padding-top: 15px; padding-bottom: 15px; font-size: 1.15rem; }
   .cred-atencao-topo { padding: 18px 20px; }
@@ -1414,7 +1413,7 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
   .pagina:has(.moldura-voto.larga) .conteudo { max-width: 1360px; }
   .moldura-voto.larga { max-width: 1320px; }
 }
-@media (min-width: 861px) and (min-height: 1000px) {
+@media (min-width: 861px) and (min-height: 1160px) {
   .cred-campos .periodo { grid-column: 1 / -1; margin-top: 12px; }
   .form-credenciamento input[type="date"] { font-size: 1.02rem; padding: 10px 12px; }
   .form-credenciamento .periodo .periodo-datas label { margin-top: 4px; }
@@ -1467,3 +1466,56 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .cred-passos ol { margin: 0; padding-left: 22px; }
 .cred-passos li { margin: 0 0 10px; line-height: 1.45; }
 .cred-sucesso-voltar { display: inline-block; margin-top: 16px; text-decoration: none; }
+
+/* Credenciamento: e-mail na linha inteira; telefone com o mesmo visual dos outros campos */
+.cred-campos .campo-inteiro { grid-column: 1 / -1; }
+.form-credenciamento input[type="tel"] {
+  width: 100%; font: inherit; font-size: 1.05rem; padding: 11px 14px; border: 1.5px solid var(--borda); border-radius: 12px; background: #fff;
+}
+@media (min-width: 861px) {
+  .form-credenciamento input[type="tel"] { padding: 7px 12px; font-size: 0.98rem; }
+}
+@media (min-width: 861px) and (min-height: 900px) {
+  .form-credenciamento input[type="tel"] { padding: 11px 14px; font-size: 1.05rem; }
+}
+
+/* Quadro "Fique atento!" mais estreito: o formulário ganha espaço */
+@media (min-width: 861px) {
+  .cred-grade { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+}
+
+/* com o e-mail numa linha própria, aperta um pouco cada faixa de altura */
+.form-credenciamento .dica { display: none; }
+@media (min-width: 861px) and (max-height: 899px) {
+  .form-credenciamento label { margin: 6px 0 3px; }
+  .cred-campos .periodo { margin-top: 8px; }
+  .moldura-voto.larga .lema { font-size: 0.98rem; margin-bottom: 2px; }
+  .form-credenciamento input[type="text"], .form-credenciamento input[type="email"], .form-credenciamento input[type="tel"],
+  .form-credenciamento input[type="date"], .form-credenciamento select { padding-top: 6px; padding-bottom: 6px; }
+}
+@media (min-width: 861px) and (min-height: 900px) and (max-height: 1159px) {
+  .form-credenciamento label { margin: 7px 0 4px; }
+  .cred-campos .periodo { margin-top: 10px; }
+  .form-credenciamento input[type="text"], .form-credenciamento input[type="email"], .form-credenciamento input[type="tel"],
+  .form-credenciamento input[type="date"], .form-credenciamento select { padding-top: 9px; padding-bottom: 9px; }
+}
+@media (min-width: 861px) and (min-height: 721px) and (max-height: 899px) {
+  .pagina:has(.moldura-voto.larga) .topo-claro-marcas .sistema { height: 3rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-marcas .circuito { height: 3.3rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-sep { height: 2.9rem; }
+  .moldura-voto.larga .moldura-voto-topo { padding-top: 7px; padding-bottom: 7px; }
+  .form-credenciamento .periodo { padding-bottom: 8px; }
+}
+@media (min-width: 861px) and (min-height: 900px) and (max-height: 999px) {
+  .moldura-voto.larga .moldura-voto-corpo { padding-top: 10px; padding-bottom: 14px; }
+  .moldura-voto.larga .moldura-voto-topo { padding-top: 10px; padding-bottom: 10px; }
+  .form-credenciamento input[type="text"], .form-credenciamento input[type="email"], .form-credenciamento input[type="tel"],
+  .form-credenciamento input[type="date"], .form-credenciamento select { padding-top: 7px; padding-bottom: 7px; }
+}
+@media (min-width: 861px) and (min-height: 1100px) {
+  .form-credenciamento .botao.cheio { margin-top: 14px; }
+  .moldura-voto.larga .moldura-voto-corpo { padding-bottom: 22px; }
+}
+@media (min-width: 861px) and (min-height: 900px) and (max-height: 999px) {
+  .form-credenciamento label { margin: 5px 0 3px; }
+}

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
-import { ANO_CREDENCIAMENTO, formatarCpf, municipiosDisponiveis } from "@/lib/credenciamento";
+import { ANO_CREDENCIAMENTO, formatarCpf, formatarTelefone, municipiosDisponiveis } from "@/lib/credenciamento";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarData } from "@/lib/texto";
@@ -19,6 +19,7 @@ type Linha = {
   funcao: string;
   cpf: string;
   email: string;
+  telefone: string | null;
   periodo1_inicio: Date;
   periodo1_fim: Date;
   periodo2_inicio: Date;
@@ -32,7 +33,7 @@ export default async function Credenciados({ searchParams }: { searchParams: Pro
   const params = await searchParams;
 
   const linhas = await sql()<Linha[]>`
-    select c.id, m.nome municipio, c.instituicao, c.responsavel, c.funcao, c.cpf, c.email,
+    select c.id, m.nome municipio, c.instituicao, c.responsavel, c.funcao, c.cpf, c.email, c.telefone,
            c.periodo1_inicio, c.periodo1_fim, c.periodo2_inicio, c.periodo2_fim, c.criado_em, c.apresentou
     from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
     where c.ano = ${ANO_CREDENCIAMENTO}
@@ -89,7 +90,7 @@ export default async function Credenciados({ searchParams }: { searchParams: Pro
                   <td>
                     <div className="nome">{l.responsavel}</div>
                     <div className="doc">{l.funcao} · CPF {formatarCpf(l.cpf)}</div>
-                    <div className="doc"><a href={`mailto:${l.email}`}>{l.email}</a></div>
+                    <div className="doc">{l.telefone && <><a href={`tel:${l.telefone}`}>{formatarTelefone(l.telefone)}</a> · </>}<a href={`mailto:${l.email}`}>{l.email}</a></div>
                   </td>
                   <td>
                     <div>01: {periodo(l.periodo1_inicio, l.periodo1_fim)}</div>

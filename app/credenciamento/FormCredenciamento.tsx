@@ -4,6 +4,15 @@ import { useActionState } from "react";
 import type { Municipio } from "@/lib/credenciamento";
 import { maiusculaInicial } from "@/lib/texto";
 
+/** Telefone com máscara enquanto digita: (85) 99999-9999 */
+const mascaraTelefone = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const d = e.currentTarget.value.replace(/\D/g, "").slice(0, 11);
+  e.currentTarget.value =
+    d.length <= 2 ? d : d.length <= 6 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d.length <= 10
+      ? `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`
+      : `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+};
+
 /** Ao sair do campo: primeira letra de cada palavra em maiúscula e as demais em minúscula. */
 const ajustar = (e: React.FocusEvent<HTMLInputElement>) => {
   e.currentTarget.value = maiusculaInicial(e.currentTarget.value);
@@ -21,7 +30,7 @@ export default function FormCredenciamento({ municipios, ano }: { municipios: Mu
         <div>
           <label htmlFor="municipio">Município que deseja participar</label>
           <select id="municipio" name="municipio" required defaultValue="" title="Só aparecem os municípios que ainda não participam do Circuito e ainda não se credenciaram.">
-            <option value="" disabled>Escolha o município</option>
+            <option value="" disabled>Escolha o município (só os disponíveis)</option>
             {municipios.map((m) => (
               <option key={m.codigo} value={m.codigo}>{m.nome}</option>
             ))}
@@ -44,8 +53,12 @@ export default function FormCredenciamento({ municipios, ano }: { municipios: Mu
           <input id="cpf" name="cpf" type="text" inputMode="numeric" maxLength={14} autoComplete="off" required placeholder="Só os números" />
         </div>
         <div>
+          <label htmlFor="telefone">Telefone / WhatsApp</label>
+          <input id="telefone" name="telefone" type="tel" inputMode="tel" maxLength={16} autoComplete="tel" required placeholder="(85) 99999-9999" onChange={mascaraTelefone} />
+        </div>
+        <div className="campo-inteiro">
           <label htmlFor="email">E-mail</label>
-          <input id="email" name="email" type="email" maxLength={150} autoComplete="email" required />
+          <input id="email" name="email" type="email" maxLength={150} autoComplete="email" required placeholder="nome@exemplo.com" />
         </div>
 
         {(["1", "2"] as const).map((n) => (

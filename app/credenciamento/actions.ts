@@ -17,6 +17,7 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
   const responsavel = maiusculaInicial(texto(form, "responsavel"));
   const cpf = soDigitos(texto(form, "cpf"));
   const email = texto(form, "email").toLowerCase();
+  const telefone = soDigitos(texto(form, "telefone"));
   const funcao = maiusculaInicial(texto(form, "funcao"));
   const instituicao = maiusculaInicial(texto(form, "instituicao"));
   const p1i = texto(form, "periodo1_inicio");
@@ -28,6 +29,7 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
   if (responsavel.length < 3) return { erro: "Preencha o nome do responsável." };
   if (!cpfValido(cpf)) return { erro: "Este CPF não é válido. Confira os números." };
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { erro: "Este e-mail não é válido. Confira." };
+  if (telefone.length < 10 || telefone.length > 11) return { erro: "Digite o telefone com DDD, só os números. Ex.: (85) 99999-9999." };
   if (funcao.length < 2) return { erro: "Preencha a função do responsável." };
   if (instituicao.length < 3) return { erro: "Preencha o nome da prefeitura ou da associação." };
   if (responsavel.length > 150 || instituicao.length > 150 || funcao.length > 100) return { erro: "Algum campo ficou grande demais. Resuma o texto." };
@@ -56,9 +58,9 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
 
   try {
     await sql()`
-      insert into credenciamentos (ano, municipio_codigo, responsavel, cpf, email, funcao, instituicao,
+      insert into credenciamentos (ano, municipio_codigo, responsavel, cpf, email, telefone, funcao, instituicao,
                                    periodo1_inicio, periodo1_fim, periodo2_inicio, periodo2_fim)
-      values (${ANO_CREDENCIAMENTO}, ${codigo}, ${responsavel}, ${cpf}, ${email}, ${funcao}, ${instituicao},
+      values (${ANO_CREDENCIAMENTO}, ${codigo}, ${responsavel}, ${cpf}, ${email}, ${telefone}, ${funcao}, ${instituicao},
               ${p1i}, ${p1f}, ${p2i}, ${p2f})`;
   } catch (e) {
     const err = e as { code?: string; constraint_name?: string };
