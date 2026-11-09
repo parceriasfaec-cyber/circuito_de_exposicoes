@@ -23,7 +23,7 @@ insert into perguntas_padrao (ordem, texto) values
  (6, 'Alimentação dos tratadores e expositores: A organização ofereceu alimentação adequada, em quantidade suficiente, com qualidade e horários compatíveis com a rotina da exposição?'),
  (7, 'Organização dos julgamentos e atividades técnicas: Os julgamentos, a programação, os horários, os critérios de avaliação e a condução das atividades ocorreram de maneira organizada e transparente?'),
  (8, 'Premiação e pagamento dos prêmios: A premiação foi atrativa, compatível com a importância do evento e paga dentro dos prazos estabelecidos pela organização?'),
- (9, 'Atendimento e suporte durante o evento: A equipe organizadora esteve disponível e resolveu satisfatoriamente as demandas dos expositores durante a exposição?'),
+ (9, 'Atendimento e suporte durante o evento: A promotora do evento esteve disponível e resolveu satisfatoriamente as demandas dos expositores durante a exposição?'),
  (10, 'Satisfação geral e retorno do expositor: Considerando os serviços, a estrutura, os custos e os benefícios oferecidos, você considera satisfatória sua participação e pretende retornar na próxima edição?');
 
 -- Todas as exposições passam a ter as 10 perguntas novas
@@ -93,3 +93,33 @@ select ciclo_id, exposicao_id, nome, questionarios,
        rank() over (partition by ciclo_id order by media_exata desc nulls last,
                     media_p10_exata desc nulls last, questionarios desc) as posicao
 from base;
+
+-- Ajuste (2026-11-09): novo texto da pergunta 9 e desempate pelas perguntas 2, 5 e 9, nessa ordem
+-- (substitui o desempate anterior pela pergunta 10 + questionários).
+update perguntas set texto = 'Atendimento e suporte durante o evento: A promotora do evento esteve disponível e resolveu satisfatoriamente as demandas dos expositores durante a exposição?' where ordem = 9;
+drop view v_ranking;
+create view v_ranking as
+with notas as (
+  select q.exposicao_id,
+         avg(r.nota) filter (where q.ordem = 2) as p2,
+         avg(r.nota) filter (where q.ordem = 5) as p5,
+         avg(r.nota) filter (where q.ordem = 9) as p9
+  from respostas r join perguntas q on q.id = r.pergunta_id
+  group by q.exposicao_id
+),
+base as (
+  select e.ciclo_id, e.id as exposicao_id, e.nome,
+         count(a.produtor_id) as questionarios,
+         avg(a.media) as media_exata
+  from exposicoes e
+  left join avaliacoes a on a.exposicao_id = e.id
+  group by e.ciclo_id, e.id, e.nome
+)
+select b.ciclo_id, b.exposicao_id, b.nome, b.questionarios,
+       round(b.media_exata, 2) as media,
+       round(n.p2, 2) as media_p2,
+       round(n.p5, 2) as media_p5,
+       round(n.p9, 2) as media_p9,
+       rank() over (partition by b.ciclo_id order by b.media_exata desc nulls last,
+                    n.p2 desc nulls last, n.p5 desc nulls last, n.p9 desc nulls last) as posicao
+from base b left join notas n on n.exposicao_id = b.exposicao_id;

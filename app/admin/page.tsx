@@ -12,7 +12,15 @@ import Login from "./Login";
 export const dynamic = "force-dynamic";
 
 type Progresso = { nome: string; foto: string | null; na_lista: number; responderam: number };
-type Ranking = { posicao: number; nome: string; questionarios: number; media: number | null; media_satisfacao: number | null };
+type Ranking = {
+  posicao: number;
+  nome: string;
+  questionarios: number;
+  media: number | null;
+  media_p2: number | null;
+  media_p5: number | null;
+  media_p9: number | null;
+};
 type Dia = { dia: string; quantidade: number };
 
 const TZ = "America/Fortaleza";
@@ -42,9 +50,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const progresso = await db<Progresso[]>`
     select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
   const ranking = await db<Ranking[]>`
-    select posicao::int, nome, questionarios::int, media::float, media_satisfacao::float
+    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
-  // Exposições com a mesma média: mostra a nota de desempate (pergunta 10) embaixo da média.
+  // Exposições com a mesma média: mostra as notas de desempate (perguntas 2, 5 e 9) embaixo da média.
   const empatada = (r: Ranking) => r.media !== null && ranking.filter((x) => x.media === r.media).length > 1;
   const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
     with pa as (
@@ -155,8 +163,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       <td className="num">
                         <strong>{formatarMedia(r.media)}</strong>
                         {empatada(r) && (
-                          <div className="desempate" title="Desempate pela média da pergunta 10 (satisfação geral)">
-                            satisfação {formatarMedia(r.media_satisfacao)}
+                          <div className="desempate" title="Desempate pela média das perguntas 2, 5 e 9, nessa ordem">
+                            P2 {formatarMedia(r.media_p2)} · P5 {formatarMedia(r.media_p5)} · P9 {formatarMedia(r.media_p9)}
                           </div>
                         )}
                       </td>
@@ -168,7 +176,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           </div>
           <p className="suave" style={{ margin: "10px 0 0" }}>
             A pontuação é a média das notas recebidas, de 1 (muito ruim) a 5 (excelente). Em caso de empate, vence a maior
-            média na pergunta 10 (satisfação geral); persistindo o empate, vence quem tiver mais questionários respondidos.
+            média, nesta ordem, na pergunta 2 (infraestrutura e acomodação dos animais), na pergunta 5 (apoio aos
+            tratadores) e na pergunta 9 (atendimento e suporte durante o evento).
           </p>
         </section>
 
