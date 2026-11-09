@@ -10,7 +10,6 @@ import { mascararDocumento, normalizar } from "@/lib/texto";
 export const dynamic = "force-dynamic";
 
 type Item = { exposicao: string; avaliada: boolean; nota: number | null };
-const media = (n: number | null) => (n === null ? "—" : n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 type Linha = {
   id: string;
   nome: string;
@@ -48,7 +47,7 @@ export default async function Avaliacoes({
     select p.id, p.nome, p.municipio, p.tipo_documento, p.documento,
            count(*)::int total,
            count(a.produtor_id)::int avaliadas,
-           json_agg(json_build_object('exposicao', e.nome, 'avaliada', a.produtor_id is not null, 'nota', a.media)
+           json_agg(json_build_object('exposicao', e.nome, 'avaliada', a.produtor_id is not null, 'nota', round(a.media * 10)::int)
                     order by e.data_inicio) itens
     from produtores p
     join participacoes pa on pa.produtor_id = p.id
@@ -151,7 +150,7 @@ export default async function Avaliacoes({
                     <ul className="lista-exp">
                       {l.itens.map((i) => (
                         <li key={i.exposicao} className={i.avaliada ? "feito" : "falta"}>
-                          {curto(i.exposicao)} - {i.avaliada ? `concluído (média ${media(i.nota)})` : "pendente"}
+                          {curto(i.exposicao)} - {i.avaliada ? `concluído (${i.nota} de 50 pontos)` : "pendente"}
                         </li>
                       ))}
                     </ul>
