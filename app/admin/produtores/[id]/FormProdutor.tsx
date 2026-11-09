@@ -29,7 +29,8 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
   const participa = new Set(dados.participa);
 
   return (
-    <form action={acao} className="bloco" style={{ paddingTop: 6 }}>
+    // Depois de enviar, o React limpa o formulário e os campos voltam ao valor inicial; o tipo de documento volta junto.
+    <form action={acao} className="bloco" style={{ paddingTop: 6 }} onReset={() => setTipo(dados.tipo_documento)}>
       <input type="hidden" name="id" value={dados.id} />
       <input type="hidden" name="ciclo_id" value={cicloId} />
       <div className="form-grade">
@@ -50,7 +51,7 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
         </div>
         <div>
           <label htmlFor="tipo_documento">Documento</label>
-          <select id="tipo_documento" name="tipo_documento" value={tipo} onChange={(e) => setTipo(e.target.value)}>
+          <select id="tipo_documento" name="tipo_documento" defaultValue={dados.tipo_documento} onChange={(e) => setTipo(e.target.value)}>
             <option value="CPF">CPF</option>
             <option value="CNPJ">CNPJ</option>
             <option value="OUTRO">Outro documento</option>
