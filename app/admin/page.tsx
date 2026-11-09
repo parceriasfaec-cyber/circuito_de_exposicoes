@@ -20,6 +20,7 @@ type Ranking = {
   media_p2: number | null;
   media_p5: number | null;
   media_p9: number | null;
+  pontos: number;
 };
 type Dia = { dia: string; quantidade: number };
 
@@ -50,7 +51,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const progresso = await db<Progresso[]>`
     select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
   const ranking = await db<Ranking[]>`
-    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float
+    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, pontos::int
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
   // Exposições com a mesma média: mostra as notas de desempate (perguntas 2, 5 e 9) embaixo da média.
   const empatada = (r: Ranking) => r.media !== null && ranking.filter((x) => x.media === r.media).length > 1;
@@ -147,7 +148,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           <div className="tabela">
             <table className="tabela-simples">
               <thead>
-                <tr><th>Posição</th><th>Exposição</th><th className="num">Questionários</th><th className="num">Média</th></tr>
+                <tr><th>Posição</th><th>Exposição</th><th className="num">Questionários</th><th className="num">Pontos</th><th className="num">Média</th></tr>
               </thead>
               <tbody>
                 {ranking.map((r) => {
@@ -160,6 +161,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       </td>
                       <td title={r.nome}><strong>{curto(r.nome)}</strong></td>
                       <td className="num">{r.questionarios}</td>
+                      <td className="num pontos">{r.questionarios ? r.pontos.toLocaleString("pt-BR") : "—"}</td>
                       <td className="num">
                         <strong>{formatarMedia(r.media)}</strong>
                         {empatada(r) && (
@@ -175,7 +177,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             </table>
           </div>
           <p className="suave" style={{ margin: "10px 0 0" }}>
-            A pontuação é a média das notas recebidas, de 1 (muito ruim) a 5 (excelente). Em caso de empate, vence a maior
+            Pontos é a soma de todas as notas recebidas. A classificação é pela média dessas notas, de 1 (muito ruim) a 5
+            (excelente). Em caso de empate, vence a maior
             média, nesta ordem, na pergunta 2 (infraestrutura e acomodação dos animais), na pergunta 5 (apoio aos
             tratadores) e na pergunta 9 (atendimento e suporte durante o evento).
           </p>

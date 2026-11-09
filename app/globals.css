@@ -1529,3 +1529,5 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .falta-aviso { color: var(--alerta); font-weight: 800; font-size: 0.9rem; margin-top: 6px; }
 .botao.entrar.incompleto { background: var(--laranja); }
 .pergunta { scroll-margin-top: 90px; }
+
+.tabela-simples td.pontos { font-weight: 700; color: var(--verde-escuro); }
