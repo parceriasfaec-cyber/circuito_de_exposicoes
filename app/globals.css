@@ -1531,3 +1531,11 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pergunta { scroll-margin-top: 90px; }
 
 .tabela-simples td.pontos { font-weight: 700; color: var(--verde-escuro); }
+
+.busca-select { width: 100%; padding-left: 44px !important; border-radius: 999px !important; }
+
+/* Cabeçalho do painel: seletor de ciclo e "Olá, ..." lado a lado (não um embaixo do outro) */
+@media (min-width: 861px) {
+  .admin-cab-texto { flex: 1 1 auto; min-width: 0; }
+  .admin-cab-dir { flex: 0 0 auto; flex-wrap: nowrap; align-self: center; }
+}

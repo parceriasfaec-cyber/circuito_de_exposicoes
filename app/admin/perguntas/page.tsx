@@ -18,14 +18,21 @@ type Linha = {
   dist: Record<string, number> | null;
 };
 
-export default async function Perguntas({ searchParams }: { searchParams: Promise<{ ciclo?: string; ok?: string }> }) {
+export default async function Perguntas({ searchParams }: { searchParams: Promise<{ ciclo?: string; ok?: string; exp?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const { ciclo, ciclos } = await cicloEscolhido(params.ciclo);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
+  const db = sql();
 
-  // As perguntas são as mesmas em todas as exposições do ciclo: mostra uma vez, com as notas de todas juntas.
-  const linhas = await sql()<Linha[]>`
+  // Pesquisa por exposição: sem escolha, junta as notas de todas as exposições do ciclo.
+  const exposicoes = await db<{ id: string; nome: string }[]>`select id, nome from exposicoes where ciclo_id = ${cid} order by nome`;
+  const escolhida = exposicoes.find((e) => e.id === params.exp) ?? null;
+  const soEsta = escolhida ? db`and e.id = ${escolhida.id}` : db``;
+  const soEsta2 = escolhida ? db`and e2.id = ${escolhida.id}` : db``;
+
+  // As perguntas são as mesmas em todas as exposições do ciclo: mostra uma vez, com as notas juntas.
+  const linhas = await db<Linha[]>`
     select q.ordem,
            mode() within group (order by q.texto) texto,
            count(distinct q.texto)::int textos,
@@ -35,9 +42,9 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
               select r2.nota n, count(*) c from respostas r2
               join perguntas q2 on q2.id = r2.pergunta_id
               join exposicoes e2 on e2.id = q2.exposicao_id
-              where e2.ciclo_id = ${cid} and q2.ordem = q.ordem group by r2.nota) d) dist
+              where e2.ciclo_id = ${cid} ${soEsta2} and q2.ordem = q.ordem group by r2.nota) d) dist
     from perguntas q
-    join exposicoes e on e.id = q.exposicao_id and e.ciclo_id = ${cid}
+    join exposicoes e on e.id = q.exposicao_id and e.ciclo_id = ${cid} ${soEsta}
     left join respostas r on r.pergunta_id = q.id
     group by q.ordem order by q.ordem`;
 
@@ -53,6 +60,24 @@ export default async function Perguntas({ searchParams }: { searchParams: Promis
       />
 
       {params.ok && <div className="ok">Perguntas salvas para todas as exposições do {ciclo?.nome}.</div>}
+
+      {exposicoes.length > 0 && (
+        <form className="busca" action="/admin/perguntas">
+          {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
+          <div className="busca-campo">
+            <Icone nome="busca" tamanho={20} />
+            <select name="exp" defaultValue={escolhida?.id ?? ""} aria-label="Exposição" className="busca-select">
+              <option value="">Todas as exposições do ciclo</option>
+              {exposicoes.map((e) => (
+                <option key={e.id} value={e.id}>{e.nome}</option>
+              ))}
+            </select>
+          </div>
+          <button className="botao com-icone"><Icone nome="busca" tamanho={18} /> Pesquisar</button>
+          {escolhida && <a href={`/admin/perguntas${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="link">Limpar</a>}
+        </form>
+      )}
+      {escolhida && <p style={{ margin: "0 0 12px", fontWeight: 700 }}>Mostrando as notas de: {escolhida.nome}</p>}
 
       {linhas.length === 0 ? (
         <div className="cartao"><p style={{ margin: 0 }}>Este ciclo ainda não tem exposições. Cadastre em Exposições.</p></div>
