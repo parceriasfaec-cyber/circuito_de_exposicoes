@@ -1539,3 +1539,6 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .admin-cab-texto { flex: 1 1 auto; min-width: 0; }
   .admin-cab-dir { flex: 0 0 auto; flex-wrap: nowrap; align-self: center; }
 }
+
+.acoes-linha { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.acoes-linha form { margin: 0; }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import Icone from "@/components/Icone";
 import { normalizar } from "@/lib/texto";
@@ -143,7 +144,12 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                         {sim ? "✓ Apresentou" : "Não apresentou"}
                       </button>
                     </td>
-                    <td style={{ textAlign: "center" }}><BotaoExcluir id={l.id} municipio={l.municipio} /></td>
+                    <td style={{ textAlign: "center" }}>
+                      <div className="acoes-linha">
+                        <Link href={`/admin/proximo/credenciados/${l.id}`} className="botao-detalhes">Editar</Link>
+                        <BotaoExcluir id={l.id} municipio={l.municipio} />
+                      </div>
+                    </td>
                   </tr>
                 );
               })}

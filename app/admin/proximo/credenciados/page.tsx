@@ -27,7 +27,7 @@ type Linha = {
   apresentou: boolean;
 };
 
-export default async function Credenciados({ searchParams }: { searchParams: Promise<{ excluido?: string; marcado?: string }> }) {
+export default async function Credenciados({ searchParams }: { searchParams: Promise<{ excluido?: string; editado?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const ano = await anoCredenciamento();
   const params = await searchParams;
@@ -49,6 +49,7 @@ export default async function Credenciados({ searchParams }: { searchParams: Pro
       />
 
       {params.excluido && <div className="ok">Credenciamento excluído. O município voltou para a lista do formulário.</div>}
+      {params.editado && <div className="ok">Alterações salvas.</div>}
 
       <div className="barra">
         <span className="suave">

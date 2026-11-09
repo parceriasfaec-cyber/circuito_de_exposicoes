@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
-import { anoCredenciamento } from "@/lib/credenciamento";
+import { anoCredenciamento, municipiosDisponiveis } from "@/lib/credenciamento";
+import { lerDadosCredenciamento } from "@/lib/dadosCredenciamento";
 import { ehAdmin } from "@/lib/sessao";
 
 /** Define até que dia o formulário aceita cadastros (vazio = sem prazo). */
@@ -63,4 +64,43 @@ export async function definirApresentacao(id: string, apresentou: boolean): Prom
   revalidatePath("/telao");
   revalidatePath("/admin/proximo");
   return { ok: true };
+}
+
+export type EstadoEdicao = { erro?: string };
+
+/** Salva a edição de um credenciado feita pelo organizador (mesmas regras do formulário público, sem olhar o prazo). */
+export async function salvarCredenciado(_: EstadoEdicao, form: FormData): Promise<EstadoEdicao> {
+  if (!(await ehAdmin())) redirect("/admin");
+  const id = String(form.get("id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return { erro: "Credenciamento inválido." };
+  const ano = await anoCredenciamento();
+  const lido = lerDadosCredenciamento(form, ano);
+  if ("erro" in lido) return lido;
+  const d = lido.dados;
+
+  const db = sql();
+  const [atual] = await db<{ municipio_codigo: number }[]>`select municipio_codigo from credenciamentos where id = ${id} and ano = ${ano}`;
+  if (!atual) return { erro: "Este credenciamento não existe mais." };
+  // Trocar de município só para um que ainda esteja disponível (ou manter o mesmo).
+  if (d.codigo !== atual.municipio_codigo && !(await municipiosDisponiveis(ano)).some((m) => m.codigo === d.codigo)) {
+    return { erro: "Este município não está disponível. Escolha outro." };
+  }
+
+  try {
+    await db`
+      update credenciamentos set municipio_codigo = ${d.codigo}, responsavel = ${d.responsavel}, cpf = ${d.cpf},
+             email = ${d.email}, telefone = ${d.telefone}, funcao = ${d.funcao}, instituicao = ${d.instituicao},
+             periodo1_inicio = ${d.p1i}, periodo1_fim = ${d.p1f}, periodo2_inicio = ${d.p2i}, periodo2_fim = ${d.p2f}
+      where id = ${id}`;
+  } catch (e) {
+    const err = e as { code?: string; constraint_name?: string };
+    if (err.code === "23505" && err.constraint_name === "credenciamentos_cpf_ano_uk") {
+      return { erro: "Este CPF já está em outro credenciamento. Cada pessoa só pode credenciar um município." };
+    }
+    if (err.code === "23505") return { erro: "Este município já está credenciado. Escolha outro." };
+    console.error(e);
+    return { erro: "Não foi possível salvar. Tente de novo." };
+  }
+  revalidatePath("/credenciamento");
+  redirect("/admin/proximo/credenciados?editado=1");
 }
