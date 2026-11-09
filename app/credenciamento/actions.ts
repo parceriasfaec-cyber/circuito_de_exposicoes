@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
-import { ANO_CREDENCIAMENTO, municipiosDisponiveis } from "@/lib/credenciamento";
+import { ANO_CREDENCIAMENTO, diaMes, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
 import { cpfValido, soDigitos } from "@/lib/texto";
 
 export type EstadoCredenciamento = { erro?: string };
@@ -11,6 +11,8 @@ const texto = (f: FormData, k: string) => String(f.get(k) ?? "").trim().replace(
 const DATA = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function credenciar(_: EstadoCredenciamento, form: FormData): Promise<EstadoCredenciamento> {
+  const { prazo, aberto } = await lerPrazo();
+  if (!aberto) return { erro: `O prazo do credenciamento terminou em ${diaMes(prazo!, true)}.` };
   const codigo = Number(texto(form, "municipio"));
   const responsavel = texto(form, "responsavel");
   const cpf = soDigitos(texto(form, "cpf"));

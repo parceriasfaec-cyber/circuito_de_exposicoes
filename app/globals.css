@@ -1230,3 +1230,46 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .form-credenciamento .periodo legend { font-weight: 800; color: var(--verde-escuro); padding: 0 6px; }
 .botao-detalhes.perigo { color: var(--alerta); border-color: var(--alerta); background: #fff; cursor: pointer; font: inherit; }
 .botao-detalhes.perigo:hover { background: var(--alerta-claro); }
+
+/* Credenciamento: formulário + quadro "Fique atento!" lado a lado */
+.moldura-voto.larga { max-width: 1120px; }
+.cred-grade { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 0 34px; align-items: start; }
+.cred-principal { min-width: 0; }
+.cred-atencao { border-left: 2px solid var(--verde-vivo); padding: 10px 0 8px 30px; margin-top: 6px; }
+.cred-atencao-topo { display: flex; align-items: center; justify-content: center; gap: 16px; background: var(--verde-claro); color: var(--verde-escuro); border-radius: 18px; padding: 18px 20px; }
+.cred-atencao-topo strong { font-size: clamp(1.6rem, 2.6vw, 2.1rem); font-weight: 900; }
+.cred-prazo { font-size: 1.3rem; line-height: 1.4; color: var(--texto); margin: 22px 0; }
+.cred-prazo strong { font-size: 1.9rem; font-weight: 900; color: var(--verde-escuro); }
+.cred-item { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; color: var(--verde-escuro); padding: 4px 0 20px; }
+.cred-item p { margin: 0; color: var(--texto); font-weight: 600; line-height: 1.55; }
+.cred-item p strong { color: var(--verde-escuro); font-size: 1.3em; font-weight: 900; }
+.cred-item + .cred-item { border-top: 2px solid var(--verde-claro); padding-top: 22px; }
+.cred-item.grande { align-items: center; }
+.cred-item.grande p { font-size: 1.25rem; font-weight: 600; }
+.cred-assinatura { color: var(--verde-escuro); font-size: clamp(1.6rem, 2.6vw, 2rem); margin: 14px 0 0; transform: rotate(-4deg); text-align: center; }
+.cred-assinatura::after { content: ""; display: block; width: 70%; height: 3px; border-radius: 3px; background: var(--verde-vivo); margin: 4px auto 0; }
+.cred-enviar { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+.cred-principal .form-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cred-principal .periodo .form-grade label { margin-top: 4px; }
+@media (max-width: 860px) {
+  .cred-grade { grid-template-columns: 1fr; }
+  .cred-atencao { border-left: 0; border-top: 2px solid var(--verde-vivo); padding: 20px 0 0; margin-top: 24px; }
+  .cred-prazo { font-size: 1.15rem; }
+}
+@media (max-width: 420px) {
+  .cred-principal .form-grade:not(.periodo .form-grade) { grid-template-columns: 1fr; }
+}
+
+.prazo-form { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.prazo-form label { margin-top: 0; }
+.prazo-form input[type="date"] { width: auto; min-width: 200px; }
+/* ajuste de tamanhos do quadro "Fique atento!" */
+.pagina:has(.moldura-voto.larga) .conteudo { max-width: 1200px; }
+.moldura-voto.larga { max-width: 1160px; }
+.cred-atencao-topo { padding: 14px 16px; gap: 12px; }
+.cred-atencao-topo svg { width: 52px; height: 52px; flex: none; }
+.cred-atencao-topo strong { white-space: nowrap; font-size: clamp(1.5rem, 2.2vw, 1.9rem); }
+.cred-prazo { font-size: 1.2rem; margin: 20px 0 18px; }
+.cred-prazo strong { font-size: 1.7rem; }
+.cred-item p { font-size: 0.95rem; }
+.cred-item.grande p { font-size: 1.15rem; }

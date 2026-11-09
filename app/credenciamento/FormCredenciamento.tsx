@@ -57,7 +57,12 @@ export default function FormCredenciamento({ municipios, ano }: { municipios: Mu
       ))}
 
       {estado.erro && <div className="erro" role="alert">{estado.erro}</div>}
-      <button className="botao cheio" disabled={enviando}>{enviando ? "Enviando..." : "Enviar credenciamento"}</button>
+      <button className="botao cheio cred-enviar" disabled={enviando}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M22 2 2 10.5l7.2 2.6L19 6l-7.6 8.8V22l3.9-5.1 4.4 3.1z" />
+        </svg>
+        {enviando ? "Enviando..." : "Enviar credenciamento"}
+      </button>
     </form>
   );
 }
