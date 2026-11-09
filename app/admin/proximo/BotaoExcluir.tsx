@@ -1,5 +1,6 @@
 "use client";
 
+import Icone from "@/components/Icone";
 import { excluirCredenciamento } from "./actions";
 
 export default function BotaoExcluir({ id, municipio }: { id: string; municipio: string }) {
@@ -11,7 +12,9 @@ export default function BotaoExcluir({ id, municipio }: { id: string; municipio:
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button className="botao-detalhes perigo">Excluir</button>
+      <button className="botao-icone perigo" title={`Excluir ${municipio}`} aria-label={`Excluir ${municipio}`}>
+        <Icone nome="lixeira" tamanho={20} />
+      </button>
     </form>
   );
 }

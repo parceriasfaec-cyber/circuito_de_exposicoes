@@ -76,7 +76,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
   return (
     <>
       <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
-        No dia das apresentações, clique em <strong>Não apresentou</strong> para marcar como <strong>✓ Apresentou</strong> (salva na hora).
+        No dia das apresentações, marque a caixa de <strong>Apresentação</strong> do município (salva na hora).
         Só quem apresentou entra na votação das cidades: {apresentaram} de {linhas.length}.
       </p>
 
@@ -128,26 +128,28 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                       </div>
                     </td>
                     <td>
-                      <div>01: {l.periodo1}</div>
-                      <div>02: {l.periodo2}</div>
+                      <div className="periodo-linha">01: {l.periodo1}</div>
+                      <div className="periodo-linha">02: {l.periodo2}</div>
                       <div className="doc">Enviado em {l.enviado}</div>
                     </td>
                     <td style={{ textAlign: "center" }}>
-                      <button
-                        type="button"
-                        className={`selo-apresentou${sim ? " sim" : ""}`}
-                        aria-pressed={sim}
-                        disabled={salvando[l.id]}
-                        onClick={() => alternar(l)}
-                        title={sim ? "Clique para desmarcar" : "Clique quando o município fizer a apresentação"}
-                      >
-                        <Icone nome={sim ? "check" : "olho"} tamanho={18} />
-                        {sim ? "Apresentou" : "Não apresentou"}
-                      </button>
+                      <label className={`marcar-apresentou${sim ? " sim" : ""}`} title={sim ? "Apresentou (clique para desmarcar)" : "Marque quando o município fizer a apresentação"}>
+                        <input
+                          type="checkbox"
+                          checked={sim}
+                          disabled={salvando[l.id]}
+                          onChange={() => alternar(l)}
+                          aria-label={`${l.municipio} fez a apresentação`}
+                        />
+                        <span className="marcar-apresentou-caixa" aria-hidden="true"><Icone nome="check" tamanho={18} /></span>
+                        <span className="marcar-apresentou-texto">{sim ? "Apresentou" : "Não"}</span>
+                      </label>
                     </td>
                     <td style={{ textAlign: "center" }}>
                       <div className="acoes-linha">
-                        <Link href={`/admin/proximo/credenciados/${l.id}`} className="botao-detalhes">Editar</Link>
+                        <Link href={`/admin/proximo/credenciados/${l.id}`} className="botao-icone" title={`Editar ${l.municipio}`} aria-label={`Editar ${l.municipio}`}>
+                          <Icone nome="lapis" tamanho={20} />
+                        </Link>
                         <BotaoExcluir id={l.id} municipio={l.municipio} />
                       </div>
                     </td>

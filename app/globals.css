@@ -1547,3 +1547,20 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .selo-apresentou { display: inline-flex; align-items: center; gap: 8px; background: var(--verde-claro); border-color: var(--verde-borda); color: var(--verde-escuro); padding: 8px 16px; }
 .selo-apresentou:hover { background: #dcefd0; border-color: var(--verde); }
 .selo-apresentou.sim { background: var(--verde-escuro); border-color: var(--verde-escuro); color: #fff; }
+
+/* Credenciados: editar/excluir só com ícone e caixa de marcar para a apresentação */
+.botao-icone { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 1.5px solid var(--verde-borda); background: #fff; color: var(--verde-escuro); cursor: pointer; text-decoration: none; padding: 0; }
+.botao-icone:hover { background: var(--verde-claro); border-color: var(--verde); }
+.botao-icone.perigo { color: var(--alerta); border-color: #f1c4bd; }
+.botao-icone.perigo:hover { background: var(--alerta-claro); border-color: var(--alerta); }
+.acoes-linha { flex-wrap: nowrap; }
+.marcar-apresentou { display: inline-flex; align-items: center; gap: 10px; margin: 0; cursor: pointer; font-weight: 800; color: var(--suave); user-select: none; }
+.marcar-apresentou input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.marcar-apresentou-caixa { width: 30px; height: 30px; border-radius: 9px; border: 2px solid var(--verde-borda); background: #fff; display: grid; place-items: center; color: transparent; transition: background .15s, border-color .15s; }
+.marcar-apresentou:hover .marcar-apresentou-caixa { border-color: var(--verde); }
+.marcar-apresentou.sim { color: var(--verde-escuro); }
+.marcar-apresentou.sim .marcar-apresentou-caixa { background: var(--verde-escuro); border-color: var(--verde-escuro); color: #fff; }
+.marcar-apresentou input:focus-visible + .marcar-apresentou-caixa { outline: 2px solid var(--verde-vivo); outline-offset: 2px; }
+.marcar-apresentou input:disabled + .marcar-apresentou-caixa { opacity: 0.6; }
+.marcar-apresentou-texto { min-width: 5.5em; text-align: left; }
+.periodo-linha { white-space: nowrap; }
