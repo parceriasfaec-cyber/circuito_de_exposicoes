@@ -1302,3 +1302,71 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .telao-resultado { width: 100%; max-width: 900px; margin: 0 auto; text-align: left; }
 .telao-resultado .ranking-cidade .nome { font-size: 1.3rem; }
 .telao-resultado .ranking-cidade .votos { font-size: 1.4rem; }
+
+/* Credenciamento numa tela só (computador): campos em 2 colunas e tudo mais compacto */
+.cred-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.cred-campos .periodo { margin-top: 12px; }
+.periodo-datas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; }
+@media (max-width: 640px) {
+  .cred-campos { grid-template-columns: 1fr; }
+}
+@media (min-width: 861px) {
+  .pagina:has(.moldura-voto.larga) .topo-claro { min-height: 0; padding: 10px 48px 0; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-marcas .sistema { height: 3.4rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-marcas .circuito { height: 3.8rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-sep { height: 3.2rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-onda { height: 5rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-titulo { margin-bottom: 0.6rem; font-size: 1rem; }
+  .pagina:has(.moldura-voto.larga) .conteudo { padding-top: 4px; padding-bottom: 10px; }
+  .moldura-voto.larga { margin: 4px auto 0; }
+  .moldura-voto.larga .moldura-voto-topo { padding: 10px 20px; font-size: 1.6rem; }
+  .moldura-voto.larga .moldura-voto-topo svg { width: 26px; height: 26px; }
+  .moldura-voto.larga .moldura-voto-corpo { padding: 12px 32px 16px; }
+  .moldura-voto.larga .lema { font-size: 1.05rem; margin-bottom: 8px; }
+  .moldura-voto.larga .lema::after { margin-top: 6px; }
+  .form-credenciamento label { margin: 8px 0 4px; font-size: 0.92rem; }
+  .form-credenciamento input[type="text"], .form-credenciamento input[type="email"],
+  .form-credenciamento input[type="date"], .form-credenciamento select { padding: 7px 12px; font-size: 0.98rem; }
+  .form-credenciamento .periodo { padding: 0 12px 10px; }
+  .form-credenciamento .periodo legend { font-size: 0.95rem; }
+  .form-credenciamento .periodo label { margin-top: 2px; }
+  .form-credenciamento .dica { margin-top: 6px; font-size: 0.8rem; }
+  .form-credenciamento .botao.cheio { margin-top: 10px; padding-top: 11px; padding-bottom: 11px; }
+  .cred-atencao { padding: 4px 0 4px 26px; margin-top: 0; }
+  .cred-atencao-topo { padding: 8px 14px; }
+  .cred-atencao-topo svg { width: 40px; height: 40px; }
+  .cred-atencao-topo strong { font-size: 1.5rem; }
+  .cred-prazo { font-size: 1.02rem; margin: 12px 0 10px; }
+  .cred-prazo strong { font-size: 1.4rem; }
+  .cred-item { padding: 2px 0 10px; gap: 10px; }
+  .cred-item svg { width: 30px; height: 30px; }
+  .cred-item + .cred-item { padding-top: 10px; }
+  .cred-item p { font-size: 0.88rem; line-height: 1.45; }
+  .cred-item.grande p { font-size: 1rem; }
+  .cred-assinatura { font-size: 1.45rem; margin-top: 6px; }
+}
+@media (min-width: 861px) {
+  .form-credenciamento input[type="date"] { padding-left: 8px; padding-right: 6px; }
+}
+/* telas baixas (notebook 1366x768): aperta mais para não aparecer barra de rolagem */
+@media (min-width: 861px) and (max-height: 720px) {
+  .pagina:has(.moldura-voto.larga) .topo-claro-marcas .sistema { height: 2.7rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-marcas .circuito { height: 3rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro-sep { height: 2.6rem; }
+  .pagina:has(.moldura-voto.larga) .topo-claro { padding-top: 6px; }
+  .moldura-voto.larga .moldura-voto-topo { padding: 6px 20px; font-size: 1.4rem; }
+  .moldura-voto.larga .moldura-voto-corpo { padding: 8px 28px 12px; }
+  .moldura-voto.larga .lema { font-size: 0.95rem; margin-bottom: 4px; }
+  .form-credenciamento label { margin: 5px 0 3px; font-size: 0.88rem; }
+  .form-credenciamento input[type="text"], .form-credenciamento input[type="email"],
+  .form-credenciamento input[type="date"], .form-credenciamento select { padding-top: 5px; padding-bottom: 5px; font-size: 0.95rem; }
+  .cred-campos .periodo { margin-top: 8px; }
+  .form-credenciamento .dica { display: none; }
+  .form-credenciamento .botao.cheio { margin-top: 10px; padding-top: 9px; padding-bottom: 9px; }
+  .cred-atencao-topo { padding: 6px 12px; }
+  .cred-atencao-topo strong { font-size: 1.35rem; }
+  .cred-prazo { font-size: 0.95rem; margin: 8px 0 6px; }
+  .cred-item p { font-size: 0.82rem; }
+  .cred-item.grande p { font-size: 0.92rem; }
+  .cred-assinatura { font-size: 1.3rem; margin-top: 2px; }
+}
