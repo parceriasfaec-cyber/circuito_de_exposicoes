@@ -1,4 +1,5 @@
 import PaginaPublica from "@/components/PaginaPublica";
+import { anoCredenciamento } from "@/lib/credenciamento";
 import { adminLogado } from "@/lib/sessao";
 import MenuLateral from "./MenuLateral";
 
@@ -11,7 +12,7 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
 
   return (
     <div className="admin">
-      <MenuLateral />
+      <MenuLateral anoProximo={await anoCredenciamento()} />
       <div className="admin-principal">{children}</div>
     </div>
   );

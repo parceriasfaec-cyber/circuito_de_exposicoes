@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
-import { ANO_CREDENCIAMENTO, diaMes, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
+import { anoCredenciamento, diaMes, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
 import { cpfValido, maiusculaInicial, soDigitos } from "@/lib/texto";
 
 export type EstadoCredenciamento = { erro?: string };
@@ -11,7 +11,8 @@ const texto = (f: FormData, k: string) => String(f.get(k) ?? "").trim().replace(
 const DATA = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function credenciar(_: EstadoCredenciamento, form: FormData): Promise<EstadoCredenciamento> {
-  const { prazo, aberto } = await lerPrazo();
+  const ano = await anoCredenciamento();
+  const { prazo, aberto } = await lerPrazo(ano);
   if (!aberto) return { erro: `O prazo do credenciamento terminou em ${diaMes(prazo!, true)}.` };
   const codigo = Number(texto(form, "municipio"));
   const responsavel = maiusculaInicial(texto(form, "responsavel"));
@@ -38,21 +39,21 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
   for (const [ini, fim, n] of periodos) {
     if (!DATA.test(ini) || !DATA.test(fim)) return { erro: `Preencha o início e o fim do período ${n}.` };
     if (fim < ini) return { erro: `No período ${n}, o fim não pode ser antes do início.` };
-    if (!ini.startsWith(String(ANO_CREDENCIAMENTO)) || !fim.startsWith(String(ANO_CREDENCIAMENTO))) {
-      return { erro: `As datas do período ${n} precisam ser em ${ANO_CREDENCIAMENTO}.` };
+    if (!ini.startsWith(String(ano)) || !fim.startsWith(String(ano))) {
+      return { erro: `As datas do período ${n} precisam ser em ${ano}.` };
     }
   }
 
   // Cada pessoa (CPF) só pode credenciar um município.
   const [jaFeito] = await sql()<{ municipio: string }[]>`
     select m.nome municipio from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
-    where c.ano = ${ANO_CREDENCIAMENTO} and c.cpf = ${cpf}`;
+    where c.ano = ${ano} and c.cpf = ${cpf}`;
   if (jaFeito) {
     return { erro: `Este CPF já credenciou o município de ${jaFeito.municipio}. Cada pessoa só pode credenciar um município.` };
   }
 
   // Confere de novo no servidor: o município pode ter sido escolhido por outra pessoa enquanto a página estava aberta.
-  const disponiveis = await municipiosDisponiveis();
+  const disponiveis = await municipiosDisponiveis(ano);
   const municipio = disponiveis.find((m) => m.codigo === codigo);
   if (!municipio) return { erro: "Este município não está mais disponível. Escolha outro na lista (atualize a página)." };
 
@@ -60,7 +61,7 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
     await sql()`
       insert into credenciamentos (ano, municipio_codigo, responsavel, cpf, email, telefone, funcao, instituicao,
                                    periodo1_inicio, periodo1_fim, periodo2_inicio, periodo2_fim)
-      values (${ANO_CREDENCIAMENTO}, ${codigo}, ${responsavel}, ${cpf}, ${email}, ${telefone}, ${funcao}, ${instituicao},
+      values (${ano}, ${codigo}, ${responsavel}, ${cpf}, ${email}, ${telefone}, ${funcao}, ${instituicao},
               ${p1i}, ${p1f}, ${p2i}, ${p2f})`;
   } catch (e) {
     const err = e as { code?: string; constraint_name?: string };

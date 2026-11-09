@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
-import { ANO_CREDENCIAMENTO } from "@/lib/credenciamento";
+import { anoCredenciamento } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 import { sair } from "../actions";
@@ -15,6 +15,7 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
   const params = await searchParams;
 
   const db = sql();
+  const ano = await anoCredenciamento();
   const [produtor] = await db<{ nome: string; municipio: string }[]>`select nome, municipio from produtores where id = ${s.produtorId}`;
   if (!produtor) redirect("/votar");
 
@@ -22,7 +23,7 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
     select m.nome municipio from votos_cidades v
     join credenciamentos c on c.id = v.credenciamento_id
     join municipios m on m.codigo = c.municipio_codigo
-    where v.produtor_id = ${s.produtorId} and v.ano = ${ANO_CREDENCIAMENTO}
+    where v.produtor_id = ${s.produtorId} and v.ano = ${ano}
     order by m.nome`;
 
   const cidades = votos.length
@@ -30,7 +31,7 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
     : await db<{ id: string; municipio: string; instituicao: string }[]>`
         select c.id, m.nome municipio, c.instituicao from credenciamentos c
         join municipios m on m.codigo = c.municipio_codigo
-        where c.ano = ${ANO_CREDENCIAMENTO} and c.apresentou
+        where c.ano = ${ano} and c.apresentou
         order by m.nome`;
 
   return (

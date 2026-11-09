@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
-import { ANO_CREDENCIAMENTO, formatarCpf, formatarTelefone, municipiosDisponiveis } from "@/lib/credenciamento";
+import { anoCredenciamento, formatarCpf, formatarTelefone, municipiosDisponiveis } from "@/lib/credenciamento";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarData } from "@/lib/texto";
@@ -30,22 +30,23 @@ type Linha = {
 
 export default async function Credenciados({ searchParams }: { searchParams: Promise<{ excluido?: string; marcado?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
+  const ano = await anoCredenciamento();
   const params = await searchParams;
 
   const linhas = await sql()<Linha[]>`
     select c.id, m.nome municipio, c.instituicao, c.responsavel, c.funcao, c.cpf, c.email, c.telefone,
            c.periodo1_inicio, c.periodo1_fim, c.periodo2_inicio, c.periodo2_fim, c.criado_em, c.apresentou
     from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
-    where c.ano = ${ANO_CREDENCIAMENTO}
+    where c.ano = ${ano}
     order by c.criado_em`;
-  const disponiveis = (await municipiosDisponiveis()).length;
+  const disponiveis = (await municipiosDisponiveis(ano)).length;
   const apresentaram = linhas.filter((l) => l.apresentou).length;
   const periodo = (i: Date, f: Date) => `${formatarData(i)} a ${formatarData(f)}`;
 
   return (
     <>
       <CabecalhoAdmin
-        titulo={`Credenciados ${ANO_CREDENCIAMENTO}`}
+        titulo={`Credenciados ${ano}`}
         subtitulo="Municípios que se cadastraram para sediar uma etapa do Circuito. Cada município só pode se credenciar uma vez."
       />
 

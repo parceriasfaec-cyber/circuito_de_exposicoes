@@ -4,7 +4,7 @@ import QRCode from "qrcode";
 import { FaixaTitulo, LogoCircuito } from "@/components/Marca";
 import PaginaPublica from "@/components/PaginaPublica";
 import RankingCidades from "@/components/RankingCidades";
-import { ANO_CREDENCIAMENTO, resultadoCidades } from "@/lib/credenciamento";
+import { anoCredenciamento, resultadoCidades } from "@/lib/credenciamento";
 import { lerVotacao } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 
@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function Telao() {
   if (!(await ehAdmin())) redirect("/admin");
   const votacao = await lerVotacao();
+  const ano = await anoCredenciamento();
   const cidades = votacao.modo === "cidades";
 
   const h = await headers();
@@ -22,13 +23,13 @@ export default async function Telao() {
   const svg = await QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M" });
 
   // Votação das cidades encerrada: o telão mostra o resultado (durante a votação, só o QR Code, para não influenciar).
-  const resultado = cidades && !votacao.aberta ? await resultadoCidades() : null;
+  const resultado = cidades && !votacao.aberta ? await resultadoCidades(ano) : null;
 
   return (
     <PaginaPublica>
     <div className="telao">
       <LogoCircuito />
-      <FaixaTitulo>{cidades ? `Votação das cidades do Circuito ${ANO_CREDENCIAMENTO}` : "Avalie as exposições do Circuito"}</FaixaTitulo>
+      <FaixaTitulo>{cidades ? `Votação das cidades do Circuito ${ano}` : "Avalie as exposições do Circuito"}</FaixaTitulo>
       {votacao.aberta ? (
         <>
           <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />

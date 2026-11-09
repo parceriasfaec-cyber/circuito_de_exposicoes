@@ -8,7 +8,7 @@ import Icone, { type NomeIcone } from "@/components/Icone";
 type Item = { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean; exato?: boolean };
 
 /** Dois blocos: a avaliação das exposições do ciclo atual e as exposições do próximo ano (credenciamento e votação das cidades). */
-const GRUPOS: { titulo: string; itens: Item[] }[] = [
+const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
   {
     titulo: "Avaliação das exposições",
     itens: [
@@ -21,11 +21,11 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
     ],
   },
   {
-    titulo: "Exposições 2027",
+    titulo: `Exposições ${ano}`,
     itens: [
-      { href: "/admin/2027", rotulo: "Painel 2027", icone: "grafico", exato: true },
-      { href: "/admin/2027/credenciados", rotulo: "Credenciados", icone: "local" },
-      { href: "/admin/2027/prazos", rotulo: "Prazos", icone: "calendario" },
+      { href: "/admin/proximo", rotulo: `Painel ${ano}`, icone: "grafico", exato: true },
+      { href: "/admin/proximo/credenciados", rotulo: "Credenciados", icone: "local" },
+      { href: "/admin/proximo/prazos", rotulo: "Prazos", icone: "calendario" },
     ],
   },
   {
@@ -34,7 +34,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
   },
 ];
 
-export default function MenuLateral() {
+export default function MenuLateral({ anoProximo }: { anoProximo: number }) {
   const caminho = usePathname();
   const [aberto, setAberto] = useState(false);
 
@@ -51,7 +51,7 @@ export default function MenuLateral() {
       </div>
 
       <nav className="lateral-menu">
-        {GRUPOS.map((g, n) => (
+        {grupos(anoProximo).map((g, n) => (
           <div key={n} className="lateral-grupo">
             {g.titulo && <span className="lateral-grupo-titulo">{g.titulo}</span>}
             {g.itens.map((i) => {

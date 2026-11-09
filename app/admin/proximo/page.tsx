@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
 import RankingCidades, { empateNaVaga } from "@/components/RankingCidades";
-import { ANO_CREDENCIAMENTO, diaMes, lerPrazo, resultadoCidades } from "@/lib/credenciamento";
+import { anoCredenciamento, diaMes, lerPrazo, resultadoCidades } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { encerrarVotacao, liberarVotacao } from "../actions";
@@ -12,23 +12,24 @@ import { salvarVagas } from "./actions";
 export const dynamic = "force-dynamic";
 
 /** Painel das exposições do próximo ano: credenciados, apresentações e votação das cidades. */
-export default async function Painel2027({ searchParams }: { searchParams: Promise<{ vagas?: string }> }) {
+export default async function PainelProximoAno({ searchParams }: { searchParams: Promise<{ vagas?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
+  const ano = await anoCredenciamento();
   const params = await searchParams;
 
   const [t] = await sql()<{ credenciados: number; apresentaram: number }[]>`
     select count(*)::int credenciados, count(*) filter (where apresentou)::int apresentaram
-    from credenciamentos where ano = ${ANO_CREDENCIAMENTO}`;
-  const { prazo, aberto, apresentacao } = await lerPrazo();
+    from credenciamentos where ano = ${ano}`;
+  const { prazo, aberto, apresentacao } = await lerPrazo(ano);
   const votacao = await lerVotacao();
   const votacaoCidades = votacao.aberta && votacao.modo === "cidades";
-  const resultado = await resultadoCidades();
+  const resultado = await resultadoCidades(ano);
 
   return (
     <>
       <CabecalhoAdmin
-        titulo={`Painel ${ANO_CREDENCIAMENTO}`}
-        subtitulo={`Credenciamento, apresentações e votação das cidades que vão sediar as exposições de ${ANO_CREDENCIAMENTO}.`}
+        titulo={`Painel ${ano}`}
+        subtitulo={`Credenciamento, apresentações e votação das cidades que vão sediar as exposições de ${ano}.`}
       />
 
       <div className="kpis">
@@ -42,7 +43,7 @@ export default async function Painel2027({ searchParams }: { searchParams: Promi
             </div>
           </div>
           <div className="kpi-acao">
-            <Link className="botao secundario pequeno" href="/admin/2027/credenciados"><Icone nome="olho" tamanho={16} /> Ver lista</Link>
+            <Link className="botao secundario pequeno" href="/admin/proximo/credenciados"><Icone nome="olho" tamanho={16} /> Ver lista</Link>
           </div>
         </div>
 
@@ -54,7 +55,7 @@ export default async function Painel2027({ searchParams }: { searchParams: Promi
             <div className="kpi-nota">{apresentacao ? `Apresentações em ${diaMes(apresentacao, true)}` : "Dia das apresentações a definir"}</div>
           </div>
           <div className="kpi-acao">
-            <Link className="botao secundario pequeno" href="/admin/2027/credenciados"><Icone nome="lapis" tamanho={16} /> Marcar</Link>
+            <Link className="botao secundario pequeno" href="/admin/proximo/credenciados"><Icone nome="lapis" tamanho={16} /> Marcar</Link>
           </div>
         </div>
 
@@ -75,7 +76,7 @@ export default async function Painel2027({ searchParams }: { searchParams: Promi
             <div className="kpi-nota">Cada um escolhe 2 cidades</div>
           </div>
           <div className="kpi-acao">
-            <Link className="botao secundario pequeno" href="/admin/2027" prefetch={false}><Icone nome="atualizar" tamanho={16} /> Atualizar</Link>
+            <Link className="botao secundario pequeno" href="/admin/proximo" prefetch={false}><Icone nome="atualizar" tamanho={16} /> Atualizar</Link>
           </div>
         </div>
       </div>
@@ -88,13 +89,13 @@ export default async function Painel2027({ searchParams }: { searchParams: Promi
         </p>
         <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
           Só entram na votação os municípios marcados como <strong>Apresentou</strong> em{" "}
-          <Link href="/admin/2027/credenciados">Credenciados</Link>: {t.apresentaram} de {t.credenciados}.
+          <Link href="/admin/proximo/credenciados">Credenciados</Link>: {t.apresentaram} de {t.credenciados}.
         </p>
         {params.vagas && <div className="ok">Número de vagas salvo.</div>}
         <div className="prazo-form" style={{ marginBottom: 14 }}>
           <form action={salvarVagas} className="prazo-form">
             <div>
-              <label htmlFor="vagas">Cidades que entram no Circuito {ANO_CREDENCIAMENTO}</label>
+              <label htmlFor="vagas">Cidades que entram no Circuito {ano}</label>
               <input id="vagas" name="vagas" type="number" min={1} max={50} defaultValue={resultado.vagas ?? ""} placeholder="Ex.: 3" className="campo-numero" />
             </div>
             <button className="botao secundario">Salvar vagas</button>

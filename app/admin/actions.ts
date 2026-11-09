@@ -53,12 +53,12 @@ export async function liberarVotacao(form?: FormData) {
     set aberta = true, codigo_do_dia = ${codigo}, aberta_em = now(), fechada_em = null, modo = ${modo}
     where id = 1`;
   revalidatePath("/admin");
-  revalidatePath("/admin/2027");
+  revalidatePath("/admin/proximo");
 }
 
 export async function encerrarVotacao() {
   await exigirAdmin();
   await sql()`update exposicao_cearense.votacao set aberta = false, fechada_em = now() where id = 1`;
   revalidatePath("/admin");
-  revalidatePath("/admin/2027");
+  revalidatePath("/admin/proximo");
 }

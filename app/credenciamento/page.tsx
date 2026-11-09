@@ -2,11 +2,13 @@ import { Kaushan_Script } from "next/font/google";
 import Icone from "@/components/Icone";
 import { Aviso } from "@/components/Marca";
 import PaginaPublica from "@/components/PaginaPublica";
-import { ANO_CREDENCIAMENTO, diaMes, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
+import { anoCredenciamento, diaMes, lerPrazo, municipiosDisponiveis } from "@/lib/credenciamento";
 import FormCredenciamento from "./FormCredenciamento";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: `Credenciamento ${ANO_CREDENCIAMENTO} · Circuito Cearense de Exposição` };
+export async function generateMetadata() {
+  return { title: `Credenciamento ${await anoCredenciamento()} · Circuito Cearense de Exposição` };
+}
 
 const manuscrita = Kaushan_Script({ subsets: ["latin"], weight: "400" });
 
@@ -15,25 +17,26 @@ const DURACAO_APRESENTACAO_MIN = 30;
 
 export default async function Credenciamento({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { ok } = await searchParams;
-  const { prazo, aberto, apresentacao } = await lerPrazo();
-  const municipios = ok || !aberto ? [] : await municipiosDisponiveis();
+  const ano = await anoCredenciamento();
+  const { prazo, aberto, apresentacao } = await lerPrazo(ano);
+  const municipios = ok || !aberto ? [] : await municipiosDisponiveis(ano);
 
   return (
     <PaginaPublica>
       <div className="moldura-voto larga">
         <h1 className="moldura-voto-topo">
           <Icone nome="calendario" tamanho={34} />
-          Credenciamento {ANO_CREDENCIAMENTO}
+          Credenciamento {ano}
         </h1>
         <div className="moldura-voto-corpo cred-grade">
           <div className="cred-principal">
-            <p className="lema">Cadastre o seu município para sediar uma etapa do Circuito Cearense de Exposição {ANO_CREDENCIAMENTO}.</p>
+            <p className="lema">Cadastre o seu município para sediar uma etapa do Circuito Cearense de Exposição {ano}.</p>
             {ok ? (
               <div className="cred-sucesso" role="status">
                 <span className="cred-sucesso-check" aria-hidden="true">✓</span>
                 <h2>Credenciamento enviado!</h2>
                 <p className="cred-sucesso-texto">
-                  O município de <strong>{ok}</strong> está credenciado para o Circuito Cearense de Exposição {ANO_CREDENCIAMENTO}.
+                  O município de <strong>{ok}</strong> está credenciado para o Circuito Cearense de Exposição {ano}.
                 </p>
                 <div className="cred-passos">
                   <h3>Próximos passos</h3>
@@ -60,7 +63,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                 <p>Todos os municípios já foram credenciados. Procure a organização.</p>
               </Aviso>
             ) : (
-              <FormCredenciamento municipios={municipios} ano={ANO_CREDENCIAMENTO} />
+              <FormCredenciamento municipios={municipios} ano={ano} />
             )}
           </div>
 
@@ -90,7 +93,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
               <Icone nome="trofeu" tamanho={40} />
               <p>
                 Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong> para
-                definir quais receberão as exposições em {ANO_CREDENCIAMENTO}.
+                definir quais receberão as exposições em {ano}.
               </p>
             </div>
             <div className="cred-item grande">

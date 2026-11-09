@@ -2,21 +2,22 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
-import { ANO_CREDENCIAMENTO, diaMes, lerPrazo } from "@/lib/credenciamento";
+import { anoCredenciamento, diaMes, lerPrazo } from "@/lib/credenciamento";
 import { ehAdmin } from "@/lib/sessao";
 import { salvarPrazo } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function Prazos2027({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
+export default async function PrazosProximoAno({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
+  const ano = await anoCredenciamento();
   const params = await searchParams;
-  const { prazo, aberto, apresentacao } = await lerPrazo();
+  const { prazo, aberto, apresentacao } = await lerPrazo(ano);
 
   return (
     <>
       <CabecalhoAdmin
-        titulo={`Prazos ${ANO_CREDENCIAMENTO}`}
+        titulo={`Prazos ${ano}`}
         subtitulo="Até quando os municípios podem se credenciar e o dia das apresentações. As duas datas aparecem no formulário."
       />
 

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** Endereço antigo: o credenciamento agora fica no Painel 2027. */
+/** Endereço antigo: o credenciamento agora fica no painel do próximo ano. */
 export default function CredenciamentosAntigo() {
-  redirect("/admin/2027/credenciados");
+  redirect("/admin/proximo/credenciados");
 }
