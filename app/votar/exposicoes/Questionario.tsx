@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { nomeCurto } from "@/lib/texto";
 import { NOTAS, ROTULO_NOTA, partesPergunta } from "@/lib/escala";
 import { avaliarTudo, type EstadoAvaliacao } from "../actions";
 
@@ -11,7 +12,7 @@ export type ExposicaoQuestionario = {
   perguntas: { ordem: number; texto: string }[];
 };
 
-const curto = (nome: string) => nome.replace("Exposição Agropecuária de ", "");
+const curto = nomeCurto;
 
 /**
  * Uma aba por exposição. Todas as respostas ficam no mesmo formulário e são enviadas juntas no final,

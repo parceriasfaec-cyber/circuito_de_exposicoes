@@ -9,7 +9,7 @@ import { formatarData } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
-type Linha = { id: string; nome: string; municipio: string; local: string | null; data_inicio: Date; data_fim: Date; participantes: number; avaliacoes: number };
+type Linha = { id: string; nome: string; municipio: string; local: string | null; responsavel: string | null; data_inicio: Date; data_fim: Date; participantes: number; avaliacoes: number };
 
 export default async function Exposicoes({ searchParams }: { searchParams: Promise<{ ok?: string; excluida?: string; ciclo?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
@@ -18,7 +18,7 @@ export default async function Exposicoes({ searchParams }: { searchParams: Promi
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const lista = await sql()<Linha[]>`
-    select e.id, e.nome, e.municipio, e.local, e.data_inicio, e.data_fim,
+    select e.id, e.nome, e.municipio, e.local, e.responsavel, e.data_inicio, e.data_fim,
            (select count(*)::int from participacoes p where p.exposicao_id = e.id) participantes,
            (select count(*)::int from avaliacoes a where a.exposicao_id = e.id) avaliacoes
     from exposicoes e where e.ciclo_id = ${cid} order by e.data_inicio, e.nome`;
@@ -51,6 +51,7 @@ export default async function Exposicoes({ searchParams }: { searchParams: Promi
             <tr key={e.id}>
               <td className="c-produtor">
                 <div className="nome">{e.nome}</div>
+                {e.responsavel && <div className="doc">Responsável: {e.responsavel}</div>}
                 {e.local && <div className="doc">{e.local}</div>}
               </td>
               <td className="c-municipio"><span className="municipio"><Icone nome="local" tamanho={16} />{e.municipio}</span></td>

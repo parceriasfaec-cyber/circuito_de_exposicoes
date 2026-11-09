@@ -21,7 +21,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
 
   const todos = await sql()<Linha[]>`
     select p.id, p.nome, p.municipio, p.atividade, p.tipo_documento, p.documento,
-           array_remove(array_agg(replace(e.nome, 'Exposição Agropecuária de ', '') order by e.data_inicio), null) exposicoes
+           array_remove(array_agg(regexp_replace(e.nome, '^Exposição (Agropecuária )?(de|do|da) ', '') order by e.data_inicio), null) exposicoes
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
     left join exposicoes e on e.id = pa.exposicao_id and e.ciclo_id = ${cid}

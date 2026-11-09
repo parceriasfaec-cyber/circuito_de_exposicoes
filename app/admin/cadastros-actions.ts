@@ -28,6 +28,7 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
   const nome = texto(form, "nome");
   const municipio = texto(form, "municipio");
   const local = texto(form, "local") || null;
+  const responsavel = texto(form, "responsavel") || null;
   const inicio = texto(form, "data_inicio");
   const fim = texto(form, "data_fim");
   const perguntas = Array.from({ length: QTD_PERGUNTAS }, (_, i) => texto(form, `pergunta_${i + 1}`));
@@ -43,7 +44,7 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
     if (id) {
       if (!UUID.test(id)) return { erro: "Exposição inválida." };
       await db.begin(async (tx) => {
-        await tx`update exposicoes set nome = ${nome}, municipio = ${municipio}, local = ${local}, foto = ${foto},
+        await tx`update exposicoes set nome = ${nome}, municipio = ${municipio}, local = ${local}, responsavel = ${responsavel}, foto = ${foto},
                  data_inicio = ${inicio}, data_fim = ${fim} where id = ${id}`;
         for (let i = 0; i < QTD_PERGUNTAS; i++) {
           await tx`update perguntas set texto = ${perguntas[i]} where exposicao_id = ${id} and ordem = ${i + 1}`;
@@ -51,8 +52,8 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
       });
     } else {
       // As perguntas padrão são copiadas pelo próprio banco (gatilho) ao criar a exposição.
-      await db`insert into exposicoes (ciclo_id, nome, municipio, local, foto, data_inicio, data_fim)
-               values (${cicloId}, ${nome}, ${municipio}, ${local}, ${foto}, ${inicio}, ${fim})`;
+      await db`insert into exposicoes (ciclo_id, nome, municipio, local, responsavel, foto, data_inicio, data_fim)
+               values (${cicloId}, ${nome}, ${municipio}, ${local}, ${responsavel}, ${foto}, ${inicio}, ${fim})`;
     }
   } catch (e) {
     if ((e as { code?: string }).code === "23505") return { erro: "Já existe uma exposição com esse nome neste ciclo." };
@@ -189,8 +190,8 @@ export async function criarCiclo(_: EstadoForm, form: FormData): Promise<EstadoF
       if (copiarDe) {
         // Copia as exposições do outro ciclo, com as datas no novo ano. As perguntas padrão entram pelo gatilho.
         await tx`
-          insert into exposicoes (ciclo_id, nome, municipio, local, foto, data_inicio, data_fim)
-          select ${novoId}::uuid, e.nome, e.municipio, e.local, e.foto,
+          insert into exposicoes (ciclo_id, nome, municipio, local, responsavel, foto, data_inicio, data_fim)
+          select ${novoId}::uuid, e.nome, e.municipio, e.local, e.responsavel, e.foto,
                  (e.data_inicio + make_interval(years => ${ano} - extract(year from e.data_inicio)::int))::date,
                  (e.data_fim + make_interval(years => ${ano} - extract(year from e.data_inicio)::int))::date
           from exposicoes e where e.ciclo_id = ${copiarDe}`;

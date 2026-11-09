@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { nomeCurto } from "@/lib/texto";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone, { type NomeIcone } from "@/components/Icone";
@@ -29,7 +30,7 @@ const FILTROS: Record<string, { rotulo: string; icone: NomeIcone }> = {
 type Filtro = keyof typeof FILTROS;
 const POR_PAGINA = 25;
 
-const curto = (nome: string) => nome.replace("Exposição Agropecuária de ", "");
+const curto = nomeCurto;
 
 export default async function Avaliacoes({
   searchParams,

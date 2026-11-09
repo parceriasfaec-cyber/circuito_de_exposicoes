@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { FOTOS } from "@/lib/fotos";
 import { salvarExposicao, type EstadoForm } from "../../cadastros-actions";
 
-type Dados = { id: string; ciclo_id: string; foto: string; nome: string; municipio: string; local: string; data_inicio: string; data_fim: string; perguntas: string[] };
+type Dados = { id: string; ciclo_id: string; foto: string; nome: string; municipio: string; local: string; responsavel: string; data_inicio: string; data_fim: string; perguntas: string[] };
 
 export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; avaliacoes: number }) {
   const [estado, acao, salvando] = useActionState<EstadoForm, FormData>(salvarExposicao, {});
@@ -18,7 +18,7 @@ export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; ava
       <div className="form-grade">
         <div style={{ gridColumn: "1 / -1" }}>
           <label htmlFor="nome">Nome da exposição</label>
-          <input id="nome" name="nome" type="text" defaultValue={dados.nome} placeholder="Exposição Agropecuária de ..." required />
+          <input id="nome" name="nome" type="text" defaultValue={dados.nome} placeholder="Exposição de ..." required />
         </div>
         <div>
           <label htmlFor="municipio">Município</label>
@@ -27,6 +27,10 @@ export default function FormExposicao({ dados, avaliacoes }: { dados: Dados; ava
         <div>
           <label htmlFor="local">Local (opcional)</label>
           <input id="local" name="local" type="text" defaultValue={dados.local} placeholder="Parque de Exposições ..." />
+        </div>
+        <div>
+          <label htmlFor="responsavel">Responsável / gestor</label>
+          <input id="responsavel" name="responsavel" type="text" defaultValue={dados.responsavel} placeholder="Ex.: Dr. Darlan" />
         </div>
         <div>
           <label htmlFor="data_inicio">Início</label>

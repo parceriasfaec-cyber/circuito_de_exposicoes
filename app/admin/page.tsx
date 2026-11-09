@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { nomeCurto } from "@/lib/texto";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
 import { FaixaTitulo } from "@/components/Marca";
@@ -26,7 +27,7 @@ type Ranking = {
 type Dia = { dia: string; quantidade: number };
 
 const TZ = "America/Fortaleza";
-const curto = (nome: string) => nome.replace("Exposição Agropecuária de ", "");
+const curto = nomeCurto;
 const dataHora = (d: Date | null) =>
   d ? d.toLocaleString("pt-BR", { timeZone: TZ, dateStyle: "short", timeStyle: "short" }).replace(",", " às") : "—";
 

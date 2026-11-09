@@ -21,13 +21,13 @@ export default async function EditarExposicao({ params, searchParams }: { params
   if (!nova && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const db = sql();
-  let dados = { id: "", ciclo_id: ciclo?.id ?? "", foto: "", nome: "", municipio: "", local: "", data_inicio: "", data_fim: "", perguntas: [] as string[] };
+  let dados = { id: "", ciclo_id: ciclo?.id ?? "", foto: "", nome: "", municipio: "", local: "", responsavel: "", data_inicio: "", data_fim: "", perguntas: [] as string[] };
   let avaliacoes = 0;
   let participantes = 0;
 
   if (!nova) {
-    const [e] = await db<{ ciclo_id: string; foto: string | null; nome: string; municipio: string; local: string | null; data_inicio: Date; data_fim: Date }[]>`
-      select ciclo_id, foto, nome, municipio, local, data_inicio, data_fim from exposicoes where id = ${id}`;
+    const [e] = await db<{ ciclo_id: string; foto: string | null; nome: string; municipio: string; local: string | null; responsavel: string | null; data_inicio: Date; data_fim: Date }[]>`
+      select ciclo_id, foto, nome, municipio, local, responsavel, data_inicio, data_fim from exposicoes where id = ${id}`;
     if (!e) notFound();
     const perguntas = await db<{ texto: string }[]>`select texto from perguntas where exposicao_id = ${id} order by ordem`;
     const [c] = await db<{ a: number; p: number }[]>`
@@ -35,7 +35,7 @@ export default async function EditarExposicao({ params, searchParams }: { params
              (select count(*)::int from participacoes where exposicao_id = ${id}) p`;
     avaliacoes = c.a;
     participantes = c.p;
-    dados = { id, ciclo_id: e.ciclo_id, foto: e.foto ?? "", nome: e.nome, municipio: e.municipio, local: e.local ?? "", data_inicio: iso(e.data_inicio), data_fim: iso(e.data_fim), perguntas: perguntas.map((q) => q.texto) };
+    dados = { id, ciclo_id: e.ciclo_id, foto: e.foto ?? "", nome: e.nome, municipio: e.municipio, local: e.local ?? "", responsavel: e.responsavel ?? "", data_inicio: iso(e.data_inicio), data_fim: iso(e.data_fim), perguntas: perguntas.map((q) => q.texto) };
   }
 
   return (

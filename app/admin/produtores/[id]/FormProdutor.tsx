@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { salvarProdutor, type EstadoForm } from "../../cadastros-actions";
+import { nomeCurto } from "@/lib/texto";
 
 type Dados = {
   id: string;
@@ -73,7 +74,7 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
           return (
             <label key={e.id} className={travada ? "travado" : undefined} title={travada ? "Já avaliada: não pode ser desmarcada" : undefined}>
               <input type="checkbox" name="exposicoes" value={e.id} defaultChecked={participa.has(e.id) || travada} disabled={travada} />
-              {e.nome.replace("Exposição Agropecuária de ", "")}
+              {nomeCurto(e.nome)}
               {travada && <span className="suave"> (avaliada)</span>}
             </label>
           );

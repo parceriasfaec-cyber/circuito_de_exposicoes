@@ -66,3 +66,8 @@ export function maiusculaInicial(s: string) {
     })
     .join(" ");
 }
+
+/** Nome curto da exposição para abas, ranking e listas: "Exposição de Crateús" -> "Crateús". */
+export function nomeCurto(nome: string) {
+  return nome.replace(/^Exposição Agropecuária (de|do|da) /i, "").replace(/^Exposição (de|do|da) /i, "");
+}
