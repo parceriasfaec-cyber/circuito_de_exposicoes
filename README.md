@@ -50,6 +50,8 @@ Para testar pelo celular na mesma rede Wi-Fi, rode `npm run dev -- -H 0.0.0.0` e
 | `/votar/exposicoes/[id]` | Produtor | Questionário de 10 perguntas, notas de 1 (muito ruim) a 5 (excelente) |
 | `/admin` | Organizador | Liberar e encerrar a votação, código do dia, ranking, progresso e pendências |
 | `/admin/telao` | Organizador | QR Code e código do dia em tela cheia, para o telão |
+| `/credenciamento` | Município (prefeitura ou associação) | Credenciamento para sediar uma etapa do Circuito 2027. Só aparecem municípios que não estão no Circuito 2026 e ainda não se credenciaram |
+| `/admin/credenciamentos` | Organizador | Lista dos municípios credenciados; excluir devolve o município para a lista |
 
 ## Segurança
 

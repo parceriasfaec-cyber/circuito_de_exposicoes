@@ -12,6 +12,7 @@ const ITENS: { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean
   { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
   { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
   { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
+  { href: "/admin/credenciamentos", rotulo: "Credenciamento", icone: "calendario" },
   { href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true },
 ];
 

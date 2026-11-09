@@ -1220,3 +1220,13 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 @media (min-width: 861px) and (max-height: 760px) { .telao .logo-faixa { display: none; } }
 
 .desempate { font-size: 0.75rem; font-weight: 600; color: var(--suave); white-space: nowrap; }
+
+/* Credenciamento dos municípios */
+.form-credenciamento input[type="email"] {
+  width: 100%; font: inherit; font-size: 1.05rem; padding: 11px 14px; border: 1.5px solid var(--borda); border-radius: 12px; background: #fff;
+}
+.form-credenciamento .dica { font-size: 0.85rem; color: var(--suave); margin: 6px 0 0; }
+.form-credenciamento .periodo { border: 1.5px solid var(--borda); border-radius: 14px; padding: 6px 14px 14px; margin: 18px 0 0; }
+.form-credenciamento .periodo legend { font-weight: 800; color: var(--verde-escuro); padding: 0 6px; }
+.botao-detalhes.perigo { color: var(--alerta); border-color: var(--alerta); background: #fff; cursor: pointer; font: inherit; }
+.botao-detalhes.perigo:hover { background: var(--alerta-claro); }
