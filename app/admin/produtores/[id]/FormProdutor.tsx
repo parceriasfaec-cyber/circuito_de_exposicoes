@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { salvarProdutor, type EstadoForm } from "../../cadastros-actions";
+import { juntarProdutores, salvarProdutor, type EstadoForm } from "../../cadastros-actions";
 import { nomeCurto } from "@/lib/texto";
 
 type Dados = {
@@ -28,8 +28,10 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
   const avaliadas = new Set(dados.avaliadas);
   const participa = new Set(dados.participa);
 
+  const h = estado.homonimo;
   return (
-    // Depois de enviar, o React limpa o formulário e os campos voltam ao valor inicial; o tipo de documento volta junto.
+    <>
+    {/* Depois de enviar, o React limpa o formulário e os campos voltam ao valor inicial; o tipo de documento volta junto. */}
     <form action={acao} className="bloco" style={{ paddingTop: 6 }} onReset={() => setTipo(dados.tipo_documento)}>
       <input type="hidden" name="id" value={dados.id} />
       <input type="hidden" name="ciclo_id" value={cicloId} />
@@ -89,5 +91,27 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
         <Link href="/admin/produtores" className="link">Cancelar</Link>
       </div>
     </form>
+
+    {h && (
+      <section className="bloco juntar-produtor">
+        <h3 style={{ margin: "0 0 6px", color: "var(--verde-escuro)" }}>É a mesma pessoa?</h3>
+        <p style={{ margin: "0 0 8px" }}>
+          Já existe o cadastro <strong>{h.nome}</strong> ({h.municipio})
+          {h.exposicoes.length > 0 ? <> nas exposições: {h.exposicoes.map(nomeCurto).join(", ")}.</> : <>, sem exposições neste ciclo.</>}
+        </p>
+        {novo ? (
+          <Link href={`/admin/produtores/${h.id}`} className="botao secundario">Abrir o cadastro existente</Link>
+        ) : (
+          <form action={juntarProdutores} className="acoes-form" style={{ marginTop: 0 }}
+            onSubmit={(e) => { if (!confirm(`Juntar os dois cadastros em "${h.nome}"? As exposições deste cadastro passam para ele e este cadastro é apagado.`)) e.preventDefault(); }}>
+            <input type="hidden" name="origem" value={dados.id} />
+            <input type="hidden" name="destino" value={h.id} />
+            <button className="botao">Juntar com este produtor</button>
+            <span className="suave">As exposições deste cadastro passam para o de {h.nome}, e este cadastro é apagado.</span>
+          </form>
+        )}
+      </section>
+    )}
+    </>
   );
 }

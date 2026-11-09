@@ -10,10 +10,10 @@ import FormProdutor from "./FormProdutor";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditarProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string }> }) {
+export default async function EditarProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string; juntado?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const { id } = await params;
-  const { erro, ciclo: cicloParam } = await searchParams;
+  const { erro, ciclo: cicloParam, juntado } = await searchParams;
   const { ciclo, ciclos } = await cicloEscolhido(cicloParam);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
   const novo = id === "novo";
@@ -50,6 +50,8 @@ export default async function EditarProdutor({ params, searchParams }: { params:
       </div>
 
       {erro === "avaliou" && <div className="erro" style={{ marginBottom: 14 }}>Este produtor já avaliou e não pode ser excluído.</div>}
+      {erro === "juntar-avaliou" && <div className="erro" style={{ marginBottom: 14 }}>Este cadastro já enviou avaliação e não pode ser juntado. Junte pelo outro cadastro.</div>}
+      {juntado && <div className="ok">Cadastros juntados. As exposições dos dois estão marcadas abaixo.</div>}
 
       <FormProdutor dados={dados} exposicoes={exposicoes} cicloId={cid} cicloNome={ciclo?.nome ?? ""} />
 

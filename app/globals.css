@@ -1564,3 +1564,5 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .marcar-apresentou input:disabled + .marcar-apresentou-caixa { opacity: 0.6; }
 .marcar-apresentou-texto { min-width: 5.5em; text-align: left; }
 .periodo-linha { white-space: nowrap; }
+
+.juntar-produtor { border: 2px solid var(--laranja); background: #fff8ef; }

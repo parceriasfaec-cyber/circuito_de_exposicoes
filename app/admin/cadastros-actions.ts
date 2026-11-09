@@ -8,7 +8,11 @@ import { ehFoto } from "@/lib/fotos";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
 import { QTD_PERGUNTAS } from "@/lib/escala";
 
-export type EstadoForm = { erro?: string };
+export type EstadoForm = {
+  erro?: string;
+  /** Outro produtor com o mesmo nome e município: o formulário oferece juntar os dois cadastros. */
+  homonimo?: { id: string; nome: string; municipio: string; exposicoes: string[] };
+};
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const texto = (f: FormData, k: string) => String(f.get(k) ?? "").trim().replace(/\s+/g, " ");
@@ -144,8 +148,21 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
     });
   } catch (e) {
     const err = e as { code?: string; message?: string };
-    if (err.message === "HOMONIMO")
-      return { erro: "Já existe um produtor com esse nome nesse município. Informe um documento para diferenciar os dois." };
+    if (err.message === "HOMONIMO") {
+      const [h] = await db<{ id: string; nome: string; municipio: string; exposicoes: string[] | null }[]>`
+        select p.id, p.nome, p.municipio,
+               array_remove(array_agg(e.nome order by e.data_inicio), null) exposicoes
+        from produtores p
+        left join participacoes pa on pa.produtor_id = p.id
+        left join exposicoes e on e.id = pa.exposicao_id and e.ciclo_id = ${cicloProd}
+        where lower(p.nome) = lower(${nome}) and lower(p.municipio) = lower(${municipio})
+          and p.id <> coalesce(${id || null}::uuid, '00000000-0000-0000-0000-000000000000')
+        group by p.id limit 1`;
+      return {
+        erro: "Já existe um produtor com esse nome nesse município. Se for a mesma pessoa, junte os dois cadastros; se não, informe um documento para diferenciar.",
+        homonimo: h ? { id: h.id, nome: h.nome, municipio: h.municipio, exposicoes: h.exposicoes ?? [] } : undefined,
+      };
+    }
     if (err.code === "23505") return { erro: "Esse documento já está cadastrado para outro produtor." };
     console.error(e);
     return { erro: "Não foi possível salvar." };
@@ -241,4 +258,35 @@ export async function salvarPerguntasCiclo(_: EstadoForm, form: FormData): Promi
   });
   revalidatePath("/admin");
   redirect(`/admin/perguntas?ok=1&ciclo=${cicloId}`);
+}
+
+/**
+ * Junta dois cadastros da mesma pessoa: as exposições do cadastro "origem" passam para o "destino"
+ * (que fica), o documento é aproveitado se o destino não tiver, e a origem é apagada.
+ * Não junta se a origem já enviou avaliação (para não mexer em votos).
+ */
+export async function juntarProdutores(form: FormData) {
+  await exigirAdmin();
+  const origem = texto(form, "origem");
+  const destino = texto(form, "destino");
+  if (!UUID.test(origem) || !UUID.test(destino) || origem === destino) redirect("/admin/produtores");
+  const db = sql();
+  const [{ n }] = await db<{ n: number }[]>`select count(*)::int n from avaliacoes where produtor_id = ${origem}`;
+  if (n > 0) redirect(`/admin/produtores/${origem}?erro=juntar-avaliou`);
+  await db.begin(async (tx) => {
+    const [o] = await tx<{ tipo_documento: string | null; documento: string | null; atividade: string | null }[]>`
+      select tipo_documento, documento, atividade from produtores where id = ${origem}`;
+    if (!o) return;
+    await tx`insert into participacoes (produtor_id, exposicao_id)
+             select ${destino}::uuid, exposicao_id from participacoes where produtor_id = ${origem}
+             on conflict do nothing`;
+    await tx`delete from produtores where id = ${origem}`;
+    await tx`update produtores set
+               tipo_documento = coalesce(tipo_documento, ${o.tipo_documento}),
+               documento = coalesce(documento, ${o.documento}),
+               atividade = coalesce(atividade, ${o.atividade})
+             where id = ${destino}`;
+  });
+  revalidatePath("/admin");
+  redirect(`/admin/produtores/${destino}?juntado=1`);
 }

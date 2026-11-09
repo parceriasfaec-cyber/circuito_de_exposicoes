@@ -51,6 +51,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           <button className="botao com-icone"><Icone nome="busca" tamanho={18} /> Buscar</button>
           {busca && <Link href="/admin/produtores" className="link">Limpar</Link>}
         </form>
+        <a href={`/admin/produtores/excel?ciclo=${cid}`} className="botao secundario com-icone" download><Icone nome="documento" tamanho={18} /> Baixar Excel</a>
         <Link href={`/admin/produtores/novo?ciclo=${cid}`} className="botao com-icone">+ Novo produtor</Link>
       </div>
 
