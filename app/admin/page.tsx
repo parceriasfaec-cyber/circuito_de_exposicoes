@@ -21,6 +21,7 @@ type Ranking = {
   media_p5: number | null;
   media_p9: number | null;
   pontos: number;
+  media_produtor: number | null;
 };
 type Dia = { dia: string; quantidade: number };
 
@@ -51,10 +52,10 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const progresso = await db<Progresso[]>`
     select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
   const ranking = await db<Ranking[]>`
-    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, pontos::int
+    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, pontos::int, media_produtor::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
   // Exposições com a mesma média: mostra as notas de desempate (perguntas 2, 5 e 9) embaixo da média.
-  const empatada = (r: Ranking) => r.media !== null && ranking.filter((x) => x.media === r.media).length > 1;
+  const empatada = (r: Ranking) => r.media_produtor !== null && ranking.filter((x) => x.media_produtor === r.media_produtor).length > 1;
   const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
     with pa as (
       select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}
@@ -152,7 +153,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
               </thead>
               <tbody>
                 {ranking.map((r) => {
-                  const medalha = r.media !== null && r.posicao <= 3 ? ["ouro", "prata", "bronze"][r.posicao - 1] : null;
+                  const medalha = r.media_produtor !== null && r.posicao <= 3 ? ["ouro", "prata", "bronze"][r.posicao - 1] : null;
                   return (
                     <tr key={r.nome}>
                       <td className="posicao">
@@ -163,7 +164,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       <td className="num">{r.questionarios}</td>
                       <td className="num pontos">{r.questionarios ? r.pontos.toLocaleString("pt-BR") : "—"}</td>
                       <td className="num">
-                        <strong>{formatarMedia(r.media)}</strong>
+                        <strong>{formatarMedia(r.media_produtor)}</strong>
                         {empatada(r) && (
                           <div className="desempate" title="Desempate pela média das perguntas 2, 5 e 9, nessa ordem">
                             P2 {formatarMedia(r.media_p2)} · P5 {formatarMedia(r.media_p5)} · P9 {formatarMedia(r.media_p9)}
@@ -177,8 +178,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             </table>
           </div>
           <p className="suave" style={{ margin: "10px 0 0" }}>
-            Pontos é a soma de todas as notas recebidas. A classificação é pela média dessas notas, de 1 (muito ruim) a 5
-            (excelente). Em caso de empate, vence a maior
+            Pontos é a soma de todas as notas recebidas. Média = pontos ÷ número de produtores que avaliaram (de 10 a 50 por
+            produtor). A classificação é pela média. Em caso de empate, vence a maior
             média, nesta ordem, na pergunta 2 (infraestrutura e acomodação dos animais), na pergunta 5 (apoio aos
             tratadores) e na pergunta 9 (atendimento e suporte durante o evento).
           </p>
