@@ -54,3 +54,13 @@ export async function marcarApresentacao(form: FormData) {
   revalidatePath("/telao");
   redirect("/admin/proximo/credenciados?marcado=1");
 }
+
+/** Marca ou desmarca a apresentação sem recarregar a página (usado pela lista de credenciados). */
+export async function definirApresentacao(id: string, apresentou: boolean): Promise<{ ok: boolean }> {
+  if (!(await ehAdmin())) return { ok: false };
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return { ok: false };
+  await sql()`update credenciamentos set apresentou = ${apresentou} where id = ${id}`;
+  revalidatePath("/telao");
+  revalidatePath("/admin/proximo");
+  return { ok: true };
+}
