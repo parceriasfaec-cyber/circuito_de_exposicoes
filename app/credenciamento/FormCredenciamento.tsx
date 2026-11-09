@@ -58,7 +58,7 @@ export default function FormCredenciamento({ municipios, ano }: { municipios: Mu
           </fieldset>
         ))}
       </div>
-      <p className="dica">Na lista só aparecem os municípios que ainda não participam do Circuito e ainda não se credenciaram.</p>
+      <p className="dica">Na lista só aparecem municípios que ainda não estão no Circuito nem se credenciaram.</p>
 
       {estado.erro && <div className="erro" role="alert">{estado.erro}</div>}
       <button className="botao cheio cred-enviar" disabled={enviando}>
