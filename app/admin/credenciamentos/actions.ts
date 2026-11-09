@@ -37,3 +37,14 @@ export async function excluirCredenciamento(form: FormData) {
   revalidatePath("/credenciamento");
   redirect("/admin/credenciamentos?excluido=1");
 }
+
+/** Marca se o município fez a apresentação. Só quem apresentou entra na votação das cidades. */
+export async function marcarApresentacao(form: FormData) {
+  if (!(await ehAdmin())) redirect("/admin");
+  const id = String(form.get("id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/admin/credenciamentos");
+  const apresentou = form.get("apresentou") === "sim";
+  await sql()`update credenciamentos set apresentou = ${apresentou} where id = ${id}`;
+  revalidatePath("/telao");
+  redirect("/admin/credenciamentos?marcado=1");
+}

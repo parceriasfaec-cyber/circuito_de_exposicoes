@@ -1441,3 +1441,9 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
   .cred-item.grande p { font-size: 1.08rem; }
   .cred-assinatura { font-size: 1.65rem; margin-top: 6px; }
 }
+
+/* Marcar quem fez a apresentação (Credenciamento no painel) */
+.selo-apresentou { font: inherit; font-weight: 800; font-size: 0.9rem; cursor: pointer; border-radius: 999px; padding: 7px 14px; border: 1.5px solid var(--borda); background: #fff; color: var(--suave); white-space: nowrap; }
+.selo-apresentou:hover { border-color: var(--verde); color: var(--verde-escuro); }
+.selo-apresentou.sim { background: var(--verde-escuro); border-color: var(--verde-escuro); color: #fff; }
+.tabela-org tr.linha-apresentou td { background: #f3faee; }

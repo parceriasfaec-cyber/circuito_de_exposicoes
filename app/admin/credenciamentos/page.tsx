@@ -8,7 +8,7 @@ import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarData } from "@/lib/texto";
 import { encerrarVotacao, liberarVotacao } from "../actions";
-import { salvarPrazo, salvarVagas } from "./actions";
+import { marcarApresentacao, salvarPrazo, salvarVagas } from "./actions";
 import BotaoExcluir from "./BotaoExcluir";
 
 export const dynamic = "force-dynamic";
@@ -26,15 +26,16 @@ type Linha = {
   periodo2_inicio: Date;
   periodo2_fim: Date;
   criado_em: Date;
+  apresentou: boolean;
 };
 
-export default async function Credenciamentos({ searchParams }: { searchParams: Promise<{ excluido?: string; prazo?: string; vagas?: string }> }) {
+export default async function Credenciamentos({ searchParams }: { searchParams: Promise<{ excluido?: string; prazo?: string; vagas?: string; marcado?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
 
   const linhas = await sql()<Linha[]>`
     select c.id, m.nome municipio, c.instituicao, c.responsavel, c.funcao, c.cpf, c.email,
-           c.periodo1_inicio, c.periodo1_fim, c.periodo2_inicio, c.periodo2_fim, c.criado_em
+           c.periodo1_inicio, c.periodo1_fim, c.periodo2_inicio, c.periodo2_fim, c.criado_em, c.apresentou
     from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
     where c.ano = ${ANO_CREDENCIAMENTO}
     order by c.criado_em`;
@@ -44,6 +45,7 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
   const votacaoCidades = votacao.aberta && votacao.modo === "cidades";
   const resultado = await resultadoCidades();
   const vagas = resultado.vagas;
+  const apresentaram = linhas.filter((l) => l.apresentou).length;
   const periodo = (i: Date, f: Date) => `${formatarData(i)} a ${formatarData(f)}`;
 
   return (
@@ -85,6 +87,11 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
           No dia das apresentações, cada produtor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele entra do mesmo jeito
           da votação das exposições: documento ou nome, mais o código do dia mostrado no telão.
         </p>
+        <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
+          Só entram na votação os municípios marcados como <strong>Apresentou</strong> na lista abaixo: {apresentaram} de {linhas.length}{" "}
+          {linhas.length === 1 ? "credenciado" : "credenciados"}.
+        </p>
+        {params.marcado && <div className="ok">Apresentação atualizada.</div>}
         {params.vagas && <div className="ok">Número de vagas salvo.</div>}
         <div className="prazo-form" style={{ marginBottom: 14 }}>
           <form action={salvarVagas} className="prazo-form">
@@ -99,7 +106,7 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
           ) : (
             <form action={liberarVotacao}>
               <input type="hidden" name="modo" value="cidades" />
-              <button className="botao" disabled={linhas.length < 2}>▶ Liberar votação das cidades</button>
+              <button className="botao" disabled={apresentaram < 2}>▶ Liberar votação das cidades</button>
             </form>
           )}
           <Link className="botao secundario" href="/telao" target="_blank"><Icone nome="olho" tamanho={16} /> Tela do telão</Link>
@@ -109,8 +116,8 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
             ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}.`
             : votacao.aberta
               ? "Agora está liberada a votação das exposições. Ao liberar a das cidades, ela é encerrada e sai um código novo."
-              : linhas.length < 2
-                ? "Para liberar a votação, é preciso ter pelo menos 2 cidades credenciadas."
+              : apresentaram < 2
+                ? "Para liberar a votação, marque na lista abaixo pelo menos 2 municípios que fizeram a apresentação."
                 : "Votação das cidades fechada."}
         </p>
         <p className="suave" style={{ margin: "0 0 14px" }}>
@@ -142,12 +149,13 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
                 <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
                 <th><span><Icone nome="usuario" tamanho={18} /> Responsável</span></th>
                 <th><span><Icone nome="calendario" tamanho={18} /> Períodos</span></th>
+                <th style={{ textAlign: "center" }}>Apresentação</th>
                 <th style={{ textAlign: "center" }}>Ações</th>
               </tr>
             </thead>
             <tbody>
               {linhas.map((l) => (
-                <tr key={l.id}>
+                <tr key={l.id} className={l.apresentou ? "linha-apresentou" : undefined}>
                   <td>
                     <div className="nome">{l.municipio}</div>
                     <div className="doc">{l.instituicao}</div>
@@ -163,6 +171,15 @@ export default async function Credenciamentos({ searchParams }: { searchParams: 
                     <div className="doc">
                       Enviado em {l.criado_em.toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" })}
                     </div>
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <form action={marcarApresentacao}>
+                      <input type="hidden" name="id" value={l.id} />
+                      <input type="hidden" name="apresentou" value={l.apresentou ? "nao" : "sim"} />
+                      <button className={`selo-apresentou${l.apresentou ? " sim" : ""}`} title={l.apresentou ? "Clique para desmarcar" : "Clique quando o município fizer a apresentação"}>
+                        {l.apresentou ? "✓ Apresentou" : "Não apresentou"}
+                      </button>
+                    </form>
                   </td>
                   <td style={{ textAlign: "center" }}><BotaoExcluir id={l.id} municipio={l.municipio} /></td>
                 </tr>

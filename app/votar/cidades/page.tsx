@@ -30,7 +30,7 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
     : await db<{ id: string; municipio: string; instituicao: string }[]>`
         select c.id, m.nome municipio, c.instituicao from credenciamentos c
         join municipios m on m.codigo = c.municipio_codigo
-        where c.ano = ${ANO_CREDENCIAMENTO}
+        where c.ano = ${ANO_CREDENCIAMENTO} and c.apresentou
         order by m.nome`;
 
   return (
