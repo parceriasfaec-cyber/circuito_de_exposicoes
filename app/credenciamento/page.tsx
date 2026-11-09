@@ -10,13 +10,12 @@ export const metadata = { title: `Credenciamento ${ANO_CREDENCIAMENTO} · Circui
 
 const manuscrita = Kaushan_Script({ subsets: ["latin"], weight: "400" });
 
-/** Regras mostradas no quadro "Fique atento!" */
-const DIAS_PARA_APRESENTACAO = 5;
+/** Regra mostrada no quadro "Fique atento!" */
 const DURACAO_APRESENTACAO_MIN = 30;
 
 export default async function Credenciamento({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { ok } = await searchParams;
-  const { prazo, aberto } = await lerPrazo();
+  const { prazo, aberto, apresentacao } = await lerPrazo();
   const municipios = ok || !aberto ? [] : await municipiosDisponiveis();
 
   return (
@@ -32,8 +31,10 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             {ok ? (
               <Aviso titulo="Credenciamento enviado. Obrigado!" sucesso>
                 <p>
-                  O município de <strong>{ok}</strong> foi cadastrado para o Circuito {ANO_CREDENCIAMENTO}. Fique atento ao prazo
-                  para enviar o vídeo e/ou a apresentação.
+                  O município de <strong>{ok}</strong> foi cadastrado para o Circuito {ANO_CREDENCIAMENTO}.
+                  {apresentacao
+                    ? ` Prepare o vídeo ou a apresentação para o dia ${diaMes(apresentacao, true)}.`
+                    : " A organização vai informar a data das apresentações."}
                 </p>
               </Aviso>
             ) : !aberto ? (
@@ -66,8 +67,16 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             <div className="cred-item">
               <Icone nome="calendario" tamanho={40} />
               <p>
-                Em até <strong>{String(DIAS_PARA_APRESENTACAO).padStart(2, "0")} dias</strong> após o credenciamento, deverá ser
-                apresentado um vídeo e/ou apresentação da localidade e dos municípios que deseja que a exposição seja em sua cidade.
+                {apresentacao ? <>No dia <strong>{diaMes(apresentacao)}</strong>, o</> : "Na data das apresentações, o"} credenciado
+                deverá apresentar um vídeo ou uma breve apresentação destacando os motivos pelos quais sua cidade merece sediar a
+                exposição.
+              </p>
+            </div>
+            <div className="cred-item">
+              <Icone nome="trofeu" tamanho={40} />
+              <p>
+                Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong> para
+                definir quais receberão as exposições em {ANO_CREDENCIAMENTO}.
               </p>
             </div>
             <div className="cred-item grande">

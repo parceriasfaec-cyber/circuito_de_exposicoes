@@ -1273,3 +1273,4 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .cred-prazo strong { font-size: 1.7rem; }
 .cred-item p { font-size: 0.95rem; }
 .cred-item.grande p { font-size: 1.15rem; }
+.cred-item p strong.sem-destaque { font-size: 1em; }

@@ -32,10 +32,12 @@ export const hojeFortaleza = () => new Date().toLocaleDateString("en-CA", { time
  * Prazo definido no painel (ex.: "2026-11-05") e se o formulário ainda aceita cadastros.
  * Aceita até o fim do dia do prazo; sem prazo definido, fica aberto.
  */
-export async function lerPrazo(): Promise<{ prazo: string | null; aberto: boolean }> {
-  const [c] = await sql()<{ prazo: string | null }[]>`select to_char(prazo, 'YYYY-MM-DD') prazo from credenciamento_config where id = 1`;
+export async function lerPrazo(): Promise<{ prazo: string | null; aberto: boolean; apresentacao: string | null }> {
+  const [c] = await sql()<{ prazo: string | null; apresentacao: string | null }[]>`
+    select to_char(prazo, 'YYYY-MM-DD') prazo, to_char(data_apresentacao, 'YYYY-MM-DD') apresentacao
+    from credenciamento_config where id = 1`;
   const prazo = c?.prazo ?? null;
-  return { prazo, aberto: !prazo || hojeFortaleza() <= prazo };
+  return { prazo, aberto: !prazo || hojeFortaleza() <= prazo, apresentacao: c?.apresentacao ?? null };
 }
 
 /** "2026-11-05" -> "05/11" (ou "05/11/2026" com ano) */

@@ -7,3 +7,7 @@ create table credenciamento_config (
 );
 alter table credenciamento_config enable row level security;
 insert into credenciamento_config (id, prazo) values (1, null);
+
+-- Dia em que os credenciados apresentam o vídeo ou a apresentação (aparece no quadro "Fique atento!").
+alter table credenciamento_config add column data_apresentacao date;
+update credenciamento_config set data_apresentacao = '2026-11-12' where id = 1;

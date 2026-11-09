@@ -9,8 +9,10 @@ import { ehAdmin } from "@/lib/sessao";
 export async function salvarPrazo(form: FormData) {
   if (!(await ehAdmin())) redirect("/admin");
   const prazo = String(form.get("prazo") ?? "").trim();
-  if (prazo && !/^\d{4}-\d{2}-\d{2}$/.test(prazo)) redirect("/admin/credenciamentos");
-  await sql()`update credenciamento_config set prazo = ${prazo || null} where id = 1`;
+  const apresentacao = String(form.get("apresentacao") ?? "").trim();
+  const data = /^\d{4}-\d{2}-\d{2}$/;
+  if ((prazo && !data.test(prazo)) || (apresentacao && !data.test(apresentacao))) redirect("/admin/credenciamentos");
+  await sql()`update credenciamento_config set prazo = ${prazo || null}, data_apresentacao = ${apresentacao || null} where id = 1`;
   revalidatePath("/credenciamento");
   redirect("/admin/credenciamentos?prazo=1");
 }
