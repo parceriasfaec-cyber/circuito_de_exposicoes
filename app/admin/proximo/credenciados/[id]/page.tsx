@@ -26,9 +26,10 @@ type Linha = {
 };
 
 /** Editar um credenciado: os mesmos campos do formulário público, já preenchidos. */
-export default async function EditarCredenciado({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditarCredenciado({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ ok?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const { id } = await params;
+  const { ok } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const ano = await anoCredenciamento();
 
@@ -53,8 +54,11 @@ export default async function EditarCredenciado({ params }: { params: Promise<{ 
         <Link href="/admin/proximo/credenciados" className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Credenciados</Link>
       </div>
 
+      {ok && <div className="ok">Alterações salvas.</div>}
+
       <section className="bloco" style={{ maxWidth: 900 }}>
         <FormCredenciamento
+          key={ok ?? "inicio"}
           municipios={municipios}
           ano={ano}
           acao={salvarCredenciado}

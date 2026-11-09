@@ -12,10 +12,10 @@ export const dynamic = "force-dynamic";
 
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 
-export default async function EditarExposicao({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string }> }) {
+export default async function EditarExposicao({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string; ok?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const { id } = await params;
-  const { erro, ciclo: cicloParam } = await searchParams;
+  const { erro, ciclo: cicloParam, ok } = await searchParams;
   const { ciclo } = await cicloEscolhido(cicloParam);
   const nova = id === "nova";
   if (!nova && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -45,9 +45,10 @@ export default async function EditarExposicao({ params, searchParams }: { params
         <Link href="/admin/exposicoes" className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Exposições</Link>
       </div>
 
+      {ok && <div className="ok">Alterações salvas.</div>}
       {erro === "avaliada" && <div className="erro" style={{ marginBottom: 14 }}>Esta exposição já recebeu avaliações e não pode ser excluída.</div>}
 
-      <FormExposicao dados={dados} avaliacoes={avaliacoes} />
+      <FormExposicao key={ok ?? "inicio"} dados={dados} avaliacoes={avaliacoes} />
 
       {!nova && (
         <section className="bloco" style={{ paddingTop: 14 }}>

@@ -102,5 +102,5 @@ export async function salvarCredenciado(_: EstadoEdicao, form: FormData): Promis
     return { erro: "Não foi possível salvar. Tente de novo." };
   }
   revalidatePath("/credenciamento");
-  redirect("/admin/proximo/credenciados?editado=1");
+  redirect(`/admin/proximo/credenciados/${id}?ok=${Date.now()}`);
 }

@@ -44,6 +44,7 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
   if (id && perguntas.some((p) => !p)) return { erro: `As ${QTD_PERGUNTAS} perguntas precisam ter texto.` };
 
   const db = sql();
+  let salvaId = id;
   try {
     if (id) {
       if (!UUID.test(id)) return { erro: "Exposição inválida." };
@@ -56,8 +57,9 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
       });
     } else {
       // As perguntas padrão são copiadas pelo próprio banco (gatilho) ao criar a exposição.
-      await db`insert into exposicoes (ciclo_id, nome, municipio, local, responsavel, foto, data_inicio, data_fim)
-               values (${cicloId}, ${nome}, ${municipio}, ${local}, ${responsavel}, ${foto}, ${inicio}, ${fim})`;
+      const [nova] = await db<{ id: string }[]>`insert into exposicoes (ciclo_id, nome, municipio, local, responsavel, foto, data_inicio, data_fim)
+               values (${cicloId}, ${nome}, ${municipio}, ${local}, ${responsavel}, ${foto}, ${inicio}, ${fim}) returning id`;
+      salvaId = nova.id;
     }
   } catch (e) {
     if ((e as { code?: string }).code === "23505") return { erro: "Já existe uma exposição com esse nome neste ciclo." };
@@ -65,7 +67,8 @@ export async function salvarExposicao(_: EstadoForm, form: FormData): Promise<Es
     return { erro: "Não foi possível salvar." };
   }
   revalidatePath("/admin");
-  redirect(`/admin/exposicoes?ok=1${UUID.test(cicloId) ? `&ciclo=${cicloId}` : ""}`);
+  // Continua no registro que está sendo editado.
+  redirect(`/admin/exposicoes/${salvaId}?ok=${Date.now()}`);
 }
 
 export async function excluirExposicao(form: FormData) {
@@ -110,6 +113,7 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
   if (!UUID.test(cicloProd)) return { erro: "Ciclo inválido." };
 
   const db = sql();
+  let salvoId = id;
   try {
     await db.begin(async (tx) => {
       // Mesmo nome no mesmo município só com documento, para o produtor conseguir se identificar.
@@ -129,6 +133,7 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
           insert into produtores (nome, municipio, atividade, tipo_documento, documento)
           values (${nome}, ${municipio}, ${atividade}, ${tipo}, ${documento}) returning id`;
         produtorId = novo.id;
+        salvoId = novo.id;
       }
 
       // Participações: não deixa tirar uma exposição que já foi avaliada.
@@ -168,7 +173,8 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
     return { erro: "Não foi possível salvar." };
   }
   revalidatePath("/admin");
-  redirect(`/admin/produtores?ok=1&ciclo=${cicloProd}`);
+  // Continua no registro que está sendo editado.
+  redirect(`/admin/produtores/${salvoId}?ok=${Date.now()}&ciclo=${cicloProd}`);
 }
 
 export async function excluirProdutor(form: FormData) {
