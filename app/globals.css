@@ -1542,3 +1542,8 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 
 .acoes-linha { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
 .acoes-linha form { margin: 0; }
+
+/* Botão Apresentou com ícone (olho = ainda não; check = apresentou) */
+.selo-apresentou { display: inline-flex; align-items: center; gap: 8px; background: var(--verde-claro); border-color: var(--verde-borda); color: var(--verde-escuro); padding: 8px 16px; }
+.selo-apresentou:hover { background: #dcefd0; border-color: var(--verde); }
+.selo-apresentou.sim { background: var(--verde-escuro); border-color: var(--verde-escuro); color: #fff; }
