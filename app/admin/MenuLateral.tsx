@@ -18,6 +18,7 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
       { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
       { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
       { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
+      { href: "/admin/diagnostico", rotulo: "Diagnóstico", icone: "alerta" },
     ],
   },
   {
