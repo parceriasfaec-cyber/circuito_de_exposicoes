@@ -1957,3 +1957,11 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .ranking-exposicoes .desempate-linha { white-space: normal; line-height: 1.25; font-size: 0.74rem; max-width: 9.5rem; margin: 3px auto 0; }
 .ranking-exposicoes th, .ranking-exposicoes td { padding-left: 8px; padding-right: 8px; }
 .diag-numeros strong.diag-neg { color: #b42318; }
+/* Painel: o quadro dos participantes vai até o fim do Ranking (mesma altura dos dois lados) */
+@media (min-width: 981px) {
+  .painel-grade { align-items: stretch; }
+  .painel-grade .coluna-graficos { display: flex; flex-direction: column; }
+  .painel-grade .coluna-graficos > .bloco { flex: 1; display: flex; flex-direction: column; }
+  .painel-grade .coluna-graficos .part { flex: 1; display: flex; flex-direction: column; }
+  .painel-grade .coluna-graficos .part-grafico { flex: 1; min-height: 0; }
+}
