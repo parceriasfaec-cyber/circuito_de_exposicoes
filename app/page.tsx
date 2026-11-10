@@ -51,16 +51,22 @@ export default async function Inicio() {
         </Aviso>
       ) : s && !faltaAvaliar && !faltaVotar ? (
         <>
-          <Aviso titulo="Está tudo feito. Obrigado!" sucesso>
-            <p>
-              {votacao.exposicoes_aberta && votacao.cidades_aberta
-                ? "Você já avaliou as exposições e já votou nas cidades."
-                : votacao.cidades_aberta
-                  ? "Você já votou nas cidades (ou a votação das cidades não é para você)."
-                  : "Você já avaliou todas as exposições."}
-            </p>
-            <p>Pode fechar esta página.</p>
-          </Aviso>
+          {votacao.cidades_aberta ? (
+            <Aviso titulo="Está tudo feito. Obrigado!" sucesso>
+              <p>
+                {votacao.exposicoes_aberta
+                  ? "Você já avaliou as exposições e já votou nas cidades."
+                  : "Você já votou nas cidades (ou a votação das cidades não é para você)."}
+              </p>
+              <p>Pode fechar esta página.</p>
+            </Aviso>
+          ) : (
+            // Avaliou tudo, mas a votação das cidades ainda não foi liberada: avisa que ainda vai poder votar.
+            <Aviso titulo="Avaliação concluída. Obrigado!" sucesso>
+              <p>Agora falta escolher as 2 novas cidades para {ano}, mas essa votação ainda não foi liberada.</p>
+              <p>Assim que for liberada, leia o QR Code de novo ou atualize esta página para votar.</p>
+            </Aviso>
+          )}
           <form action={sair} style={{ marginTop: 20 }}>
             <button className="link">Sair</button>
           </form>
