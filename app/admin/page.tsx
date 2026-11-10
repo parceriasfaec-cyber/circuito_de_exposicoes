@@ -205,10 +205,10 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           </div>
           <p className="ranking-nota">
             <span className="ranking-nota-i" aria-hidden="true">i</span>
-            Pontos é a soma de todas as notas recebidas. Média = pontos ÷ número de produtores que avaliaram (de 10 a 50 por
-            produtor). A classificação é pela média. Em caso de empate, vence a maior
-            média, nesta ordem, na pergunta 2 (infraestrutura e acomodação dos animais), na pergunta 5 (apoio aos
-            tratadores) e na pergunta 9 (atendimento e suporte durante o evento).
+            <span>
+              <strong>Pontos</strong> = soma das notas. <strong>Média</strong> = pontos ÷ produtores que avaliaram (de 10 a 50).
+              No empate, vence a maior média na pergunta 2, depois na 5 e na 9.
+            </span>
           </p>
         </section>
 
