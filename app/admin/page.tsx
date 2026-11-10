@@ -133,9 +133,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="kpi">
           <span className="kpi-icone"><Icone nome="checkCirculo" tamanho={30} /></span>
           <div className="kpi-corpo">
-            <div className="kpi-rotulo">Questionários respondidos</div>
-            <div className="kpi-valor">{t.respondidos} de {t.questionarios}</div>
-            <div className="kpi-nota">{t.completos} de {t.produtores} produtores já avaliaram tudo</div>
+            <div className="kpi-rotulo">Produtores que já avaliaram</div>
+            <div className="kpi-valor">{t.completos} de {t.produtores}</div>
+            <div className="kpi-nota">Avaliaram todas as exposições de que participaram</div>
           </div>
           <div className="kpi-acao">
             <Link className="botao secundario pequeno" href="/admin/avaliacoes"><Icone nome="olho" tamanho={16} /> Ver quem já avaliou</Link>
