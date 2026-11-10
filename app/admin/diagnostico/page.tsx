@@ -55,10 +55,6 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
         subtitulo={ehUltima ? "A exposição que ficou em último lugar, a que sai do Circuito, e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
       />
 
-      <div className="diag-impresso so-imprimir">
-        <strong>Circuito Cearense de Exposição · Avaliação por Circuito</strong>
-        <span>{ciclo?.nome ?? ""} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
-      </div>
 
       <form className="diag-escolha nao-imprimir" method="get">
         {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
@@ -72,9 +68,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
           ))}
         </select>
         <button className="botao secundario pequeno">Ver</button>
-        {todas ? (
-          <Link className="link" href={`/admin/diagnostico${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`}>Ver só uma</Link>
-        ) : (
+        {!todas && (
           <Link className="botao secundario pequeno" href={`/admin/diagnostico?${new URLSearchParams({ ...(params.ciclo ? { ciclo: params.ciclo } : {}), todas: "1" })}`}>
             Ver todas na mesma página
           </Link>
@@ -85,11 +79,11 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
       {todas ? (
         avaliadas.map((r, k) => (
           <div key={r.exposicao_id} className={k > 0 ? "diag-pagina" : undefined}>
-            <Relatorio alvo={r} avaliadas={avaliadas} ranking={ranking} cid={cid} />
+            <Relatorio alvo={r} avaliadas={avaliadas} ranking={ranking} cid={cid} cicloNome={ciclo?.nome ?? ""} todas />
           </div>
         ))
       ) : (
-        <Relatorio alvo={alvo} avaliadas={avaliadas} ranking={ranking} cid={cid} />
+        <Relatorio alvo={alvo} avaliadas={avaliadas} ranking={ranking} cid={cid} cicloNome={ciclo?.nome ?? ""} />
       )}
 
       {semAvaliacao.length > 0 && (
@@ -103,7 +97,9 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
 }
 
 /** Diagnóstico de uma exposição: posição, números, comparação pergunta a pergunta e distribuição das notas. */
-async function Relatorio({ alvo, avaliadas, ranking, cid }: { alvo: Ranking; avaliadas: Ranking[]; ranking: Ranking[]; cid: string }) {
+async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = false }: {
+  alvo: Ranking; avaliadas: Ranking[]; ranking: Ranking[]; cid: string; cicloNome: string; todas?: boolean;
+}) {
   const db = sql();
   const ultima = avaliadas[avaliadas.length - 1];
   const ehUltima = alvo.exposicao_id === ultima.exposicao_id;
@@ -140,13 +136,17 @@ async function Relatorio({ alvo, avaliadas, ranking, cid }: { alvo: Ranking; ava
 
   return (
     <>
+      <div className="diag-impresso so-imprimir">
+        <strong>Circuito Cearense de Exposição · Avaliação por Circuito</strong>
+        <span>{cicloNome} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
+      </div>
       <section className="diag-destaque">
         <div className="diag-posicao">
           <span>{alvo.posicao}º</span>
           <small>de {ranking.length}</small>
         </div>
         <div className="diag-destaque-corpo">
-          <span className="diag-etiqueta">{ehUltima ? "Sai do Circuito · última colocada entre as avaliadas" : "Exposição escolhida"}</span>
+          <span className="diag-etiqueta">{ehUltima ? "Sai do Circuito · última colocada entre as avaliadas" : todas ? `${alvo.posicao}º lugar no Circuito` : "Exposição escolhida"}</span>
           <h2>{alvo.nome}</h2>
           <div className="diag-numeros">
             <div><strong>{fmt(alvo.media_produtor)}</strong><small>média (de 10 a 50)</small></div>

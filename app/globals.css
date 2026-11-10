@@ -1996,18 +1996,31 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .diag-pdf { margin-left: auto; }
 .so-imprimir { display: none; }
 @media print {
-  @page { size: A4; margin: 12mm; }
+  /* Margem zero tira o endereço e a data que o navegador coloca no topo e no rodapé; o espaço vem do padding. */
+  @page { size: A4; margin: 0; }
+  html { font-size: 10.5px !important; }
   html, body { background: #fff !important; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .lateral, .nao-imprimir, .admin-cab-dir, .admin-cab p { display: none !important; }
+  .lateral, .nao-imprimir, .admin-cab, .admin-principal > .suave { display: none !important; }
   .admin { display: block; background: #fff !important; min-height: 0; }
-  .admin-principal { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+  .admin-principal { padding: 10mm 12mm !important; margin: 0 !important; max-width: none !important; }
   .so-imprimir { display: flex; }
-  .diag-impresso { justify-content: space-between; gap: 12px; border-bottom: 3px solid #d96200; padding-bottom: 6px; margin-bottom: 10px; color: var(--verde-escuro); font-size: 0.85rem; }
-  .admin-cab { margin: 0 0 8px !important; padding: 0 !important; background: none !important; box-shadow: none !important; }
-  .admin-cab h1 { font-size: 1.4rem; color: var(--verde-escuro); }
-  .bloco, .diag-destaque, .diag-tabela tr { break-inside: avoid; }
-  .bloco { box-shadow: none !important; }
+  .diag-impresso { justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 3px solid #d96200; padding-bottom: 5px; margin-bottom: 10px; color: var(--verde-escuro); font-size: 0.95rem; }
+  /* Uma exposição logo depois da outra, sem pular página (sem espaços em branco) */
+  .diag-pagina { border-top: 0 !important; padding-top: 0 !important; margin-top: 14px !important; }
+  .diag-destaque { padding: 10px 14px !important; margin-bottom: 8px !important; break-inside: avoid; }
+  .diag-posicao { width: 64px !important; height: 64px !important; }
+  .diag-posicao span { font-size: 1.9rem !important; }
+  .diag-destaque h2 { font-size: 1.35rem !important; margin-bottom: 6px !important; }
+  .diag-aviso { margin-bottom: 8px !important; padding: 6px 10px !important; }
+  .bloco { box-shadow: none !important; margin-bottom: 8px !important; break-inside: auto; }
+  .bloco-titulo { padding: 6px 12px !important; font-size: 1.05rem !important; }
+  .diag-resumo { margin: 8px 0 !important; padding: 8px 12px !important; }
+  .diag-tabela th, .diag-tabela td { padding: 3px 6px !important; font-size: 0.95rem !important; }
+  .diag-tabela tr { break-inside: avoid; }
+  .diag-barra { min-width: 90px !important; }
+  .diag-notas { padding: 6px 0 0 !important; gap: 4px !important; }
+  .bloco > .suave { margin-top: 4px !important; font-size: 0.85rem; }
   a { color: inherit; text-decoration: none; }
 }
 /* Avaliação por Circuito: todas as exposições na mesma página, uma depois da outra */
