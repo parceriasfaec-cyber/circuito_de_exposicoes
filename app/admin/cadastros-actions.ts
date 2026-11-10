@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { ehFoto } from "@/lib/fotos";
-import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
+import { cnpjValido, cpfValido, nomeProprio, soDigitos } from "@/lib/texto";
 import { QTD_PERGUNTAS } from "@/lib/escala";
 
 export type EstadoForm = {
@@ -88,7 +88,7 @@ export async function excluirExposicao(form: FormData) {
 export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<EstadoForm> {
   await exigirAdmin();
   const id = texto(form, "id");
-  const nome = texto(form, "nome");
+  const nome = nomeProprio(texto(form, "nome"));
   const municipio = texto(form, "municipio");
   const atividade = texto(form, "atividade") || null;
   let tipo: string | null = texto(form, "tipo_documento") || null;

@@ -71,3 +71,16 @@ export function maiusculaInicial(s: string) {
 export function nomeCurto(nome: string) {
   return nome.replace(/^Exposição Agropecuária (de|do|da) /i, "").replace(/^Exposição (de|do|da) /i, "");
 }
+
+const LIGACOES = new Set(["de", "da", "do", "das", "dos", "e", "di", "du"]);
+
+/** "EDUARDO MELO DE BARROSO" -> "Eduardo Melo de Barroso" (primeira letra de cada nome maiúscula). */
+export function nomeProprio(nome: string) {
+  return nome
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase("pt-BR")
+    .split(" ")
+    .map((p, i) => (i > 0 && LIGACOES.has(p) ? p : p.replace(/(^|[-'/])(\p{L})/gu, (_, sep: string, l: string) => sep + l.toLocaleUpperCase("pt-BR"))))
+    .join(" ");
+}
