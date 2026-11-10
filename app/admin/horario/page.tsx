@@ -68,14 +68,15 @@ export default async function HorarioAvaliacao({ searchParams }: { searchParams:
             <span className="hr-num">1</span>
             <div className="hr-passo-corpo">
               <label htmlFor="abrir">Abre em</label>
-              {aberta ? (
-                <p className="hr-fixo">Já está aberta{votacao.exposicoes_aberta_em ? ` desde ${dataHora(votacao.exposicoes_aberta_em)}` : ""}.</p>
-              ) : (
-                <>
-                  <input id="abrir" name="abrir" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_abrir_em)} />
-                  <small>Deixe vazio para abrir pelo botão Liberar.</small>
-                </>
-              )}
+              <input
+                id="abrir" name="abrir" type="datetime-local"
+                defaultValue={paraCampo(aberta ? votacao.exposicoes_aberta_em : votacao.exposicoes_abrir_em)}
+              />
+              <small>
+                {aberta
+                  ? "Já está aberta. Pode corrigir o horário de início; se puser um horário futuro, ela fecha agora e abre nesse horário."
+                  : "Deixe vazio para abrir pelo botão Liberar."}
+              </small>
             </div>
           </div>
           <div className="hr-passo">

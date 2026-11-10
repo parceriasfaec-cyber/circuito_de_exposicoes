@@ -107,13 +107,32 @@ export async function programarHorarios(form: FormData) {
   if (abrir === "invalida" || fechar === "invalida") erro("Data ou hora inválida.");
   const a = abrir as Date | null;
   const f = fechar as Date | null;
-  if (!a && !f) erro("Preencha o horário de abrir, o de fechar ou os dois.");
   const agora = Date.now();
+  const [v] = await sql()<{ aberta: boolean }[]>`select exposicoes_aberta aberta from exposicao_cearense.votacao where id = 1`;
   if (f && f.getTime() <= agora) erro("O horário de fechar já passou.");
   if (a && f && f <= a) erro("O horário de fechar precisa ser depois do de abrir.");
-  if (a && a.getTime() <= agora - 60_000) erro("O horário de abrir já passou. Para abrir agora, use o botão Liberar avaliação.");
-  await sql()`update exposicao_cearense.votacao set exposicoes_abrir_em = ${a}, exposicoes_fechar_em = ${f} where id = 1`;
-  revalidatePath("/admin");
+
+  if (v?.aberta) {
+    // Já aberta: o início pode ser corrigido para um horário que já passou, ou mudado para o futuro
+    // (aí a avaliação fecha agora e abre sozinha no novo horário).
+    if (a && a.getTime() > agora) {
+      await sql()`
+        update exposicao_cearense.votacao
+        set exposicoes_aberta = false, exposicoes_fechada_em = now(), aberta = cidades_aberta, fechada_em = now(),
+            exposicoes_abrir_em = ${a}, exposicoes_fechar_em = ${f}
+        where id = 1`;
+    } else {
+      await sql()`
+        update exposicao_cearense.votacao
+        set exposicoes_aberta_em = coalesce(${a}, exposicoes_aberta_em), exposicoes_abrir_em = null, exposicoes_fechar_em = ${f}
+        where id = 1`;
+    }
+  } else {
+    if (!a && !f) erro("Preencha o horário de abrir, o de fechar ou os dois.");
+    if (a && a.getTime() <= agora - 60_000) erro("O horário de abrir já passou. Para abrir agora, use o botão Liberar avaliação.");
+    await sql()`update exposicao_cearense.votacao set exposicoes_abrir_em = ${a}, exposicoes_fechar_em = ${f} where id = 1`;
+  }
+  revalidatePath("/admin", "layout");
   redirect("/admin/horario?horario=ok");
 }
 

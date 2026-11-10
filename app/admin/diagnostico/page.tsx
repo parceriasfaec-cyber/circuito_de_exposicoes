@@ -7,6 +7,7 @@ import { sql } from "@/lib/db";
 import { formatarMedia, partesPergunta } from "@/lib/escala";
 import { ehAdmin } from "@/lib/sessao";
 import { nomeCurto } from "@/lib/texto";
+import BotaoPdf from "./BotaoPdf";
 
 export const dynamic = "force-dynamic";
 
@@ -82,7 +83,12 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
         subtitulo={ehUltima ? "A exposição que ficou em último lugar, a que sai do Circuito, e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
       />
 
-      <form className="diag-escolha" method="get">
+      <div className="diag-impresso so-imprimir">
+        <strong>Circuito Cearense de Exposição · Avaliação por Circuito</strong>
+        <span>{ciclo?.nome ?? ""} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
+      </div>
+
+      <form className="diag-escolha nao-imprimir" method="get">
         {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
         <label htmlFor="exp">Ver o diagnóstico de</label>
         <select id="exp" name="exp" defaultValue={alvo.exposicao_id}>
@@ -93,6 +99,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
           ))}
         </select>
         <button className="botao secundario pequeno">Ver</button>
+        <BotaoPdf arquivo={`Avaliação ${nomeCurto(alvo.nome)} - ${ciclo?.nome ?? "Circuito"}`} />
       </form>
 
       <section className="diag-destaque">

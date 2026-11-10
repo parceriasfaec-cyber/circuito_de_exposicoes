@@ -1991,3 +1991,22 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 @media (max-width: 760px) { .hr-passos { grid-template-columns: 1fr; } .hr-situacao { flex-wrap: wrap; } }
 .hr-situacao .botao-detalhes { flex: none; }
 .hr-form:target { box-shadow: 0 0 0 3px var(--verde-borda); }
+
+/* Avaliação por Circuito: botão do PDF e página impressa colorida, sem menu e sem botões */
+.diag-pdf { margin-left: auto; }
+.so-imprimir { display: none; }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  html, body { background: #fff !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .lateral, .nao-imprimir, .admin-cab-dir, .admin-cab p { display: none !important; }
+  .admin { display: block; background: #fff !important; min-height: 0; }
+  .admin-principal { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+  .so-imprimir { display: flex; }
+  .diag-impresso { justify-content: space-between; gap: 12px; border-bottom: 3px solid #d96200; padding-bottom: 6px; margin-bottom: 10px; color: var(--verde-escuro); font-size: 0.85rem; }
+  .admin-cab { margin: 0 0 8px !important; padding: 0 !important; background: none !important; box-shadow: none !important; }
+  .admin-cab h1 { font-size: 1.4rem; color: var(--verde-escuro); }
+  .bloco, .diag-destaque, .diag-tabela tr { break-inside: avoid; }
+  .bloco { box-shadow: none !important; }
+  a { color: inherit; text-decoration: none; }
+}
