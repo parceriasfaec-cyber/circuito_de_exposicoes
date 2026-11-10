@@ -24,7 +24,6 @@ type Ranking = {
   pontos: number;
   media_produtor: number | null;
 };
-type Dia = { dia: string; quantidade: number };
 
 const TZ = "America/Fortaleza";
 const curto = nomeCurto;
@@ -77,10 +76,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
               select pa.produtor_id from pa
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
               group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`;
-  const dias = await db<Dia[]>`
-    select to_char((a.enviada_em at time zone ${TZ})::date, 'YYYY-MM-DD') dia, count(*)::int quantidade
-    from avaliacoes a join exposicoes e on e.id = a.exposicao_id
-    where e.ciclo_id = ${cid} group by 1 order by 1`;
 
   const agora = new Date();
 
@@ -105,9 +100,11 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <div className="kpi-nota">
               {votacao.exposicoes_aberta ? (
                 <>
-                  {votacao.exposicoes_aberta_em && <div>Início: {dataHora(votacao.exposicoes_aberta_em)}</div>}
-                  {votacao.exposicoes_fechar_em && <div><strong>Fecha sozinha: {dataHora(votacao.exposicoes_fechar_em)}</strong></div>}
-                  <div>Link: /avaliar{votacao.cidades_aberta ? " · cidades também aberta" : ""}</div>
+                  {votacao.exposicoes_aberta_em && <div>Início: <strong>{dataHora(votacao.exposicoes_aberta_em)}</strong></div>}
+                  <div>
+                    Fim: {votacao.exposicoes_fechar_em ? <strong>{dataHora(votacao.exposicoes_fechar_em)}</strong> : <>ao clicar em Encerrar (<Link href="/admin/horario">marcar horário</Link>)</>}
+                  </div>
+                  {votacao.cidades_aberta && <div>Votação das cidades também aberta</div>}
                 </>
               ) : votacao.exposicoes_fechada_em ? (
                 <>
@@ -180,7 +177,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                 {ranking.map((r) => {
                   const medalha = r.media_produtor !== null && r.posicao <= 3 ? ["ouro", "prata", "bronze"][r.posicao - 1] : null;
                   return (
-                    <tr key={r.nome}>
+                    <tr key={r.nome} className={medalha ? `podio ${medalha}` : undefined}>
                       <td className="posicao">
                         {medalha ? <span className={`medalha ${medalha}`}>★</span> : <span className="medalha vazia" />}
                         {r.posicao}º
@@ -189,7 +186,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       <td className="num">{r.questionarios}</td>
                       <td className="num pontos">{r.questionarios ? r.pontos.toLocaleString("pt-BR") : "—"}</td>
                       <td className="num">
-                        <strong>{formatarMedia(r.media_produtor)}</strong>
+                        <strong className={medalha ? `media-pill ${medalha}` : undefined}>{formatarMedia(r.media_produtor)}</strong>
                         {(() => {
                           const d = desempate(r);
                           if (!d) return null;
@@ -206,7 +203,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
               </tbody>
             </table>
           </div>
-          <p className="suave" style={{ margin: "10px 0 0" }}>
+          <p className="ranking-nota">
+            <span className="ranking-nota-i" aria-hidden="true">i</span>
             Pontos é a soma de todas as notas recebidas. Média = pontos ÷ número de produtores que avaliaram (de 10 a 50 por
             produtor). A classificação é pela média. Em caso de empate, vence a maior
             média, nesta ordem, na pergunta 2 (infraestrutura e acomodação dos animais), na pergunta 5 (apoio aos
@@ -218,10 +216,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           <section className="bloco">
             <h2 className="bloco-titulo claro"><Icone nome="usuarios" tamanho={22} /> Participantes por Exposição</h2>
             <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} />
-          </section>
-          <section className="bloco">
-            <h2 className="bloco-titulo claro"><Icone nome="grafico" tamanho={22} /> Evolução das Respostas</h2>
-            <Evolucao dias={dias} />
           </section>
         </div>
       </div>
@@ -290,86 +284,46 @@ function Participacao({ progresso, produtores, completos }: { progresso: Progres
   );
 }
 
-/** Barras lado a lado por exposição: total de participantes (verde claro) e quantos avaliaram (verde escuro). */
+/**
+ * Barras deitadas por exposição: em cima o total de participantes (verde claro), embaixo quantos avaliaram
+ * (verde escuro). O nome fica inteiro à esquerda.
+ */
 function GraficoParticipacao({ lista }: { lista: Progresso[] }) {
-  const grupo = 64, barra = 24, m = { e: 34, d: 8, t: 26, b: 84 };
-  const L = m.e + m.d + grupo * lista.length;
-  const A = 300;
+  const linha = 34, m = { e: 168, d: 36, t: 6, b: 30 };
+  const L = 560;
+  const A = m.t + m.b + linha * lista.length;
   const max = Math.max(1, ...lista.map((p) => p.na_lista));
   const passo = max <= 10 ? 2 : max <= 50 ? 10 : max <= 100 ? 20 : 50;
   const teto = Math.ceil(max / passo) * passo;
-  const y = (v: number) => A - m.b - (v / teto) * (A - m.t - m.b);
+  const x = (v: number) => m.e + (v / teto) * (L - m.e - m.d);
   const marcas = Array.from({ length: teto / passo + 1 }, (_, k) => k * passo);
+  const base = A - m.b;
   return (
     <svg viewBox={`0 0 ${L} ${A}`} className="part-grafico" role="img" aria-label="Participantes e avaliações por exposição">
       {marcas.map((v) => (
         <g key={v}>
-          <line x1={m.e} x2={L - m.d} y1={y(v)} y2={y(v)} stroke="#e6ece3" />
-          <text x={m.e - 6} y={y(v) + 4} textAnchor="end" className="eixo">{v}</text>
+          <line x1={x(v)} x2={x(v)} y1={m.t} y2={base} stroke="#eef2ec" />
+          <line x1={x(v)} x2={x(v)} y1={base} y2={base + 5} stroke="#5b6b5b" />
+          <text x={x(v)} y={base + 20} textAnchor="middle" className="eixo">{v}</text>
         </g>
       ))}
       {lista.map((p, k) => {
-        const x0 = m.e + k * grupo + (grupo - 2 * barra - 4) / 2;
+        const y0 = m.t + k * linha + 6;
         const pct = p.na_lista ? Math.round((p.responderam / p.na_lista) * 100) : 0;
         const nome = curto(p.nome);
         return (
           <g key={p.nome}>
             <title>{`${p.nome}: ${p.na_lista} participantes, ${p.responderam} avaliaram (${pct}%)`}</title>
-            <rect x={x0} y={y(p.na_lista)} width={barra} height={y(0) - y(p.na_lista)} rx="4" fill="#a9cf94" />
-            <text x={x0 + barra / 2} y={y(p.na_lista) - 6} textAnchor="middle" className="valor">{p.na_lista}</text>
-            <rect x={x0 + barra + 4} y={y(p.responderam)} width={barra} height={Math.max(0, y(0) - y(p.responderam))} rx="4" fill="#1d5e2c" />
-            <text x={x0 + barra * 1.5 + 4} y={y(p.responderam) - 6} textAnchor="middle" className="valor escuro">{p.responderam}</text>
-            <text
-              x={x0 + barra + 2} y={y(0) + 14} textAnchor="end" className="eixo nome"
-              transform={`rotate(-40 ${x0 + barra + 2} ${y(0) + 14})`}
-            >
-              {nome.length > 16 ? `${nome.slice(0, 15)}…` : nome}
-            </text>
+            <text x={m.e - 12} y={y0 + 14} textAnchor="end" className="eixo nome">{nome.length > 24 ? `${nome.slice(0, 23)}…` : nome}</text>
+            <rect x={m.e} y={y0} width={Math.max(3, x(p.na_lista) - m.e)} height="10" rx="5" fill="#a9cf94" />
+            <text x={x(p.na_lista) + 6} y={y0 + 9} className="valor">{p.na_lista}</text>
+            <rect x={m.e} y={y0 + 12} width={Math.max(3, x(p.responderam) - m.e)} height="10" rx="5" fill="#1d5e2c" />
+            <text x={x(p.responderam) + 6} y={y0 + 21} className="valor escuro">{p.responderam}</text>
           </g>
         );
       })}
-      <line x1={m.e} x2={L - m.d} y1={y(0)} y2={y(0)} stroke="#b9c4b4" />
-    </svg>
-  );
-}
-
-function Evolucao({ dias }: { dias: Dia[] }) {
-  if (dias.length === 0) return <p className="suave" style={{ margin: 0 }}>Ainda não há respostas.</p>;
-
-  let acumulado = 0;
-  const pontos = dias.map((d) => ({ dia: d.dia, total: (acumulado += d.quantidade) }));
-  if (pontos.length === 1) pontos.unshift({ dia: "", total: 0 });
-
-  const L = 560, A = 230, m = { e: 40, d: 24, t: 34, b: 30 };
-  const max = Math.max(...pontos.map((p) => p.total), 1);
-  const teto = Math.ceil(max / 5) * 5 || 5;
-  const x = (i: number) => m.e + (i * (L - m.e - m.d)) / Math.max(pontos.length - 1, 1);
-  const y = (v: number) => A - m.b - (v / teto) * (A - m.t - m.b);
-  const linha = pontos.map((p, i) => `${i ? "L" : "M"}${x(i)},${y(p.total)}`).join(" ");
-  const area = `${linha} L${x(pontos.length - 1)},${y(0)} L${x(0)},${y(0)} Z`;
-  const ultimo = pontos[pontos.length - 1];
-  const rotulo = (d: string) => (d ? `${d.slice(8, 10)}/${d.slice(5, 7)}` : "");
-
-  return (
-    <svg viewBox={`0 0 ${L} ${A}`} className="evolucao" role="img" aria-label={`Total acumulado de respostas: ${ultimo.total}`}>
-      {[0, 0.5, 1].map((f) => (
-        <g key={f}>
-          <line x1={m.e} x2={L - m.d} y1={y(teto * f)} y2={y(teto * f)} stroke="#e6ece3" />
-          <text x={m.e - 6} y={y(teto * f) + 4} textAnchor="end" className="eixo">{Math.round(teto * f)}</text>
-        </g>
-      ))}
-      <path d={area} fill="#7cc242" opacity="0.18" />
-      <path d={linha} fill="none" stroke="#2a7a3b" strokeWidth="3.5" />
-      {pontos.map((p, i) => (
-        <g key={i}>
-          <circle cx={x(i)} cy={y(p.total)} r="5.5" fill="#2a7a3b" />
-          <text x={x(i)} y={A - 8} textAnchor="middle" className="eixo">{rotulo(p.dia)}</text>
-        </g>
-      ))}
-      <g transform={`translate(${x(pontos.length - 1)},${y(ultimo.total) - 14})`}>
-        <rect x="-22" y="-20" width="44" height="24" rx="8" fill="#1d5e2c" />
-        <text x="0" y="-3" textAnchor="middle" className="balao">{ultimo.total}</text>
-      </g>
+      <line x1={m.e} x2={m.e} y1={m.t} y2={base} stroke="#5b6b5b" strokeWidth="1.5" />
+      <line x1={m.e} x2={L - m.d} y1={base} y2={base} stroke="#5b6b5b" strokeWidth="1.5" />
     </svg>
   );
 }
