@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 type Linha = { id: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null };
 const POR_PAGINA = 25;
 
-export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string }> }) {
+export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string; exp?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const busca = (params.q ?? "").trim();
@@ -26,21 +26,29 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
     left join participacoes pa on pa.produtor_id = p.id
     left join exposicoes e on e.id = pa.exposicao_id and e.ciclo_id = ${cid}
     group by p.id order by p.nome, p.municipio`;
+  const nomesExposicoes = (await sql()<{ nome: string }[]>`
+    select regexp_replace(nome, '^Exposição (Agropecuária )?(de|do|da) ', '') nome
+    from exposicoes where ciclo_id = ${cid} order by data_inicio, nome`).map((e) => e.nome);
 
   const q = normalizar(busca);
   const achados = q ? todos.filter((l) => normalizar(`${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) : todos;
   const totalDe = (l: Linha) => l.exposicoes?.length ?? 0;
+  // Filtro por exposição: quantos produtores (da busca) participaram de cada uma.
+  const porExposicao = new Map<string, number>();
+  for (const l of achados) for (const e of l.exposicoes ?? []) porExposicao.set(e, (porExposicao.get(e) ?? 0) + 1);
+  const expEscolhida = params.exp && nomesExposicoes.includes(params.exp) ? params.exp : null;
+  const naExposicao = expEscolhida ? achados.filter((l) => l.exposicoes?.includes(expEscolhida)) : achados;
   // Filtro pelo total de exposições: um botão para cada total que existe, com quantos produtores têm esse total.
   const porTotal = new Map<number, number>();
-  for (const l of achados) porTotal.set(totalDe(l), (porTotal.get(totalDe(l)) ?? 0) + 1);
+  for (const l of naExposicao) porTotal.set(totalDe(l), (porTotal.get(totalDe(l)) ?? 0) + 1);
   const totais = [...porTotal.keys()].sort((a, b) => a - b);
   const totalEscolhido = params.total !== undefined && /^\d+$/.test(params.total) ? Number(params.total) : null;
-  const filtrados = totalEscolhido === null ? achados : achados.filter((l) => totalDe(l) === totalEscolhido);
+  const filtrados = totalEscolhido === null ? naExposicao : naExposicao.filter((l) => totalDe(l) === totalEscolhido);
   const paginas = Math.max(1, Math.ceil(filtrados.length / POR_PAGINA));
   const pagina = Math.min(Math.max(1, Number(params.pagina) || 1), paginas);
   const visiveis = filtrados.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
-  const url = (n: number, total: number | null = totalEscolhido) =>
-    `/admin/produtores?${new URLSearchParams({ ...(busca ? { q: busca } : {}), ...(params.ciclo ? { ciclo: params.ciclo } : {}), ...(total !== null ? { total: String(total) } : {}), ...(n > 1 ? { pagina: String(n) } : {}) })}`;
+  const url = (n: number, total: number | null = totalEscolhido, exp: string | null = expEscolhida) =>
+    `/admin/produtores?${new URLSearchParams({ ...(busca ? { q: busca } : {}), ...(params.ciclo ? { ciclo: params.ciclo } : {}), ...(exp ? { exp } : {}), ...(total !== null ? { total: String(total) } : {}), ...(n > 1 ? { pagina: String(n) } : {}) })}`;
 
   return (
     <>
@@ -53,6 +61,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         <form className="busca" action="/admin/produtores" style={{ flex: 1, marginBottom: 0 }}>
           {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
           {totalEscolhido !== null && <input type="hidden" name="total" value={totalEscolhido} />}
+          {expEscolhida && <input type="hidden" name="exp" value={expEscolhida} />}
           <div className="busca-campo">
             <Icone nome="busca" tamanho={20} />
             <input type="text" name="q" defaultValue={busca} placeholder="Buscar por nome, empresa, município, documento ou atividade..." />
@@ -64,9 +73,19 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         <Link href={`/admin/produtores/novo?ciclo=${cid}`} className="botao com-icone">+ Novo produtor</Link>
       </div>
 
+      <nav className="filtros prod-filtro" aria-label="Filtrar por exposição">
+        <span className="prod-filtro-rotulo"><Icone nome="local" tamanho={18} /> Exposição:</span>
+        <Link href={url(1, null, null)} className={`filtro${expEscolhida === null ? " ativo" : ""}`}>Todas <span className="filtro-num">{achados.length}</span></Link>
+        {nomesExposicoes.map((e) => (
+          <Link key={e} href={url(1, null, e)} className={`filtro${expEscolhida === e ? " ativo" : ""}`} title={`Produtores que participaram de ${e}`}>
+            {e} <span className="filtro-num">{porExposicao.get(e) ?? 0}</span>
+          </Link>
+        ))}
+      </nav>
+
       <nav className="filtros prod-filtro" aria-label="Filtrar pelo total de exposições">
         <span className="prod-filtro-rotulo"><Icone nome="trofeu" tamanho={18} /> Total de exposições:</span>
-        <Link href={url(1, null)} className={`filtro${totalEscolhido === null ? " ativo" : ""}`}>Todos <span className="filtro-num">{achados.length}</span></Link>
+        <Link href={url(1, null)} className={`filtro${totalEscolhido === null ? " ativo" : ""}`}>Todos <span className="filtro-num">{naExposicao.length}</span></Link>
         {totais.map((t) => (
           <Link key={t} href={url(1, t)} className={`filtro${totalEscolhido === t ? " ativo" : ""}`} title={`Produtores com ${t} ${t === 1 ? "exposição" : "exposições"}`}>
             {t === 0 ? "Nenhuma" : t} <span className="filtro-num">{porTotal.get(t)}</span>
