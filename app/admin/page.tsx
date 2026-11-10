@@ -278,30 +278,58 @@ function Participacao({ progresso, produtores, completos }: { progresso: Progres
         <div><strong>{completos}</strong><small>já avaliaram tudo</small></div>
       </div>
       <ul className="part-legenda">
-        <li><span className="ponto cheio" /> Avaliaram</li>
-        <li><span className="ponto" /> Participantes</li>
+        <li><span className="ponto part-cor-total" /> Participantes</li>
+        <li><span className="ponto part-cor-aval" /> Avaliaram</li>
       </ul>
       {lista.length === 0 ? (
         <p className="suave" style={{ margin: 0 }}>Nenhuma exposição neste ciclo.</p>
       ) : (
-        <ul className="part-lista">
-          {lista.map((p) => {
-            const pct = p.na_lista ? Math.round((p.responderam / p.na_lista) * 100) : 0;
-            return (
-              <li key={p.nome} title={`${p.nome}: ${p.responderam} de ${p.na_lista} participantes avaliaram (${pct}%)`}>
-                <div className="part-linha">
-                  <span className="part-nome">{curto(p.nome)}</span>
-                  <span className="part-num"><strong>{p.responderam}</strong> de {p.na_lista} <small>({pct}%)</small></span>
-                </div>
-                <div className="part-trilho" style={{ width: `${Math.max(8, (p.na_lista / maior) * 100)}%` }}>
-                  <span style={{ width: `${pct}%` }} />
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <GraficoParticipacao lista={lista} />
       )}
     </div>
+  );
+}
+
+/** Barras lado a lado por exposição: total de participantes (verde claro) e quantos avaliaram (verde escuro). */
+function GraficoParticipacao({ lista }: { lista: Progresso[] }) {
+  const grupo = 64, barra = 24, m = { e: 34, d: 8, t: 26, b: 84 };
+  const L = m.e + m.d + grupo * lista.length;
+  const A = 300;
+  const max = Math.max(1, ...lista.map((p) => p.na_lista));
+  const passo = max <= 10 ? 2 : max <= 50 ? 10 : max <= 100 ? 20 : 50;
+  const teto = Math.ceil(max / passo) * passo;
+  const y = (v: number) => A - m.b - (v / teto) * (A - m.t - m.b);
+  const marcas = Array.from({ length: teto / passo + 1 }, (_, k) => k * passo);
+  return (
+    <svg viewBox={`0 0 ${L} ${A}`} className="part-grafico" role="img" aria-label="Participantes e avaliações por exposição">
+      {marcas.map((v) => (
+        <g key={v}>
+          <line x1={m.e} x2={L - m.d} y1={y(v)} y2={y(v)} stroke="#e6ece3" />
+          <text x={m.e - 6} y={y(v) + 4} textAnchor="end" className="eixo">{v}</text>
+        </g>
+      ))}
+      {lista.map((p, k) => {
+        const x0 = m.e + k * grupo + (grupo - 2 * barra - 4) / 2;
+        const pct = p.na_lista ? Math.round((p.responderam / p.na_lista) * 100) : 0;
+        const nome = curto(p.nome);
+        return (
+          <g key={p.nome}>
+            <title>{`${p.nome}: ${p.na_lista} participantes, ${p.responderam} avaliaram (${pct}%)`}</title>
+            <rect x={x0} y={y(p.na_lista)} width={barra} height={y(0) - y(p.na_lista)} rx="4" fill="#a9cf94" />
+            <text x={x0 + barra / 2} y={y(p.na_lista) - 6} textAnchor="middle" className="valor">{p.na_lista}</text>
+            <rect x={x0 + barra + 4} y={y(p.responderam)} width={barra} height={Math.max(0, y(0) - y(p.responderam))} rx="4" fill="#1d5e2c" />
+            <text x={x0 + barra * 1.5 + 4} y={y(p.responderam) - 6} textAnchor="middle" className="valor escuro">{p.responderam}</text>
+            <text
+              x={x0 + barra + 2} y={y(0) + 14} textAnchor="end" className="eixo nome"
+              transform={`rotate(-40 ${x0 + barra + 2} ${y(0) + 14})`}
+            >
+              {nome.length > 16 ? `${nome.slice(0, 15)}…` : nome}
+            </text>
+          </g>
+        );
+      })}
+      <line x1={m.e} x2={L - m.d} y1={y(0)} y2={y(0)} stroke="#b9c4b4" />
+    </svg>
   );
 }
 

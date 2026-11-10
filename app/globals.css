@@ -1917,3 +1917,10 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .horario-situacao { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .horario-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; }
 .horario-limpar { margin-left: auto; }
+.part-cor-total { background: #a9cf94 !important; }
+.part-cor-aval { background: var(--verde-escuro) !important; }
+.part-grafico { width: 100%; height: auto; display: block; overflow: visible; margin-top: 4px; }
+.part-grafico .eixo { font-size: 12px; fill: var(--suave); font-family: var(--fonte-texto), sans-serif; }
+.part-grafico .eixo.nome { font-size: 12.5px; font-weight: 700; fill: var(--texto); }
+.part-grafico .valor { font-size: 12px; font-weight: 800; fill: #4f7a3f; font-family: var(--fonte-texto), sans-serif; }
+.part-grafico .valor.escuro { fill: var(--verde-escuro); }
