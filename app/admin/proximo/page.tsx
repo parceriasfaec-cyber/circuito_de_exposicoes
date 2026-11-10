@@ -90,50 +90,82 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
 
       <section className="bloco">
         <h2 className="bloco-titulo"><Icone nome="trofeu" tamanho={22} /> Votação das cidades</h2>
-        <p className="suave" style={{ marginTop: 0 }}>
-          No dia das apresentações, cada produtor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele lê o QR Code do telão e
-          entra do mesmo jeito da votação das exposições: documento ou nome, mais o código do dia.
-        </p>
-        <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
-          Só entram na votação os municípios marcados como <strong>Apresentou</strong> em{" "}
-          <Link href="/admin/proximo/credenciados">Credenciados</Link>: {t.apresentaram} de {t.credenciados}.
-        </p>
+        <div className="vc-info">
+          <span className="vc-info-icone" aria-hidden="true">i</span>
+          <p>
+            No dia das apresentações, cada produtor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele lê o QR Code do telão e
+            entra do mesmo jeito da avaliação das exposições: documento ou nome, mais o código do dia.
+          </p>
+          <div className="vc-info-lado">
+            <Icone nome="calendario" tamanho={22} />
+            <span>
+              Só entram na votação os municípios marcados como Apresentou em{" "}
+              <Link href="/admin/proximo/credenciados"><strong>Credenciados: {t.apresentaram} de {t.credenciados}</strong></Link>.
+            </span>
+          </div>
+        </div>
+
         {params.vagas && <div className="ok">Número de vagas salvo.</div>}
         {params.quem && <div className="ok">Quem pode votar foi alterado. O código do dia continua o mesmo.</div>}
-        <div className="prazo-form" style={{ marginBottom: 14 }}>
-          <form action={salvarVagas} className="prazo-form">
-            <div>
-              <label htmlFor="vagas">Cidades que entram no Circuito {ano}</label>
-              <input id="vagas" name="vagas" type="number" min={1} max={50} defaultValue={resultado.vagas ?? ""} placeholder="Ex.: 3" className="campo-numero" />
-            </div>
-            <button className="botao secundario">Salvar vagas</button>
+
+        {/* Os campos ficam juntos no cartão, mas cada um pertence ao seu formulário (atributo form). */}
+        <form id="form-vagas" action={salvarVagas} hidden />
+        {votacaoCidades ? (
+          <form id="form-quem" action={alterarQuemVota} hidden />
+        ) : (
+          <form id="form-quem" action={liberarVotacao} hidden>
+            <input type="hidden" name="modo" value="cidades" />
           </form>
+        )}
+        <form id="form-encerrar" action={encerrarVotacao} hidden>
+          <input type="hidden" name="modo" value="cidades" />
+        </form>
+
+        <div className="vc-cartao">
+          <div className="vc-campo">
+            <label htmlFor="vagas" className="vc-rotulo"><Icone nome="usuarios" tamanho={22} /> Cidades que entram no Circuito {ano}</label>
+            <input id="vagas" name="vagas" form="form-vagas" type="number" min={1} max={50} defaultValue={resultado.vagas ?? ""} placeholder="Ex.: 3" className="vc-numero" />
+          </div>
+          <fieldset className="vc-campo vc-quem">
+            <legend className="vc-rotulo"><Icone nome="usuarios" tamanho={22} /> Quem pode votar nas cidades</legend>
+            <label>
+              <input type="radio" name="quem" value="todos" form="form-quem" defaultChecked={votacao.cidades_quem !== "avaliaram"} />
+              Todos os produtores <span className="suave">({p.produtores})</span>
+            </label>
+            <label>
+              <input type="radio" name="quem" value="avaliaram" form="form-quem" defaultChecked={votacao.cidades_quem === "avaliaram"} />
+              Só quem fez a avaliação das exposições <span className="suave">({p.avaliaram})</span>
+            </label>
+          </fieldset>
+          <div className="vc-botoes">
+            <button className="botao" form="form-vagas">Salvar vagas</button>
+            <Link className="botao secundario" href="/telao" target="_blank"><Icone nome="olho" tamanho={18} /> Tela do telão</Link>
+          </div>
+        </div>
+
+        <div className="vc-acoes">
           {votacaoCidades ? (
             <>
-              <form action={alterarQuemVota} className="liberar-cidades">
-                <QuemVota atual={votacao.cidades_quem} produtores={p.produtores} avaliaram={p.avaliaram} />
-                <button className="botao secundario">Salvar quem pode votar</button>
-              </form>
-              <form action={encerrarVotacao}><input type="hidden" name="modo" value="cidades" /><button className="botao perigo">■ Encerrar votação das cidades</button></form>
+              <button className="botao vc-principal" form="form-encerrar"><span className="vc-quadrado" aria-hidden="true" /> Encerrar votação das cidades</button>
+              <button className="botao secundario" form="form-quem"><Icone nome="usuarios" tamanho={18} /> Salvar quem pode votar</button>
             </>
           ) : (
-            <form action={liberarVotacao} className="liberar-cidades">
-              <input type="hidden" name="modo" value="cidades" />
-              <QuemVota atual={votacao.cidades_quem} produtores={p.produtores} avaliaram={p.avaliaram} />
-              <button className="botao" disabled={t.apresentaram < 2}>▶ Liberar votação das cidades</button>
-            </form>
+            <button className="botao vc-principal" form="form-quem" disabled={t.apresentaram < 2}>▶ Liberar votação das cidades</button>
           )}
-          <Link className="botao secundario" href="/telao" target="_blank"><Icone nome="olho" tamanho={16} /> Tela do telão</Link>
         </div>
-        <p className={votacaoCidades ? "status-aberta" : "status-fechada"} style={{ margin: "0 0 4px", fontWeight: 800 }}>
-          {votacaoCidades
-            ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}. Podem votar: ${quemVota.toLowerCase()}.`
-            : t.apresentaram < 2
+
+        <div className={`vc-status${votacaoCidades ? " aberta" : ""}`}>
+          <span className="vc-status-icone" aria-hidden="true">{votacaoCidades ? "✓" : "■"}</span>
+          <span>
+            {votacaoCidades
+              ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}. Podem votar: ${quemVota.toLowerCase()}.`
+              : t.apresentaram < 2
                 ? "Para liberar a votação, marque em Credenciados pelo menos 2 municípios que fizeram a apresentação."
                 : votacao.exposicoes_aberta
                   ? "Votação das cidades fechada. A avaliação das exposições está aberta e continua aberta quando você liberar as cidades (mesmo código)."
-                  : "Votação das cidades fechada."}
-        </p>
+                  : "Votação das cidades fechada. Escolha quem pode votar e clique em Liberar."}
+          </span>
+        </div>
         <p className="suave" style={{ margin: "0 0 14px" }}>
           {resultado.vagas ? `As ${resultado.vagas} mais votadas aparecem como classificadas.` : "Defina as vagas para marcar as classificadas."}
         </p>
@@ -150,19 +182,3 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
   );
 }
 
-/** Escolha de quem pode votar nas cidades (usada ao liberar e, com a votação aberta, para mudar sem trocar o código). */
-function QuemVota({ atual, produtores, avaliaram }: { atual: "todos" | "avaliaram"; produtores: number; avaliaram: number }) {
-  return (
-    <fieldset className="quem-vota">
-      <legend>Quem pode votar nas cidades</legend>
-      <label>
-        <input type="radio" name="quem" value="todos" defaultChecked={atual !== "avaliaram"} />
-        Todos os produtores <span className="suave">({produtores})</span>
-      </label>
-      <label>
-        <input type="radio" name="quem" value="avaliaram" defaultChecked={atual === "avaliaram"} />
-        Só quem fez a avaliação das exposições <span className="suave">({avaliaram})</span>
-      </label>
-    </fieldset>
-  );
-}
