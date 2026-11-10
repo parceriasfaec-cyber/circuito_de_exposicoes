@@ -33,9 +33,9 @@ export default async function ConteudoCidades({ s, ok }: { s: { produtorId: stri
 
   return (
     <>
-      <div className="saudacao">
-        <h2>Olá, {produtor.nome.split(" ")[0]}!</h2>
-        <div className="suave">{produtor.nome} · {produtor.municipio}</div>
+      <div className="saudacao-linha">
+        <strong>Olá, {produtor.nome.split(" ")[0]}!</strong>
+        <span className="suave">{produtor.nome} · {produtor.municipio}</span>
       </div>
 
       {votos.length > 0 ? (
@@ -53,8 +53,8 @@ export default async function ConteudoCidades({ s, ok }: { s: { produtorId: stri
         </Aviso>
       ) : (
         <>
-          <p className="intro" style={{ marginTop: 0 }}>
-            Selecione apenas <strong>2 municípios</strong> para a votação. O voto só pode ser feito uma vez.
+          <p className="intro-mini">
+            Selecione <strong>2 municípios</strong>. O voto só pode ser feito uma vez.
           </p>
           <EscolherCidades cidades={cidades} />
         </>

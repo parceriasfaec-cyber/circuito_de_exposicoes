@@ -1753,3 +1753,59 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .cartao-cidades .botao { width: 100%; text-align: center; }
 }
 .bloco:has(.vc-info) .bloco-titulo { background: linear-gradient(100deg, var(--verde-escuro) 0%, var(--verde-escuro) 78%, #3f8f3a 88%, var(--verde-escuro) 94%, #2f7a31 100%); font-size: 1.35rem; padding-top: 14px; padding-bottom: 14px; }
+
+/* Votação das cidades: tela mais compacta (cabe mais da lista sem rolar) */
+.moldura-voto-sep { display: inline-block; width: 2px; height: 1.3em; background: rgba(255, 255, 255, 0.7); border-radius: 2px; margin: 0 4px; }
+.moldura-voto.tipo-cidades .moldura-voto-topo { padding-top: 12px; padding-bottom: 12px; font-size: clamp(1.4rem, 2.6vw, 1.9rem); gap: 14px; }
+.moldura-voto.tipo-cidades .moldura-voto-topo svg { width: 30px; height: 30px; }
+.moldura-voto.tipo-cidades .moldura-voto-corpo { padding: 12px 28px 16px; }
+.moldura-voto.tipo-cidades .lema { font-size: 1.02rem; margin-bottom: 8px; }
+.moldura-voto.tipo-cidades .lema::after { margin-top: 6px; width: 110px; }
+.moldura-voto.tipo-cidades .saudacao { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--borda); }
+.moldura-voto.tipo-cidades .saudacao h2 { font-size: 1.2rem; }
+.moldura-voto.tipo-cidades .saudacao .suave { font-size: 0.88rem; }
+.moldura-voto.tipo-cidades .intro { font-size: 0.9rem; margin: 0 auto 8px; }
+.moldura-voto.tipo-cidades .cidades-contador { padding: 6px 12px; margin-bottom: 8px; gap: 10px; }
+.moldura-voto.tipo-cidades .cidades-contador-icone svg { width: 24px; height: 24px; }
+.moldura-voto.tipo-cidades .cidades-contador-num strong { font-size: 1.3rem; }
+.moldura-voto.tipo-cidades .cidades-busca { margin-bottom: 8px; }
+.moldura-voto.tipo-cidades .cidades-busca input { padding: 8px 0; font-size: 0.95rem; }
+.moldura-voto.tipo-cidades .cidades-filtros { margin-bottom: 8px; }
+.moldura-voto.tipo-cidades .cidades-faixa { padding: 4px 12px; font-size: 0.82rem; }
+.moldura-voto.tipo-cidades .cidade-linha { padding: 5px 12px; }
+.moldura-voto.tipo-cidades .cidade-linha-texto strong { font-size: 0.94rem; }
+.moldura-voto.tipo-cidades .cidade-linha-texto small { font-size: 0.74rem; }
+.moldura-voto.tipo-cidades .cidades-lista.linhas { max-height: 40vh; margin-bottom: 8px; }
+.moldura-voto.tipo-cidades .cidades-envio-aviso { padding: 8px 12px; font-size: 0.82rem; }
+@media (max-width: 560px) {
+  .moldura-voto.tipo-cidades .moldura-voto-corpo { padding: 10px 14px 14px; }
+  .moldura-voto.tipo-cidades .lema { font-size: 0.95rem; }
+  .moldura-voto.tipo-cidades .cidades-lista.linhas { max-height: 44vh; }
+}
+.saudacao-linha { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 4px 10px; margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--borda); }
+.saudacao-linha strong { color: var(--verde-escuro); font-size: 1.1rem; }
+.saudacao-linha .suave { font-size: 0.85rem; }
+.intro-mini { text-align: center; color: var(--suave); font-size: 0.85rem; margin: 0 0 8px; }
+.moldura-voto.tipo-cidades .lema { font-size: 0.98rem; margin-bottom: 8px; max-width: none; }
+.moldura-voto.tipo-cidades .lema::after { display: none; }
+@media (min-width: 561px) {
+  .pagina:has(.tipo-cidades) .topo-claro { min-height: 0; padding-top: 8px; padding-bottom: 0; }
+  .pagina:has(.tipo-cidades) .topo-claro-marcas .sistema { height: 2.8rem; }
+  .pagina:has(.tipo-cidades) .topo-claro-marcas .circuito { height: 3.2rem; }
+  .pagina:has(.tipo-cidades) .topo-claro-sep { height: 2.6rem; }
+  .pagina:has(.tipo-cidades) .conteudo { padding-top: 4px; }
+  .pagina:has(.tipo-cidades) .moldura-voto { margin-top: 6px; }
+}
+@media (min-width: 561px) {
+  .moldura-voto.tipo-cidades .cidades-lista.linhas { max-height: max(180px, calc(100vh - 500px)); }
+}
+@media (max-width: 560px) {
+  .moldura-voto.tipo-cidades .moldura-voto-topo { font-size: 1.2rem; gap: 10px; padding: 10px 12px; }
+  .moldura-voto.tipo-cidades .moldura-voto-topo svg { width: 24px; height: 24px; }
+  .moldura-voto.tipo-cidades .lema { font-size: 0.9rem; }
+}
+@media (max-width: 560px) {
+  .moldura-voto.tipo-cidades .cidades-envio-aviso { display: none; }
+  .moldura-voto.tipo-cidades .cidades-lista.linhas { max-height: max(200px, calc(100vh - 520px)); }
+  .moldura-voto.tipo-cidades .saudacao-linha .suave { display: none; }
+}
