@@ -69,7 +69,11 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           <button className="botao com-icone"><Icone nome="busca" tamanho={18} /> Buscar</button>
           {busca && <Link href={`/admin/produtores${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="link">Limpar</Link>}
         </form>
-        <a href={`/admin/produtores/excel?ciclo=${cid}`} className="botao secundario com-icone" download><Icone nome="documento" tamanho={18} /> Baixar Excel</a>
+        <a
+          href={`/admin/produtores/excel?${new URLSearchParams({ ciclo: cid, ...(busca ? { q: busca } : {}), ...(expEscolhida ? { exp: expEscolhida } : {}), ...(totalEscolhido !== null ? { total: String(totalEscolhido) } : {}) })}`}
+          className="botao secundario com-icone" download
+          title={busca || expEscolhida || totalEscolhido !== null ? "Baixa só os produtores do filtro escolhido" : "Baixa todos os produtores"}
+        ><Icone nome="documento" tamanho={18} /> Baixar Excel</a>
         <Link href={`/admin/produtores/novo?ciclo=${cid}`} className="botao com-icone">+ Novo produtor</Link>
       </div>
 

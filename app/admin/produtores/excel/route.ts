@@ -2,11 +2,12 @@ import ExcelJS from "exceljs";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { formatarData } from "@/lib/texto";
+import { formatarData, normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
 type Linha = {
+  id: string;
   expositor: string;
   empresa: string | null;
   tipo: string | null;
@@ -14,6 +15,7 @@ type Linha = {
   municipio: string;
   atividade: string | null;
   exposicao: string | null;
+  exposicao_curta: string | null;
   data_inicio: Date | null;
   data_fim: Date | null;
 };
@@ -50,18 +52,41 @@ function estilizar(ws: ExcelJS.Worksheet, larguras: number[]) {
   ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: ws.columnCount } };
 }
 
-/** Baixa os produtores do ciclo escolhido em Excel: aba por expositor e aba por exposição, em ordem alfabética. */
+/**
+ * Baixa os produtores do ciclo escolhido em Excel: aba por expositor e aba por exposição, em ordem alfabética.
+ * Respeita os filtros da tela (busca, exposição e total de exposições).
+ */
 export async function GET(req: Request) {
   if (!(await ehAdmin())) return new Response("Acesso restrito ao organizador.", { status: 401 });
-  const { ciclo } = await cicloEscolhido(new URL(req.url).searchParams.get("ciclo") ?? undefined);
+  const sp = new URL(req.url).searchParams;
+  const { ciclo } = await cicloEscolhido(sp.get("ciclo") ?? undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
-  const linhas = await sql()<Linha[]>`
-    select p.nome expositor, p.empresa, p.tipo_documento tipo, p.documento, p.municipio, p.atividade,
-           e.nome exposicao, e.data_inicio, e.data_fim
+  const todasLinhas = await sql()<Linha[]>`
+    select p.id, p.nome expositor, p.empresa, p.tipo_documento tipo, p.documento, p.municipio, p.atividade,
+           e.nome exposicao, regexp_replace(e.nome, '^Exposição (Agropecuária )?(de|do|da) ', '') exposicao_curta, e.data_inicio, e.data_fim
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
     left join exposicoes e on e.id = pa.exposicao_id and e.ciclo_id = ${cid}`;
+
+  // Mesmos filtros da tela de Produtores
+  const q = normalizar(sp.get("q") ?? "");
+  const exp = sp.get("exp") || null;
+  const total = /^\d+$/.test(sp.get("total") ?? "") ? Number(sp.get("total")) : null;
+  const expsDe = new Map<string, Set<string>>();
+  for (const l of todasLinhas) {
+    const set = expsDe.get(l.id) ?? new Set<string>();
+    if (l.exposicao_curta) set.add(l.exposicao_curta);
+    expsDe.set(l.id, set);
+  }
+  const passa = (l: Linha) => {
+    const exps = expsDe.get(l.id)!;
+    if (q && !normalizar(`${l.expositor} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) return false;
+    if (exp && !exps.has(exp)) return false;
+    if (total !== null && exps.size !== total) return false;
+    return true;
+  };
+  const linhas = todasLinhas.filter(passa);
 
   const wb = new ExcelJS.Workbook();
   wb.creator = "Circuito Cearense de Exposição";
@@ -85,7 +110,7 @@ export async function GET(req: Request) {
   // Aba 2: exposição em ordem alfabética e, dentro dela, os expositores
   const porExposicao = wb.addWorksheet("Por exposição");
   porExposicao.addRow(["Exposição", "Período", "Expositor", "CPF / CNPJ", "Município"]);
-  for (const l of linhas.filter((x) => x.exposicao).sort((a, b) => comparar(a.exposicao!, b.exposicao!) || comparar(a.expositor, b.expositor))) {
+  for (const l of linhas.filter((x) => x.exposicao && (!exp || x.exposicao_curta === exp)).sort((a, b) => comparar(a.exposicao!, b.exposicao!) || comparar(a.expositor, b.expositor))) {
     porExposicao.addRow([
       l.exposicao,
       l.data_inicio && l.data_fim ? `${formatarData(l.data_inicio)} a ${formatarData(l.data_fim)}` : "",
@@ -97,7 +122,8 @@ export async function GET(req: Request) {
   estilizar(porExposicao, [32, 25, 42, 22, 18]);
 
   const arquivo = await wb.xlsx.writeBuffer();
-  const nome = `produtores-${(ciclo?.nome ?? "circuito").toLowerCase().replace(/\s+/g, "-")}.xlsx`;
+  const base = [ciclo?.nome ?? "circuito", exp ?? "", total !== null ? `${total}-exposicoes` : ""].filter(Boolean).join(" ");
+  const nome = `produtores-${normalizar(base).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}.xlsx`;
   return new Response(arquivo as ArrayBuffer, {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
