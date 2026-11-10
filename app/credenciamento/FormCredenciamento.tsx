@@ -71,8 +71,8 @@ export default function FormCredenciamento({
           </select>
         </div>
         <div>
-          <label htmlFor="instituicao">Prefeitura ou associação</label>
-          <input id="instituicao" name="instituicao" type="text" maxLength={150} required placeholder="Ex.: Prefeitura Municipal de ..." defaultValue={v?.instituicao} onBlur={ajustar} autoCapitalize="words" />
+          <label htmlFor="instituicao">Promotor do Evento</label>
+          <input id="instituicao" name="instituicao" type="text" maxLength={150} required placeholder="Ex.: Prefeitura Municipal ou associação" defaultValue={v?.instituicao} onBlur={ajustar} autoCapitalize="words" />
         </div>
         <div>
           <label htmlFor="responsavel">Nome do responsável</label>
