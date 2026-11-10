@@ -21,7 +21,7 @@ const sinal = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${formatarMedia
  * Diagnóstico da exposição que ficou em último lugar (entre as que receberam avaliação):
  * posição, distância para a penúltima e, pergunta por pergunta, a nota dela comparada com a média do Circuito.
  */
-export default async function Diagnostico({ searchParams }: { searchParams: Promise<{ ciclo?: string; exp?: string }> }) {
+export default async function Diagnostico({ searchParams }: { searchParams: Promise<{ ciclo?: string; exp?: string; todas?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const { ciclo } = await cicloEscolhido(params.ciclo);
@@ -45,6 +45,67 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
 
   const ultima = avaliadas[avaliadas.length - 1];
   const alvo = avaliadas.find((r) => r.exposicao_id === params.exp) ?? ultima;
+  const todas = params.todas === "1" || params.exp === "";
+  const ehUltima = alvo.exposicao_id === ultima.exposicao_id;
+
+  return (
+    <>
+      <CabecalhoAdmin
+        titulo="Avaliação por Circuito"
+        subtitulo={ehUltima ? "A exposição que ficou em último lugar, a que sai do Circuito, e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
+      />
+
+      <div className="diag-impresso so-imprimir">
+        <strong>Circuito Cearense de Exposição · Avaliação por Circuito</strong>
+        <span>{ciclo?.nome ?? ""} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
+      </div>
+
+      <form className="diag-escolha nao-imprimir" method="get">
+        {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
+        <label htmlFor="exp">Ver o diagnóstico de</label>
+        <select id="exp" name="exp" defaultValue={todas ? "" : alvo.exposicao_id}>
+          <option value="">Todas as exposições</option>
+          {avaliadas.map((r) => (
+            <option key={r.exposicao_id} value={r.exposicao_id}>
+              {r.posicao}º · {nomeCurto(r.nome)}{r.exposicao_id === ultima.exposicao_id ? " (última)" : ""}
+            </option>
+          ))}
+        </select>
+        <button className="botao secundario pequeno">Ver</button>
+        {todas ? (
+          <Link className="link" href={`/admin/diagnostico${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`}>Ver só uma</Link>
+        ) : (
+          <Link className="botao secundario pequeno" href={`/admin/diagnostico?${new URLSearchParams({ ...(params.ciclo ? { ciclo: params.ciclo } : {}), todas: "1" })}`}>
+            Ver todas na mesma página
+          </Link>
+        )}
+        <BotaoPdf arquivo={todas ? `Avaliação por Circuito - todas - ${ciclo?.nome ?? "Circuito"}` : `Avaliação ${nomeCurto(alvo.nome)} - ${ciclo?.nome ?? "Circuito"}`} />
+      </form>
+
+      {todas ? (
+        avaliadas.map((r, k) => (
+          <div key={r.exposicao_id} className={k > 0 ? "diag-pagina" : undefined}>
+            <Relatorio alvo={r} avaliadas={avaliadas} ranking={ranking} cid={cid} />
+          </div>
+        ))
+      ) : (
+        <Relatorio alvo={alvo} avaliadas={avaliadas} ranking={ranking} cid={cid} />
+      )}
+
+      {semAvaliacao.length > 0 && (
+        <p className="suave">
+          {semAvaliacao.map((r) => nomeCurto(r.nome)).join(" e ")} {semAvaliacao.length === 1 ? "ainda não recebeu" : "ainda não receberam"} nenhuma avaliação e
+          não {semAvaliacao.length === 1 ? "entra" : "entram"} nesta análise. Veja em <Link href="/admin">Painel</Link>.
+        </p>
+      )}
+    </>
+  );
+}
+
+/** Diagnóstico de uma exposição: posição, números, comparação pergunta a pergunta e distribuição das notas. */
+async function Relatorio({ alvo, avaliadas, ranking, cid }: { alvo: Ranking; avaliadas: Ranking[]; ranking: Ranking[]; cid: string }) {
+  const db = sql();
+  const ultima = avaliadas[avaliadas.length - 1];
   const ehUltima = alvo.exposicao_id === ultima.exposicao_id;
   const empatadasNoFim = avaliadas.filter((r) => r.posicao === ultima.posicao);
   const idx = avaliadas.indexOf(alvo);
@@ -76,32 +137,9 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   const maiorDif = Math.max(0.5, ...comparadas.map((p) => Math.abs(p.dif)));
   const poucas = alvo.questionarios < 3;
 
+
   return (
     <>
-      <CabecalhoAdmin
-        titulo="Avaliação por Circuito"
-        subtitulo={ehUltima ? "A exposição que ficou em último lugar, a que sai do Circuito, e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
-      />
-
-      <div className="diag-impresso so-imprimir">
-        <strong>Circuito Cearense de Exposição · Avaliação por Circuito</strong>
-        <span>{ciclo?.nome ?? ""} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
-      </div>
-
-      <form className="diag-escolha nao-imprimir" method="get">
-        {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
-        <label htmlFor="exp">Ver o diagnóstico de</label>
-        <select id="exp" name="exp" defaultValue={alvo.exposicao_id}>
-          {avaliadas.map((r) => (
-            <option key={r.exposicao_id} value={r.exposicao_id}>
-              {r.posicao}º · {nomeCurto(r.nome)}{r.exposicao_id === ultima.exposicao_id ? " (última)" : ""}
-            </option>
-          ))}
-        </select>
-        <button className="botao secundario pequeno">Ver</button>
-        <BotaoPdf arquivo={`Avaliação ${nomeCurto(alvo.nome)} - ${ciclo?.nome ?? "Circuito"}`} />
-      </form>
-
       <section className="diag-destaque">
         <div className="diag-posicao">
           <span>{alvo.posicao}º</span>
@@ -217,12 +255,6 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
         </section>
       )}
 
-      {semAvaliacao.length > 0 && (
-        <p className="suave">
-          {semAvaliacao.map((r) => nomeCurto(r.nome)).join(" e ")} {semAvaliacao.length === 1 ? "ainda não recebeu" : "ainda não receberam"} nenhuma avaliação e
-          não {semAvaliacao.length === 1 ? "entra" : "entram"} nesta análise. Veja em <Link href="/admin">Painel</Link>.
-        </p>
-      )}
     </>
   );
 }

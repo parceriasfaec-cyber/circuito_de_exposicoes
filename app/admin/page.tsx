@@ -8,6 +8,7 @@ import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarMedia } from "@/lib/escala";
 import { encerrarVotacao, liberarVotacao } from "./actions";
+import FormConfirmar from "./FormConfirmar";
 import Login from "./Login";
 
 export const dynamic = "force-dynamic";
@@ -115,15 +116,24 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                   {votacao.exposicoes_abrir_em && <div><strong>Abre sozinha: {dataHora(votacao.exposicoes_abrir_em)}</strong></div>}
                 </>
               ) : votacao.exposicoes_abrir_em ? (
-                <div><strong>Abre sozinha: {dataHora(votacao.exposicoes_abrir_em)}</strong></div>
+                <>
+                  <div>Abre sozinha: <strong>{dataHora(votacao.exposicoes_abrir_em)}</strong></div>
+                  {votacao.exposicoes_fechar_em && <div>Fecha sozinha: <strong>{dataHora(votacao.exposicoes_fechar_em)}</strong></div>}
+                  <div><Link href="/admin/horario">Alterar horário</Link></div>
+                </>
               ) : "Ainda não foi liberada"}
             </div>
           </div>
           <div className="kpi-acao">
             {votacao.exposicoes_aberta ? (
-              <form action={encerrarVotacao}><input type="hidden" name="modo" value="exposicoes" /><button className="botao perigo pequeno">■ Encerrar avaliação</button></form>
+              <FormConfirmar action={encerrarVotacao} mensagem={votacao.exposicoes_fechar_em ? `Encerrar agora? O horário marcado para fechar (${dataHora(votacao.exposicoes_fechar_em)}) será cancelado.` : null}>
+                <input type="hidden" name="modo" value="exposicoes" /><button className="botao perigo pequeno">■ Encerrar avaliação</button>
+              </FormConfirmar>
             ) : (
-              <form action={liberarVotacao}><input type="hidden" name="modo" value="exposicoes" /><button className="botao pequeno">▶ Liberar avaliação</button></form>
+              <FormConfirmar action={liberarVotacao} mensagem={votacao.exposicoes_abrir_em ? `A avaliação já está programada para abrir sozinha em ${dataHora(votacao.exposicoes_abrir_em)}. Liberar agora mesmo assim?` : null}>
+                <input type="hidden" name="modo" value="exposicoes" />
+                <button className="botao pequeno">▶ {votacao.exposicoes_abrir_em ? "Liberar agora" : "Liberar avaliação"}</button>
+              </FormConfirmar>
             )}
           </div>
         </div>
