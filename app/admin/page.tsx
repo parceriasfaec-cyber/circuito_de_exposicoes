@@ -7,7 +7,7 @@ import { cicloEscolhido } from "@/lib/ciclo";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarMedia } from "@/lib/escala";
-import { encerrarVotacao, liberarVotacao } from "./actions";
+import { encerrarVotacao, liberarVotacao, programarHorarios } from "./actions";
 import Login from "./Login";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +31,17 @@ const curto = nomeCurto;
 const dataHora = (d: Date | null) =>
   d ? d.toLocaleString("pt-BR", { timeZone: TZ, dateStyle: "short", timeStyle: "short" }).replace(",", " às") : "—";
 
-export default async function Admin({ searchParams }: { searchParams: Promise<{ ciclo?: string }> }) {
+/** Date -> "2026-12-12T08:00" na hora de Fortaleza, para o campo datetime-local. */
+const paraCampo = (d: Date | null) => {
+  if (!d) return "";
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(d).map((x) => [x.type, x.value]),
+  );
+  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
+};
+
+export default async function Admin({ searchParams }: { searchParams: Promise<{ ciclo?: string; horario?: string; horario_erro?: string }> }) {
   if (!(await ehAdmin())) {
     return (
       <>
@@ -44,7 +54,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     );
   }
 
-  const { ciclo, ciclos } = await cicloEscolhido((await searchParams).ciclo);
+  const params = await searchParams;
+  const { ciclo, ciclos } = await cicloEscolhido(params.ciclo);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const db = sql();
@@ -82,7 +93,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     where e.ciclo_id = ${cid} group by 1 order by 1`;
 
   const agora = new Date();
-  const pct = t.questionarios ? Math.round((t.respondidos / t.questionarios) * 1000) / 10 : 0;
 
   return (
     <>
@@ -103,9 +113,23 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <div className="kpi-rotulo">Avaliação das exposições</div>
             <div className={`kpi-valor ${votacao.exposicoes_aberta ? "status-aberta" : "status-fechada"}`}>{votacao.exposicoes_aberta ? "Liberada" : "Fechada"}</div>
             <div className="kpi-nota">
-              {votacao.exposicoes_aberta
-                ? `Link: /avaliar${votacao.cidades_aberta ? " · cidades também aberta" : ""}`
-                : votacao.exposicoes_fechada_em ? `Encerrada em ${dataHora(votacao.exposicoes_fechada_em)}` : "Ainda não foi liberada"}
+              {votacao.exposicoes_aberta ? (
+                <>
+                  {votacao.exposicoes_aberta_em && <div>Início: {dataHora(votacao.exposicoes_aberta_em)}</div>}
+                  {votacao.exposicoes_fechar_em && <div><strong>Fecha sozinha: {dataHora(votacao.exposicoes_fechar_em)}</strong></div>}
+                  <div>Link: /avaliar{votacao.cidades_aberta ? " · cidades também aberta" : ""}</div>
+                </>
+              ) : votacao.exposicoes_fechada_em ? (
+                <>
+                  {votacao.exposicoes_aberta_em && votacao.exposicoes_aberta_em < votacao.exposicoes_fechada_em && (
+                    <div>Início: {dataHora(votacao.exposicoes_aberta_em)}</div>
+                  )}
+                  <div>Fim: {dataHora(votacao.exposicoes_fechada_em)}</div>
+                  {votacao.exposicoes_abrir_em && <div><strong>Abre sozinha: {dataHora(votacao.exposicoes_abrir_em)}</strong></div>}
+                </>
+              ) : votacao.exposicoes_abrir_em ? (
+                <div><strong>Abre sozinha: {dataHora(votacao.exposicoes_abrir_em)}</strong></div>
+              ) : "Ainda não foi liberada"}
             </div>
           </div>
           <div className="kpi-acao">
@@ -153,6 +177,34 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           </div>
         </div>
       </div>
+
+      <section className="bloco horario-aval" id="horario">
+        <h2 className="bloco-titulo"><Icone nome="calendario" tamanho={22} /> Horário da avaliação das exposições</h2>
+        <p className="suave" style={{ margin: "6px 0 10px" }}>
+          Marque quando a avaliação abre e quando fecha. Ela abre e fecha sozinha nesses horários (hora de Fortaleza). Os botões
+          Liberar e Encerrar continuam funcionando a qualquer momento.
+        </p>
+        {params.horario === "ok" && <div className="ok">Horário salvo.</div>}
+        {params.horario === "limpo" && <div className="ok">Horários apagados. Abrir e fechar agora só pelos botões.</div>}
+        {params.horario_erro && <div className="erro" role="alert">{params.horario_erro}</div>}
+        <form action={programarHorarios} className="horario-form">
+          <div>
+            <label htmlFor="abrir">Abrir em</label>
+            <input id="abrir" name="abrir" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_abrir_em)} disabled={votacao.exposicoes_aberta} />
+            {votacao.exposicoes_aberta && <small className="suave">Já está aberta.</small>}
+          </div>
+          <div>
+            <label htmlFor="fechar">Fechar em</label>
+            <input id="fechar" name="fechar" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_fechar_em)} />
+          </div>
+          <div className="horario-botoes">
+            <button className="botao" name="acao" value="salvar">Salvar horário</button>
+            {(votacao.exposicoes_abrir_em || votacao.exposicoes_fechar_em) && (
+              <button className="botao secundario" name="acao" value="limpar">Apagar horários</button>
+            )}
+          </div>
+        </form>
+      </section>
 
       <div className="painel-grade">
         <section className="bloco">
@@ -202,8 +254,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
 
         <div className="coluna-graficos">
           <section className="bloco">
-            <h2 className="bloco-titulo claro"><Icone nome="grafico" tamanho={22} /> Resumo da Votação</h2>
-            <Rosca respondidos={t.respondidos} total={t.questionarios} pct={pct} />
+            <h2 className="bloco-titulo claro"><Icone nome="usuarios" tamanho={22} /> Participantes por Exposição</h2>
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} />
           </section>
           <section className="bloco">
             <h2 className="bloco-titulo claro"><Icone nome="grafico" tamanho={22} /> Evolução das Respostas</h2>
@@ -250,25 +302,43 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   );
 }
 
-function Rosca({ respondidos, total, pct }: { respondidos: number; total: number; pct: number }) {
-  const r = 50;
-  const c = 2 * Math.PI * r;
-  const fracao = total ? respondidos / total : 0;
+/**
+ * Total de produtores do ciclo e, para cada exposição, a barra do total de participantes
+ * com a parte de quem já fez a avaliação (o tamanho da barra acompanha o número de participantes).
+ */
+function Participacao({ progresso, produtores, completos }: { progresso: Progresso[]; produtores: number; completos: number }) {
+  const lista = [...progresso].sort((a, b) => b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
+  const maior = Math.max(1, ...lista.map((p) => p.na_lista));
   return (
-    <div className="rosca">
-      <svg viewBox="0 0 140 140" width="150" height="150" role="img" aria-label={`${pct}% respondido`}>
-        <circle cx="70" cy="70" r={r} fill="none" stroke="#e6ece3" strokeWidth="22" />
-        <circle
-          cx="70" cy="70" r={r} fill="none" stroke="#2a7a3b" strokeWidth="22" strokeLinecap="butt"
-          strokeDasharray={`${c * fracao} ${c}`} transform="rotate(-90 70 70)"
-        />
-        <text x="70" y="70" textAnchor="middle" className="rosca-pct">{pct.toLocaleString("pt-BR")}%</text>
-        <text x="70" y="90" textAnchor="middle" className="rosca-rot">respondido</text>
-      </svg>
-      <ul className="legenda">
-        <li><span className="ponto cheio" /> Respondidos <strong>{respondidos}</strong></li>
-        <li><span className="ponto" /> Pendentes <strong>{total - respondidos}</strong></li>
+    <div className="part">
+      <div className="part-topo">
+        <div><strong>{produtores}</strong><small>produtores no ciclo</small></div>
+        <div><strong>{completos}</strong><small>já avaliaram tudo</small></div>
+      </div>
+      <ul className="part-legenda">
+        <li><span className="ponto cheio" /> Avaliaram</li>
+        <li><span className="ponto" /> Participantes</li>
       </ul>
+      {lista.length === 0 ? (
+        <p className="suave" style={{ margin: 0 }}>Nenhuma exposição neste ciclo.</p>
+      ) : (
+        <ul className="part-lista">
+          {lista.map((p) => {
+            const pct = p.na_lista ? Math.round((p.responderam / p.na_lista) * 100) : 0;
+            return (
+              <li key={p.nome} title={`${p.nome}: ${p.responderam} de ${p.na_lista} participantes avaliaram (${pct}%)`}>
+                <div className="part-linha">
+                  <span className="part-nome">{curto(p.nome)}</span>
+                  <span className="part-num"><strong>{p.responderam}</strong> de {p.na_lista} <small>({pct}%)</small></span>
+                </div>
+                <div className="part-trilho" style={{ width: `${Math.max(8, (p.na_lista / maior) * 100)}%` }}>
+                  <span style={{ width: `${pct}%` }} />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

@@ -90,6 +90,7 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
   const id = texto(form, "id");
   const nome = nomeProprio(texto(form, "nome"));
   const municipio = texto(form, "municipio");
+  const empresa = texto(form, "empresa").replace(/\s+/g, " ") || null;
   const atividade = texto(form, "atividade") || null;
   let tipo: string | null = texto(form, "tipo_documento") || null;
   let documento: string | null = texto(form, "documento") || null;
@@ -126,12 +127,12 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
       let produtorId = id;
       if (id) {
         if (!UUID.test(id)) throw new Error("INVALIDO");
-        await tx`update produtores set nome = ${nome}, municipio = ${municipio}, atividade = ${atividade},
+        await tx`update produtores set nome = ${nome}, empresa = ${empresa}, municipio = ${municipio}, atividade = ${atividade},
                  tipo_documento = ${tipo}, documento = ${documento} where id = ${id}`;
       } else {
         const [novo] = await tx<{ id: string }[]>`
-          insert into produtores (nome, municipio, atividade, tipo_documento, documento)
-          values (${nome}, ${municipio}, ${atividade}, ${tipo}, ${documento}) returning id`;
+          insert into produtores (nome, empresa, municipio, atividade, tipo_documento, documento)
+          values (${nome}, ${empresa}, ${municipio}, ${atividade}, ${tipo}, ${documento}) returning id`;
         produtorId = novo.id;
         salvoId = novo.id;
       }
@@ -280,8 +281,8 @@ export async function juntarProdutores(form: FormData) {
   const [{ n }] = await db<{ n: number }[]>`select count(*)::int n from avaliacoes where produtor_id = ${origem}`;
   if (n > 0) redirect(`/admin/produtores/${origem}?erro=juntar-avaliou`);
   await db.begin(async (tx) => {
-    const [o] = await tx<{ tipo_documento: string | null; documento: string | null; atividade: string | null }[]>`
-      select tipo_documento, documento, atividade from produtores where id = ${origem}`;
+    const [o] = await tx<{ tipo_documento: string | null; documento: string | null; atividade: string | null; empresa: string | null }[]>`
+      select tipo_documento, documento, atividade, empresa from produtores where id = ${origem}`;
     if (!o) return;
     await tx`insert into participacoes (produtor_id, exposicao_id)
              select ${destino}::uuid, exposicao_id from participacoes where produtor_id = ${origem}
@@ -290,7 +291,8 @@ export async function juntarProdutores(form: FormData) {
     await tx`update produtores set
                tipo_documento = coalesce(tipo_documento, ${o.tipo_documento}),
                documento = coalesce(documento, ${o.documento}),
-               atividade = coalesce(atividade, ${o.atividade})
+               atividade = coalesce(atividade, ${o.atividade}),
+               empresa = coalesce(empresa, ${o.empresa})
              where id = ${destino}`;
   });
   revalidatePath("/admin");

@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 type Linha = {
   expositor: string;
+  empresa: string | null;
   tipo: string | null;
   documento: string | null;
   municipio: string;
@@ -56,7 +57,7 @@ export async function GET(req: Request) {
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const linhas = await sql()<Linha[]>`
-    select p.nome expositor, p.tipo_documento tipo, p.documento, p.municipio, p.atividade,
+    select p.nome expositor, p.empresa, p.tipo_documento tipo, p.documento, p.municipio, p.atividade,
            e.nome exposicao, e.data_inicio, e.data_fim
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
@@ -67,7 +68,7 @@ export async function GET(req: Request) {
 
   // Aba 1: um produtor por linha, com todas as exposições dele
   const porExpositor = wb.addWorksheet("Por expositor");
-  porExpositor.addRow(["Expositor", "CPF / CNPJ", "Município", "Atividade", "Qtd. exposições", "Exposições"]);
+  porExpositor.addRow(["Expositor", "Empresa", "CPF / CNPJ", "Município", "Atividade", "Qtd. exposições", "Exposições"]);
   const pessoas = new Map<string, { l: Linha; exps: Set<string> }>();
   for (const l of linhas) {
     const k = `${l.expositor}|${l.documento ?? ""}|${l.municipio}`;
@@ -77,9 +78,9 @@ export async function GET(req: Request) {
   }
   for (const { l, exps } of [...pessoas.values()].sort((a, b) => comparar(a.l.expositor, b.l.expositor))) {
     const lista = [...exps].sort(comparar);
-    porExpositor.addRow([l.expositor, doc(l.tipo, l.documento), l.municipio, l.atividade ?? "", lista.length, lista.join("; ")]);
+    porExpositor.addRow([l.expositor, l.empresa ?? "", doc(l.tipo, l.documento), l.municipio, l.atividade ?? "", lista.length, lista.join("; ")]);
   }
-  estilizar(porExpositor, [42, 22, 18, 22, 10, 70]);
+  estilizar(porExpositor, [42, 32, 22, 18, 22, 10, 70]);
 
   // Aba 2: exposição em ordem alfabética e, dentro dela, os expositores
   const porExposicao = wb.addWorksheet("Por exposição");

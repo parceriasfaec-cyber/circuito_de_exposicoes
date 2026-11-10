@@ -22,16 +22,17 @@ export default async function EditarProdutor({ params, searchParams }: { params:
   const db = sql();
   const exposicoes = await db<{ id: string; nome: string }[]>`select id, nome from exposicoes where ciclo_id = ${cid} order by data_inicio, nome`;
 
-  let dados = { id: "", nome: "", municipio: "", atividade: "", tipo_documento: "CPF", documento: "", participa: [] as string[], avaliadas: [] as string[] };
+  let dados = { id: "", nome: "", empresa: "", municipio: "", atividade: "", tipo_documento: "CPF", documento: "", participa: [] as string[], avaliadas: [] as string[] };
   if (!novo) {
-    const [p] = await db<{ nome: string; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null }[]>`
-      select nome, municipio, atividade, tipo_documento, documento from produtores where id = ${id}`;
+    const [p] = await db<{ nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null }[]>`
+      select nome, empresa, municipio, atividade, tipo_documento, documento from produtores where id = ${id}`;
     if (!p) notFound();
     const part = await db<{ exposicao_id: string }[]>`select exposicao_id from participacoes where produtor_id = ${id}`;
     const aval = await db<{ exposicao_id: string }[]>`select exposicao_id from avaliacoes where produtor_id = ${id}`;
     dados = {
       id,
       nome: p.nome,
+      empresa: p.empresa ?? "",
       municipio: p.municipio,
       atividade: p.atividade ?? "",
       tipo_documento: p.tipo_documento ?? "",

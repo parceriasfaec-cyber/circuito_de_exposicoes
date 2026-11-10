@@ -1888,3 +1888,29 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .prod-filtro { align-items: center; margin: 0 0 12px; }
 .prod-filtro-rotulo { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: var(--verde-escuro); margin-right: 4px; }
 .prod-filtro .filtro { text-decoration: none; }
+
+/* Painel: participantes por exposição (total de produtores e quem já avaliou em cada exposição) */
+.part-topo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 10px; }
+.part-topo div { display: grid; background: var(--verde-claro); border-radius: 12px; padding: 10px 14px; }
+.part-topo strong { font-size: 1.7rem; font-weight: 900; color: var(--verde-escuro); line-height: 1.1; }
+.part-topo small { color: var(--suave); font-size: 0.82rem; }
+.part-legenda { list-style: none; display: flex; gap: 16px; margin: 0 0 8px; padding: 0; font-size: 0.85rem; color: var(--suave); }
+.part-legenda li { display: inline-flex; align-items: center; gap: 6px; }
+.part-legenda .ponto { width: 12px; height: 12px; }
+.part-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.part-linha { display: flex; justify-content: space-between; gap: 8px; font-size: 0.9rem; margin-bottom: 4px; }
+.part-nome { font-weight: 700; color: var(--texto); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.part-num { flex: none; color: var(--suave); font-variant-numeric: tabular-nums; }
+.part-num strong { color: var(--verde-escuro); }
+.part-trilho { height: 12px; border-radius: 6px; background: #e6ece3; overflow: hidden; }
+.part-trilho span { display: block; height: 100%; border-radius: 6px; background: var(--verde); }
+
+/* Painel: horário programado da avaliação das exposições */
+.horario-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 12px 16px; align-items: end; }
+.horario-form label { display: block; font-weight: 800; color: var(--verde-escuro); margin: 0 0 6px; }
+.horario-form input { width: 100%; font: inherit; padding: 9px 12px; border: 1.5px solid var(--borda); border-radius: 10px; background: #fff; }
+.horario-form input:disabled { background: #f1f4ef; color: var(--suave); }
+.horario-botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.horario-botoes .botao { margin: 0; }
+@media (max-width: 760px) { .horario-form { grid-template-columns: 1fr; } }
+.prod-empresa { font-size: 0.88rem; font-weight: 700; color: var(--verde); }

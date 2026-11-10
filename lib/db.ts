@@ -30,6 +30,12 @@ export type Votacao = {
   codigo_do_dia: string | null;
   /** Última vez que alguma das duas foi liberada (o código do dia vale para essa data). */
   aberta_em: Date | null;
+  /** Quando cada uma começou (a última vez que passou de fechada para aberta). */
+  exposicoes_aberta_em: Date | null;
+  cidades_aberta_em: Date | null;
+  /** Programado no Painel: a avaliação das exposições abre / fecha sozinha nestes horários. */
+  exposicoes_abrir_em: Date | null;
+  exposicoes_fechar_em: Date | null;
   exposicoes_fechada_em: Date | null;
   cidades_fechada_em: Date | null;
   /** Na votação das cidades: todos os produtores ou só quem avaliou alguma exposição do ciclo ativo. */
@@ -37,14 +43,16 @@ export type Votacao = {
 };
 
 export async function lerVotacao(): Promise<Votacao> {
+  // Abre ou fecha a avaliação se chegou um horário programado no Painel.
+  await sql()`select exposicao_cearense.aplicar_horarios()`;
   const [v] = await sql()<Votacao[]>`
     select (exposicoes_aberta or cidades_aberta) aberta, exposicoes_aberta, cidades_aberta, codigo_do_dia, aberta_em,
-           exposicoes_fechada_em, cidades_fechada_em, cidades_quem
+           exposicoes_aberta_em, cidades_aberta_em, exposicoes_abrir_em, exposicoes_fechar_em, exposicoes_fechada_em, cidades_fechada_em, cidades_quem
     from exposicao_cearense.votacao where id = 1`;
   return (
     v ?? {
       aberta: false, exposicoes_aberta: false, cidades_aberta: false, codigo_do_dia: null, aberta_em: null,
-      exposicoes_fechada_em: null, cidades_fechada_em: null, cidades_quem: "todos",
+      exposicoes_aberta_em: null, cidades_aberta_em: null, exposicoes_abrir_em: null, exposicoes_fechar_em: null, exposicoes_fechada_em: null, cidades_fechada_em: null, cidades_quem: "todos",
     }
   );
 }

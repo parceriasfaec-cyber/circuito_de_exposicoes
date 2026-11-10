@@ -60,6 +60,9 @@ export async function liberarVotacao(form?: FormData) {
            and (aberta_em at time zone 'America/Fortaleza')::date = (now() at time zone 'America/Fortaleza')::date
           then codigo_do_dia else ${novo} end,
         aberta_em = now(),
+        exposicoes_aberta_em = case when ${!cidades} and not exposicoes_aberta then now() else exposicoes_aberta_em end,
+        cidades_aberta_em = case when ${cidades} and not cidades_aberta then now() else cidades_aberta_em end,
+        exposicoes_abrir_em = case when ${!cidades} then null else exposicoes_abrir_em end,
         exposicoes_aberta = exposicoes_aberta or ${!cidades},
         cidades_aberta = cidades_aberta or ${cidades},
         cidades_quem = case when ${cidades} then ${quem} else cidades_quem end,
@@ -78,6 +81,42 @@ export async function alterarQuemVota(form: FormData) {
   redirect("/admin/proximo?quem=1");
 }
 
+/** "2026-12-12T08:00" digitado no Painel (hora de Fortaleza, UTC-3, sem horário de verão) -> Date. */
+function horaFortaleza(v: FormDataEntryValue | null): Date | null | "invalida" {
+  const s = String(v ?? "").trim();
+  if (!s) return null;
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(s)) return "invalida";
+  const d = new Date(`${s}:00-03:00`);
+  return Number.isNaN(d.getTime()) ? "invalida" : d;
+}
+
+/**
+ * Programa o horário em que a avaliação das exposições abre e/ou fecha sozinha.
+ * Campo vazio = sem horário (abrir ou fechar continua pelo botão).
+ */
+export async function programarHorarios(form: FormData) {
+  await exigirAdmin();
+  if (form.get("acao") === "limpar") {
+    await sql()`update exposicao_cearense.votacao set exposicoes_abrir_em = null, exposicoes_fechar_em = null where id = 1`;
+    revalidatePath("/admin");
+    redirect("/admin?horario=limpo#horario");
+  }
+  const abrir = horaFortaleza(form.get("abrir"));
+  const fechar = horaFortaleza(form.get("fechar"));
+  const erro = (m: string) => redirect(`/admin?horario_erro=${encodeURIComponent(m)}#horario`);
+  if (abrir === "invalida" || fechar === "invalida") erro("Data ou hora inválida.");
+  const a = abrir as Date | null;
+  const f = fechar as Date | null;
+  if (!a && !f) erro("Preencha o horário de abrir, o de fechar ou os dois.");
+  const agora = Date.now();
+  if (f && f.getTime() <= agora) erro("O horário de fechar já passou.");
+  if (a && f && f <= a) erro("O horário de fechar precisa ser depois do de abrir.");
+  if (a && a.getTime() <= agora - 60_000) erro("O horário de abrir já passou. Para abrir agora, use o botão Liberar avaliação.");
+  await sql()`update exposicao_cearense.votacao set exposicoes_abrir_em = ${a}, exposicoes_fechar_em = ${f} where id = 1`;
+  revalidatePath("/admin");
+  redirect("/admin?horario=ok#horario");
+}
+
 /** Encerra só a avaliação das exposições (modo=exposicoes) ou só a votação das cidades (modo=cidades). */
 export async function encerrarVotacao(form?: FormData) {
   await exigirAdmin();
@@ -86,6 +125,7 @@ export async function encerrarVotacao(form?: FormData) {
     update exposicao_cearense.votacao
     set exposicoes_aberta = exposicoes_aberta and ${cidades},
         exposicoes_fechada_em = case when ${!cidades} then now() else exposicoes_fechada_em end,
+        exposicoes_fechar_em = case when ${!cidades} then null else exposicoes_fechar_em end,
         cidades_aberta = cidades_aberta and ${!cidades},
         cidades_fechada_em = case when ${cidades} then now() else cidades_fechada_em end,
         aberta = (exposicoes_aberta and ${cidades}) or (cidades_aberta and ${!cidades}),

@@ -8,6 +8,7 @@ import { nomeCurto } from "@/lib/texto";
 type Dados = {
   id: string;
   nome: string;
+  empresa: string;
   municipio: string;
   atividade: string;
   tipo_documento: string;
@@ -39,6 +40,10 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
         <div style={{ gridColumn: "1 / -1" }}>
           <label htmlFor="nome">Nome completo</label>
           <input id="nome" name="nome" type="text" defaultValue={dados.nome} required />
+        </div>
+        <div style={{ gridColumn: "1 / -1" }}>
+          <label htmlFor="empresa">Nome da empresa <span className="suave" style={{ fontWeight: 400 }}>(opcional)</span></label>
+          <input id="empresa" name="empresa" type="text" defaultValue={dados.empresa} placeholder="Ex.: Fazenda Boa Vista Ltda" />
         </div>
         <div>
           <label htmlFor="municipio">Município</label>

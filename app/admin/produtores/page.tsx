@@ -9,7 +9,7 @@ import { normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
-type Linha = { id: string; nome: string; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null };
+type Linha = { id: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null };
 const POR_PAGINA = 25;
 
 /** Documento completo, com pontuação (tela só do organizador). */
@@ -29,7 +29,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const todos = await sql()<Linha[]>`
-    select p.id, p.nome, p.municipio, p.atividade, p.tipo_documento, p.documento,
+    select p.id, p.nome, p.empresa, p.municipio, p.atividade, p.tipo_documento, p.documento,
            array_remove(array_agg(regexp_replace(e.nome, '^Exposição (Agropecuária )?(de|do|da) ', '') order by e.data_inicio), null) exposicoes
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
@@ -37,7 +37,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
     group by p.id order by p.nome, p.municipio`;
 
   const q = normalizar(busca);
-  const achados = q ? todos.filter((l) => normalizar(`${l.nome} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) : todos;
+  const achados = q ? todos.filter((l) => normalizar(`${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) : todos;
   const totalDe = (l: Linha) => l.exposicoes?.length ?? 0;
   // Filtro pelo total de exposições: um botão para cada total que existe, com quantos produtores têm esse total.
   const porTotal = new Map<number, number>();
@@ -64,7 +64,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           {totalEscolhido !== null && <input type="hidden" name="total" value={totalEscolhido} />}
           <div className="busca-campo">
             <Icone nome="busca" tamanho={20} />
-            <input type="text" name="q" defaultValue={busca} placeholder="Buscar por nome, município, documento ou atividade..." />
+            <input type="text" name="q" defaultValue={busca} placeholder="Buscar por nome, empresa, município, documento ou atividade..." />
           </div>
           <button className="botao com-icone"><Icone nome="busca" tamanho={18} /> Buscar</button>
           {busca && <Link href={`/admin/produtores${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="link">Limpar</Link>}
@@ -106,6 +106,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                       <span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={20} /></span>
                       <div>
                         <div className="nome">{l.nome}</div>
+                        {l.empresa && <div className="prod-empresa">{l.empresa}</div>}
                         <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>
                       </div>
                     </div>
