@@ -55,45 +55,62 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         <Link href={`/admin/produtores/novo?ciclo=${cid}`} className="botao com-icone">+ Novo produtor</Link>
       </div>
 
-      <table className="tabela-org">
-        <thead>
-          <tr>
-            <th><span><Icone nome="usuario" tamanho={18} /> Produtor</span></th>
-            <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
-            <th>Atividade</th>
-            <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
-            <th style={{ textAlign: "center" }}>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {visiveis.map((l) => (
-            <tr key={l.id}>
-              <td className="c-produtor">
-                <div className="nome">{l.nome}</div>
-                <div className="doc">{mascararDocumento(l.tipo_documento, l.documento)}</div>
-              </td>
-              <td className="c-municipio"><span className="municipio"><Icone nome="local" tamanho={16} />{l.municipio}</span></td>
-              <td className="c-exposicoes">{l.atividade ?? <span className="suave">—</span>}</td>
-              <td className="c-exposicoes">
-                {l.exposicoes && l.exposicoes.length > 0 ? l.exposicoes.join(", ") : <span className="suave">nenhuma neste ciclo</span>}
-              </td>
-              <td className="c-acoes" style={{ textAlign: "center" }}>
-                <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes">Editar</Link>
-              </td>
+      <div className="prod-quadro">
+        <table className="tabela-org prod-tabela">
+          <thead>
+            <tr>
+              <th><span><Icone nome="usuario" tamanho={18} /> Produtor</span></th>
+              <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
+              <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
+              <th className="centro">Total</th>
+              <th className="centro">Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="rodape-tabela">
-        <span className="total"><Icone nome="grafico" tamanho={20} /> Total de produtores: {filtrados.length}</span>
-        {paginas > 1 && (
-          <nav className="paginas" aria-label="Páginas">
-            {Array.from({ length: paginas }, (_, i) => i + 1).map((n) =>
-              n === pagina ? <span key={n} className="atual">{n}</span> : <Link key={n} href={url(n)}>{n}</Link>,
+          </thead>
+          <tbody>
+            {visiveis.length === 0 && (
+              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum produtor encontrado.</td></tr>
             )}
-          </nav>
-        )}
+            {visiveis.map((l) => {
+              const exps = l.exposicoes ?? [];
+              return (
+                <tr key={l.id}>
+                  <td className="c-produtor">
+                    <div className="prod-pessoa">
+                      <span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={20} /></span>
+                      <div>
+                        <div className="nome">{l.nome}</div>
+                        <div className="doc">{mascararDocumento(l.tipo_documento, l.documento)}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="c-municipio"><span className="municipio"><Icone nome="local" tamanho={16} />{l.municipio}</span></td>
+                  <td className="c-exposicoes">
+                    {exps.length > 0 ? (
+                      <div className="prod-chips">{exps.map((e, i) => <span key={i} className="prod-chip">{e}</span>)}</div>
+                    ) : <span className="suave">nenhuma neste ciclo</span>}
+                  </td>
+                  <td className="c-total centro">
+                    <span className={`prod-total${exps.length === 0 ? " zero" : ""}`} title={`${exps.length} ${exps.length === 1 ? "exposição" : "exposições"}`}>{exps.length}</span>
+                  </td>
+                  <td className="c-acoes centro">
+                    <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes"><Icone nome="lapis" tamanho={16} /> Editar</Link>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <div className="rodape-tabela">
+          <span className="total"><Icone nome="grafico" tamanho={20} /> Total de produtores: {filtrados.length}</span>
+          {paginas > 1 && (
+            <nav className="paginas" aria-label="Páginas">
+              {Array.from({ length: paginas }, (_, i) => i + 1).map((n) =>
+                n === pagina ? <span key={n} className="atual">{n}</span> : <Link key={n} href={url(n)}>{n}</Link>,
+              )}
+            </nav>
+          )}
+        </div>
       </div>
     </>
   );

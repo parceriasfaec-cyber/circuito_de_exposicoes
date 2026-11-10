@@ -1866,3 +1866,22 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .cidade-chip-num { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--verde-escuro); color: #fff; font-size: 0.72rem; }
 .cidade-chip-x { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--verde-claro); font-size: 1rem; line-height: 1; }
 .cidades-escolhidas-vazio, .cidades-escolhidas-dica { color: var(--suave); font-size: 0.8rem; font-style: italic; }
+
+/* Produtores: quadro com cabeçalho verde, avatar, exposições em etiquetas e total por produtor */
+.prod-quadro { background: #fff; border: 1.5px solid var(--borda); border-radius: 18px; box-shadow: 0 4px 16px rgba(29, 94, 44, 0.07); overflow: hidden; }
+.prod-quadro .prod-tabela { border: 0; border-radius: 0; }
+.prod-tabela th.centro, .prod-tabela td.centro { text-align: center; }
+.prod-tabela thead th span svg { color: #fff; }
+.prod-pessoa { display: flex; align-items: center; gap: 12px; }
+.prod-avatar { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--verde-claro); color: var(--verde-escuro); }
+.prod-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.prod-chip { background: var(--verde-claro); color: var(--verde-escuro); font-weight: 700; font-size: 0.85rem; padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+.prod-total { display: inline-grid; place-items: center; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 10px; background: var(--verde-escuro); color: #fff; font-weight: 900; font-variant-numeric: tabular-nums; }
+.prod-total.zero { background: #eef1ec; color: var(--suave); }
+.prod-quadro .botao-detalhes { border-radius: 12px; padding: 8px 16px; }
+.prod-quadro .rodape-tabela { margin: 0; padding: 10px 12px 12px; }
+@media (max-width: 760px) {
+  .prod-quadro { border: 0; box-shadow: none; background: transparent; }
+  .prod-quadro .rodape-tabela { padding: 0; }
+  .prod-tabela td.c-total { grid-column: 2; grid-row: 1; justify-self: end; }
+}
