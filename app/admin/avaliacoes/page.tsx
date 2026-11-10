@@ -157,8 +157,8 @@ export default async function Avaliacoes({
                     </ul>
                   </td>
                   <td className="c-acoes" style={{ textAlign: "center" }}>
-                    <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes">
-                      <Icone nome="olho" tamanho={16} /> Ver detalhes
+                    <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-ver" aria-label="Ver detalhes da avaliação">
+                      Detalhes <Icone nome="direita" tamanho={16} />
                     </Link>
                   </td>
                 </tr>
