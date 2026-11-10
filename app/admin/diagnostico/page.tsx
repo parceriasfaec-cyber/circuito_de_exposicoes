@@ -12,7 +12,7 @@ import BotaoPdf, { ImprimirAoAbrir } from "./BotaoPdf";
 export const dynamic = "force-dynamic";
 
 type Ranking = { exposicao_id: string; posicao: number; nome: string; questionarios: number; pontos: number; media_produtor: number | null };
-type Pergunta = { ordem: number; texto: string; exp: number | null; circuito: number | null };
+type Pergunta = { ordem: number; texto: string; exp: number | null; circuito: number | null; pontos: number | null };
 
 const fmt = (n: number | null) => (n === null ? "—" : formatarMedia(n));
 const sinal = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${formatarMedia(Math.abs(n))}`;
@@ -119,6 +119,7 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
   const perguntas = await db<Pergunta[]>`
     select q.ordem, min(q.texto) texto,
            (avg(r.nota) filter (where q.exposicao_id = ${alvo.exposicao_id}))::float exp,
+           (sum(r.nota) filter (where q.exposicao_id = ${alvo.exposicao_id}))::int pontos,
            avg(r.nota)::float circuito
     from respostas r
     join perguntas q on q.id = r.pergunta_id
@@ -217,7 +218,7 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
         <div className="tabela">
           <table className="tabela-simples diag-tabela">
             <thead>
-              <tr><th>Pergunta</th><th className="num">Esta exposição</th><th className="num">Média do Circuito</th><th>Diferença</th></tr>
+              <tr><th>Pergunta</th><th className="num">Esta exposição</th><th className="num">Média do Circuito</th><th>Diferença</th><th className="num">Total de pontos</th></tr>
             </thead>
             <tbody>
               {comparadas.map((p) => {
@@ -238,10 +239,20 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
                       </div>
                       <small className={p.dif < 0 ? "diag-neg" : "diag-pos"}>{sinal(p.dif)}</small>
                     </td>
+                    <td className="num"><strong>{p.pontos ?? 0}</strong></td>
                   </tr>
                 );
               })}
             </tbody>
+            <tfoot>
+              <tr className="diag-total">
+                <td>Total</td>
+                <td className="num"><strong>{fmt(alvo.media_produtor)}</strong></td>
+                <td className="num">{formatarMedia(mediaCircuito)}</td>
+                <td><small className={(alvo.media_produtor ?? 0) < mediaCircuito ? "diag-neg" : "diag-pos"}>{sinal((alvo.media_produtor ?? 0) - mediaCircuito)}</small></td>
+                <td className="num"><strong>{comparadas.reduce((n, p) => n + (p.pontos ?? 0), 0)}</strong></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
         <p className="suave" style={{ margin: "10px 0 0" }}>Notas de 1 (muito ruim) a 5 (excelente). Em vermelho, as perguntas em que a exposição mais ficou abaixo da média.</p>

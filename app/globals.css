@@ -2031,3 +2031,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 }
 /* Avaliação por Circuito: todas as exposições na mesma página, uma depois da outra */
 .diag-pagina { border-top: 3px dashed var(--verde-borda); padding-top: 18px; margin-top: 22px; }
+.diag-tabela tfoot td { border-top: 2px solid var(--verde-escuro); background: var(--verde-claro); font-weight: 800; color: var(--verde-escuro); }
