@@ -117,6 +117,14 @@ export async function programarHorarios(form: FormData) {
   redirect("/admin/horario?horario=ok");
 }
 
+/** Apaga o início e o fim registrados da avaliação das exposições (só quando ela está fechada). */
+export async function limparInicioFim() {
+  await exigirAdmin();
+  await sql()`update exposicao_cearense.votacao set exposicoes_aberta_em = null, exposicoes_fechada_em = null where id = 1 and not exposicoes_aberta`;
+  revalidatePath("/admin", "layout");
+  redirect("/admin/horario?horario=historico");
+}
+
 /** Encerra só a avaliação das exposições (modo=exposicoes) ou só a votação das cidades (modo=cidades). */
 export async function encerrarVotacao(form?: FormData) {
   await exigirAdmin();

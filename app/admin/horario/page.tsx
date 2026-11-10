@@ -4,6 +4,7 @@ import Icone from "@/components/Icone";
 import { lerVotacao } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { programarHorarios } from "../actions";
+import BotaoLimpar from "./BotaoLimpar";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,7 @@ export default async function HorarioAvaliacao({ searchParams }: { searchParams:
           Liberar e Encerrar continuam funcionando a qualquer momento.
         </p>
         {params.horario === "ok" && <div className="ok">Horário salvo.</div>}
+        {params.horario === "historico" && <div className="ok">Início e fim excluídos.</div>}
         {params.horario === "limpo" && <div className="ok">Horários apagados. Abrir e fechar agora só pelos botões.</div>}
         {params.horario_erro && <div className="erro" role="alert">{params.horario_erro}</div>}
         <form action={programarHorarios} className="horario-form">
@@ -62,16 +64,18 @@ export default async function HorarioAvaliacao({ searchParams }: { searchParams:
 
       <section className="bloco">
         <h2 className="bloco-titulo"><Icone nome="prancheta" tamanho={22} /> Situação agora</h2>
-        <p className={votacao.exposicoes_aberta ? "status-aberta" : "status-fechada"} style={{ margin: "0 0 6px", fontWeight: 800 }}>
-          {votacao.exposicoes_aberta ? "A avaliação está aberta." : "A avaliação está fechada."}
-        </p>
-        <ul className="horario-situacao">
-          {votacao.exposicoes_aberta_em && <li>Início: <strong>{dataHora(votacao.exposicoes_aberta_em)}</strong></li>}
-          {!votacao.exposicoes_aberta && votacao.exposicoes_fechada_em && <li>Fim: <strong>{dataHora(votacao.exposicoes_fechada_em)}</strong></li>}
-          {votacao.exposicoes_abrir_em && <li>Abre sozinha: <strong>{dataHora(votacao.exposicoes_abrir_em)}</strong></li>}
-          {votacao.exposicoes_fechar_em && <li>Fecha sozinha: <strong>{dataHora(votacao.exposicoes_fechar_em)}</strong></li>}
-          {!votacao.exposicoes_abrir_em && !votacao.exposicoes_fechar_em && <li className="suave">Nenhum horário marcado.</li>}
-        </ul>
+        {/* Tudo numa linha: situação, início, fim, horários marcados e o botão de excluir. */}
+        <div className="horario-linha">
+          <strong className={votacao.exposicoes_aberta ? "status-aberta" : "status-fechada"}>
+            {votacao.exposicoes_aberta ? "Aberta" : "Fechada"}
+          </strong>
+          {votacao.exposicoes_aberta_em && <span>Início: <strong>{dataHora(votacao.exposicoes_aberta_em)}</strong></span>}
+          {!votacao.exposicoes_aberta && votacao.exposicoes_fechada_em && <span>Fim: <strong>{dataHora(votacao.exposicoes_fechada_em)}</strong></span>}
+          {votacao.exposicoes_abrir_em && <span>Abre sozinha: <strong>{dataHora(votacao.exposicoes_abrir_em)}</strong></span>}
+          {votacao.exposicoes_fechar_em && <span>Fecha sozinha: <strong>{dataHora(votacao.exposicoes_fechar_em)}</strong></span>}
+          {!votacao.exposicoes_abrir_em && !votacao.exposicoes_fechar_em && <span className="suave">Nenhum horário marcado</span>}
+          {!votacao.exposicoes_aberta && (votacao.exposicoes_aberta_em || votacao.exposicoes_fechada_em) && <BotaoLimpar />}
+        </div>
       </section>
     </>
   );
