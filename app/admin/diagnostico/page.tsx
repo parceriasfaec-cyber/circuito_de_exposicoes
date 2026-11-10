@@ -36,7 +36,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   if (avaliadas.length === 0) {
     return (
       <>
-        <CabecalhoAdmin titulo="Quem sai do Circuito" subtitulo="A exposição que ficou em último lugar e por quê." />
+        <CabecalhoAdmin titulo="Avaliação por Circuito" subtitulo="A exposição que ficou em último lugar e por quê." />
         <div className="cartao"><p style={{ margin: 0 }}>Nenhuma exposição recebeu avaliação ainda.</p></div>
       </>
     );
@@ -78,7 +78,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   return (
     <>
       <CabecalhoAdmin
-        titulo="Quem sai do Circuito"
+        titulo="Avaliação por Circuito"
         subtitulo={ehUltima ? "A exposição que ficou em último lugar, a que sai do Circuito, e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
       />
 
