@@ -274,7 +274,7 @@ function Participacao({ progresso, produtores, completos }: { progresso: Progres
   return (
     <div className="part">
       <div className="part-topo">
-        <div><strong>{produtores}</strong><small>produtores no ciclo</small></div>
+        <div><strong>{produtores}</strong><small>Total de Participantes</small></div>
         <div><strong>{completos}</strong><small>já avaliaram tudo</small></div>
       </div>
       <ul className="part-legenda">
