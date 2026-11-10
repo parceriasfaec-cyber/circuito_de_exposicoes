@@ -36,7 +36,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   if (avaliadas.length === 0) {
     return (
       <>
-        <CabecalhoAdmin titulo="Diagnóstico" subtitulo="Por que a exposição ficou em último lugar." />
+        <CabecalhoAdmin titulo="Quem sai do Circuito" subtitulo="A exposição que ficou em último lugar e por quê." />
         <div className="cartao"><p style={{ margin: 0 }}>Nenhuma exposição recebeu avaliação ainda.</p></div>
       </>
     );
@@ -78,8 +78,8 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   return (
     <>
       <CabecalhoAdmin
-        titulo="Diagnóstico"
-        subtitulo={ehUltima ? "A exposição que ficou em último lugar e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
+        titulo="Quem sai do Circuito"
+        subtitulo={ehUltima ? "A exposição que ficou em último lugar, a que sai do Circuito, e por que ela ficou atrás das outras." : "Por que esta exposição ficou nesta posição."}
       />
 
       <form className="diag-escolha" method="get">
@@ -101,7 +101,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
           <small>de {ranking.length}</small>
         </div>
         <div className="diag-destaque-corpo">
-          <span className="diag-etiqueta">{ehUltima ? "Última colocada entre as avaliadas" : "Exposição escolhida"}</span>
+          <span className="diag-etiqueta">{ehUltima ? "Sai do Circuito · última colocada entre as avaliadas" : "Exposição escolhida"}</span>
           <h2>{alvo.nome}</h2>
           <div className="diag-numeros">
             <div><strong>{fmt(alvo.media_produtor)}</strong><small>média (de 10 a 50)</small></div>
