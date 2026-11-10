@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import Icone from "@/components/Icone";
+import Paginacao, { paginar } from "@/components/Paginacao";
 import { normalizar } from "@/lib/texto";
 import { definirApresentacao } from "../actions";
 import BotaoExcluir from "../BotaoExcluir";
@@ -24,6 +25,7 @@ export type LinhaCredenciado = {
 };
 
 type Filtro = "todos" | "faltam" | "apresentaram";
+const POR_PAGINA = 15;
 
 /**
  * Lista dos credenciados com busca e filtros. O botão "Apresentou" muda na hora, sem recarregar a página,
@@ -35,6 +37,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
   const [erro, setErro] = useState("");
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [pagina, setPagina] = useState(0);
   const [, iniciar] = useTransition();
 
   const apresentaram = linhas.filter((l) => marcados[l.id]).length;
@@ -48,6 +51,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
       return !q || normalizar(`${l.municipio} ${l.instituicao} ${l.responsavel}`).includes(q);
     });
   }, [linhas, busca, filtro, marcados]);
+  const { atual, itens: daPagina } = paginar(visiveis, pagina, POR_PAGINA);
 
   function alternar(l: LinhaCredenciado) {
     const novo = !marcados[l.id];
@@ -83,14 +87,14 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
       <div className="barra">
         <div className="filtros">
           {FILTROS.map((f) => (
-            <button key={f.id} type="button" className={`filtro${filtro === f.id ? " ativo" : ""}`} onClick={() => setFiltro(f.id)}>
+            <button key={f.id} type="button" className={`filtro${filtro === f.id ? " ativo" : ""}`} onClick={() => { setFiltro(f.id); setPagina(0); }}>
               {f.rotulo} <span className="filtro-num">{contagem[f.id]}</span>
             </button>
           ))}
         </div>
         <div className="busca-campo" style={{ maxWidth: 420 }}>
           <Icone nome="busca" tamanho={20} />
-          <input type="text" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar município, prefeitura ou responsável..." />
+          <input type="text" value={busca} onChange={(e) => { setBusca(e.target.value); setPagina(0); }} placeholder="Buscar município, prefeitura ou responsável..." />
         </div>
       </div>
 
@@ -111,7 +115,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
               </tr>
             </thead>
             <tbody>
-              {visiveis.map((l) => {
+              {daPagina.map((l) => {
                 const sim = marcados[l.id];
                 return (
                   <tr key={l.id} className={sim ? "linha-apresentou" : undefined}>
@@ -159,6 +163,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
           </table>
         </div>
       )}
+      <Paginacao pagina={atual} porPagina={POR_PAGINA} total={visiveis.length} aoMudar={setPagina} rotulo="Páginas dos credenciados" />
     </>
   );
 }

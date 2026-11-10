@@ -59,7 +59,7 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
       ) : (
         <>
           <p className="intro" style={{ marginTop: 0 }}>
-            Marque <strong>2 cidades</strong> e toque em Enviar. O voto só pode ser feito uma vez.
+            Selecione apenas <strong>2 municípios</strong> para a votação. O voto só pode ser feito uma vez.
           </p>
           <EscolherCidades cidades={cidades} />
         </>

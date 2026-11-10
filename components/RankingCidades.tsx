@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Paginacao, { paginar } from "./Paginacao";
 import type { CidadeRanking } from "@/lib/credenciamento";
 
 /**
@@ -20,9 +21,7 @@ export default function RankingCidades({
   const [pagina, setPagina] = useState(0);
   if (ranking.length === 0) return <p className="suave">Nenhuma cidade credenciada.</p>;
   const max = Math.max(1, ...ranking.map((r) => r.votos));
-  const paginas = porPagina ? Math.ceil(ranking.length / porPagina) : 1;
-  const atual = Math.min(pagina, paginas - 1);
-  const visiveis = porPagina ? ranking.slice(atual * porPagina, (atual + 1) * porPagina) : ranking;
+  const { atual, itens: visiveis } = porPagina ? paginar(ranking, pagina, porPagina) : { atual: 0, itens: ranking };
   return (
     <>
     <div className="ranking-cidades">
@@ -42,32 +41,7 @@ export default function RankingCidades({
         );
       })}
     </div>
-    {paginas > 1 && (
-      <nav className="paginacao" aria-label="Páginas do ranking">
-        <button type="button" className="botao secundario pequeno" disabled={atual === 0} onClick={() => setPagina(atual - 1)}>
-          ‹ Anterior
-        </button>
-        <div className="paginacao-numeros">
-          {Array.from({ length: paginas }, (_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`paginacao-num${i === atual ? " ativa" : ""}`}
-              aria-current={i === atual ? "page" : undefined}
-              onClick={() => setPagina(i)}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-        <span className="suave">
-          {atual * porPagina! + 1}–{Math.min((atual + 1) * porPagina!, ranking.length)} de {ranking.length}
-        </span>
-        <button type="button" className="botao secundario pequeno" disabled={atual === paginas - 1} onClick={() => setPagina(atual + 1)}>
-          Próxima ›
-        </button>
-      </nav>
-    )}
+    {porPagina && <Paginacao pagina={atual} porPagina={porPagina} total={ranking.length} aoMudar={setPagina} rotulo="Páginas do ranking" />}
     </>
   );
 }
