@@ -13,7 +13,7 @@ export async function generateMetadata() {
 const manuscrita = Kaushan_Script({ subsets: ["latin"], weight: "400" });
 
 /** Regra mostrada no quadro "Fique atento!" */
-const DURACAO_APRESENTACAO_MIN = 30;
+const DURACAO_APRESENTACAO_MIN = 10;
 
 export default async function Credenciamento({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { ok } = await searchParams;
@@ -48,8 +48,8 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                         <>Prepare o vídeo ou a apresentação. A organização vai informar a data.</>
                       )}
                     </li>
-                    <li>Destaque os motivos pelos quais a sua cidade merece sediar a exposição, em até <strong>30 minutos</strong>.</li>
-                    <li>Ao final das apresentações, as cidades serão avaliadas e votadas.</li>
+                    <li>Destaque os motivos pelos quais a sua cidade merece sediar a exposição, em até <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>.</li>
+                    <li>Ao final das apresentações, as cidades serão avaliadas e votadas. As duas mais votadas receberão as exposições em {ano}.</li>
                   </ol>
                 </div>
                 <p className="suave" style={{ margin: "14px 0 0" }}>Cada pessoa só pode credenciar um município. Em caso de dúvida, procure a organização do Circuito.</p>
@@ -92,8 +92,8 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             <div className="cred-item">
               <Icone nome="trofeu" tamanho={40} />
               <p>
-                Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong> para
-                definir quais receberão as exposições em {ano}.
+                Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong>. As{" "}
+                <strong className="sem-destaque">duas mais votadas</strong> receberão as exposições em {ano}.
               </p>
             </div>
             <div className="cred-item grande">

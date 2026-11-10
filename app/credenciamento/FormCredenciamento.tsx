@@ -64,7 +64,7 @@ export default function FormCredenciamento({
         <div>
           <label htmlFor="municipio">Município que deseja participar</label>
           <select id="municipio" name="municipio" required defaultValue={v ? String(v.municipio) : ""} title="Só aparecem os municípios que ainda não participam do Circuito e ainda não se credenciaram.">
-            <option value="" disabled>Escolha o município (só os disponíveis)</option>
+            <option value="" disabled>Escolha o município</option>
             {municipios.map((m) => (
               <option key={m.codigo} value={m.codigo}>{m.nome}</option>
             ))}
