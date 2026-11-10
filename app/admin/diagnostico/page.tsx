@@ -7,7 +7,7 @@ import { sql } from "@/lib/db";
 import { formatarMedia, partesPergunta } from "@/lib/escala";
 import { ehAdmin } from "@/lib/sessao";
 import { nomeCurto } from "@/lib/texto";
-import BotaoPdf from "./BotaoPdf";
+import BotaoPdf, { ImprimirAoAbrir } from "./BotaoPdf";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ const sinal = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${formatarMedia
  * Diagnóstico da exposição que ficou em último lugar (entre as que receberam avaliação):
  * posição, distância para a penúltima e, pergunta por pergunta, a nota dela comparada com a média do Circuito.
  */
-export default async function Diagnostico({ searchParams }: { searchParams: Promise<{ ciclo?: string; exp?: string; todas?: string }> }) {
+export default async function Diagnostico({ searchParams }: { searchParams: Promise<{ ciclo?: string; exp?: string; todas?: string; imprimir?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const { ciclo } = await cicloEscolhido(params.ciclo);
@@ -46,6 +46,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   const ultima = avaliadas[avaliadas.length - 1];
   const alvo = avaliadas.find((r) => r.exposicao_id === params.exp) ?? ultima;
   const todas = params.todas === "1" || params.exp === "";
+  const arquivoTodas = `Avaliação por Circuito - todas - ${ciclo?.nome ?? "Circuito"}`;
   const ehUltima = alvo.exposicao_id === ultima.exposicao_id;
 
   return (
@@ -68,13 +69,17 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
           ))}
         </select>
         <button className="botao secundario pequeno">Ver</button>
-        {!todas && (
-          <Link className="botao secundario pequeno" href={`/admin/diagnostico?${new URLSearchParams({ ...(params.ciclo ? { ciclo: params.ciclo } : {}), todas: "1" })}`}>
-            Ver todas na mesma página
-          </Link>
-        )}
-        <BotaoPdf arquivo={todas ? `Avaliação por Circuito - todas - ${ciclo?.nome ?? "Circuito"}` : `Avaliação ${nomeCurto(alvo.nome)} - ${ciclo?.nome ?? "Circuito"}`} />
+        <div className="diag-pdfs">
+          {!todas && <BotaoPdf rotulo="PDF desta exposição" arquivo={`Avaliação ${nomeCurto(alvo.nome)} - ${ciclo?.nome ?? "Circuito"}`} />}
+          <BotaoPdf
+            rotulo="PDF de todas as exposições"
+            arquivo={arquivoTodas}
+            secundario={!todas}
+            href={todas ? undefined : `/admin/diagnostico?${new URLSearchParams({ ...(params.ciclo ? { ciclo: params.ciclo } : {}), todas: "1", imprimir: "1" })}`}
+          />
+        </div>
       </form>
+      {todas && params.imprimir === "1" && <ImprimirAoAbrir arquivo={arquivoTodas} />}
 
       {todas ? (
         avaliadas.map((r, k) => (

@@ -1993,7 +1993,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .hr-form:target { box-shadow: 0 0 0 3px var(--verde-borda); }
 
 /* Avaliação por Circuito: botão do PDF e página impressa colorida, sem menu e sem botões */
-.diag-pdf { margin-left: auto; }
+.diag-pdfs { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
 .so-imprimir { display: none; }
 @media print {
   /* Margem zero tira o endereço e a data que o navegador coloca no topo e no rodapé; o espaço vem do padding. */
