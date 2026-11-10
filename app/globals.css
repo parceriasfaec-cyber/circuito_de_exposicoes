@@ -1949,3 +1949,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .part-grafico .valor { font-size: 12px; }
 @media (max-width: 560px) { .evolucao-grade { grid-template-columns: 1fr; } }
 .evolucao .valor-dia { font-size: 16px; font-weight: 900; fill: var(--verde-escuro); font-family: var(--fonte-texto), sans-serif; }
+.part-topo div { display: flex !important; align-items: center; gap: 12px; }
+.part-topo div > span:last-child { display: grid; }
+.part-topo-icone { flex: none; display: grid; place-items: center; color: var(--verde-escuro); }
+.part-topo-icone.redondo { width: 38px; height: 38px; border-radius: 50%; background: var(--verde-escuro); color: #fff; }

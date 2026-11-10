@@ -214,7 +214,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
 
         <div className="coluna-graficos">
           <section className="bloco">
-            <h2 className="bloco-titulo claro"><Icone nome="usuarios" tamanho={22} /> Participantes por Exposição</h2>
+            <h2 className="bloco-titulo"><Icone nome="usuarios" tamanho={22} /> Participantes por Exposição</h2>
             <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} />
           </section>
         </div>
@@ -268,8 +268,14 @@ function Participacao({ progresso, produtores, completos }: { progresso: Progres
   return (
     <div className="part">
       <div className="part-topo">
-        <div><strong>{produtores}</strong><small>Total de Participantes</small></div>
-        <div><strong>{completos}</strong><small>já avaliaram tudo</small></div>
+        <div>
+          <span className="part-topo-icone"><Icone nome="usuarios" tamanho={30} /></span>
+          <span><strong>{produtores}</strong><small>Total de Participantes</small></span>
+        </div>
+        <div>
+          <span className="part-topo-icone redondo"><Icone nome="check" tamanho={22} /></span>
+          <span><strong>{completos}</strong><small>já avaliaram tudo</small></span>
+        </div>
       </div>
       <ul className="part-legenda">
         <li><span className="ponto part-cor-total" /> Participantes</li>
