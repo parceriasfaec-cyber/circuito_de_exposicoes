@@ -1965,3 +1965,29 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .painel-grade .coluna-graficos .part { flex: 1; display: flex; flex-direction: column; }
   .painel-grade .coluna-graficos .part-grafico { flex: 1; min-height: 0; }
 }
+
+/* Prazo e horário: situação em destaque e os dois passos (abre / fecha) lado a lado */
+.hr-situacao { display: flex; align-items: center; gap: 14px; border-radius: 16px; padding: 14px 18px; margin-bottom: 14px; border: 1.5px solid var(--borda); background: #f3f5f2; }
+.hr-situacao.aberta { background: var(--verde-claro); border-color: var(--verde-borda); }
+.hr-situacao-ponto { flex: none; width: 16px; height: 16px; border-radius: 50%; background: #9aa39a; }
+.hr-situacao.aberta .hr-situacao-ponto { background: var(--verde); box-shadow: 0 0 0 5px rgba(42, 122, 59, 0.18); }
+.hr-situacao-texto { display: grid; flex: 1; min-width: 0; }
+.hr-situacao-texto strong { font-size: 1.15rem; color: var(--verde-escuro); }
+.hr-situacao.fechada .hr-situacao-texto strong { color: var(--texto); }
+.hr-situacao-texto span { color: var(--suave); }
+.hr-situacao .horario-limpar { margin-left: auto; }
+.hr-passos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.hr-passo { display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--borda); border-radius: 14px; padding: 14px; background: #fafcf8; }
+.hr-num { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--verde-escuro); color: #fff; font-weight: 900; }
+.hr-passo-corpo { display: grid; gap: 6px; flex: 1; min-width: 0; }
+.hr-passo-corpo label { margin: 0; font-weight: 800; color: var(--verde-escuro); font-size: 1.05rem; }
+.hr-passo-corpo input { width: 100%; font: inherit; padding: 9px 12px; border: 1.5px solid var(--borda); border-radius: 10px; background: #fff; }
+.hr-passo-corpo small { color: var(--suave); font-size: 0.82rem; }
+.hr-fixo { margin: 0; padding: 9px 12px; border-radius: 10px; background: var(--verde-claro); color: var(--verde-escuro); font-weight: 700; }
+.hr-rodape { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--borda); padding-top: 12px; }
+.hr-marcado { color: var(--suave); }
+.hr-botoes { display: flex; gap: 8px; }
+.hr-botoes .botao { margin: 0; }
+@media (max-width: 760px) { .hr-passos { grid-template-columns: 1fr; } .hr-situacao { flex-wrap: wrap; } }
+.hr-situacao .botao-detalhes { flex: none; }
+.hr-form:target { box-shadow: 0 0 0 3px var(--verde-borda); }

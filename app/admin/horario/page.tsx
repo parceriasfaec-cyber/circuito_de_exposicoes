@@ -28,55 +28,81 @@ export default async function HorarioAvaliacao({ searchParams }: { searchParams:
   const params = await searchParams;
   const votacao = await lerVotacao();
 
+  const aberta = votacao.exposicoes_aberta;
+  const temHorario = Boolean(votacao.exposicoes_abrir_em || votacao.exposicoes_fechar_em);
+
   return (
     <>
-      <CabecalhoAdmin titulo="Prazo e horário" subtitulo="Quando a avaliação das exposições abre e quando fecha." />
+      <CabecalhoAdmin titulo="Prazo e horário" subtitulo="Marque quando a avaliação das exposições abre e fecha. Ela abre e fecha sozinha (hora de Fortaleza)." />
 
-      <section className="bloco horario-aval" id="horario">
-        <h2 className="bloco-titulo"><Icone nome="calendario" tamanho={22} /> Horário da avaliação</h2>
-        <p className="suave" style={{ margin: "6px 0 10px" }}>
-          Marque quando a avaliação abre e quando fecha. Ela abre e fecha sozinha nesses horários (hora de Fortaleza). Os botões
-          Liberar e Encerrar continuam funcionando a qualquer momento.
-        </p>
-        {params.horario === "ok" && <div className="ok">Horário salvo.</div>}
-        {params.horario === "historico" && <div className="ok">Início e fim excluídos.</div>}
-        {params.horario === "limpo" && <div className="ok">Horários apagados. Abrir e fechar agora só pelos botões.</div>}
-        {params.horario_erro && <div className="erro" role="alert">{params.horario_erro}</div>}
-        <form action={programarHorarios} className="horario-form">
-          <div>
-            <label htmlFor="abrir">Abrir em</label>
-            <input id="abrir" name="abrir" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_abrir_em)} disabled={votacao.exposicoes_aberta} />
-            {votacao.exposicoes_aberta && <small className="suave">Já está aberta.</small>}
-          </div>
-          <div>
-            <label htmlFor="fechar">Fechar em</label>
-            <input id="fechar" name="fechar" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_fechar_em)} />
-          </div>
-          <div className="horario-botoes">
-            <button className="botao" name="acao" value="salvar">Salvar horário</button>
-            {(votacao.exposicoes_abrir_em || votacao.exposicoes_fechar_em) && (
-              <button className="botao secundario" name="acao" value="limpar">Apagar horários</button>
-            )}
-          </div>
-        </form>
-      </section>
+      {params.horario === "ok" && <div className="ok">Horário salvo.</div>}
+      {params.horario === "limpo" && <div className="ok">Horários apagados. Abrir e fechar agora só pelos botões do Painel.</div>}
+      {params.horario === "historico" && <div className="ok">Início e fim excluídos.</div>}
+      {params.horario_erro && <div className="erro" role="alert">{params.horario_erro}</div>}
 
-
-      <section className="bloco">
-        <h2 className="bloco-titulo"><Icone nome="prancheta" tamanho={22} /> Situação agora</h2>
-        {/* Tudo numa linha: situação, início, fim, horários marcados e o botão de excluir. */}
-        <div className="horario-linha">
-          <strong className={votacao.exposicoes_aberta ? "status-aberta" : "status-fechada"}>
-            {votacao.exposicoes_aberta ? "Aberta" : "Fechada"}
-          </strong>
-          {votacao.exposicoes_aberta_em && <span>Início: <strong>{dataHora(votacao.exposicoes_aberta_em)}</strong></span>}
-          {!votacao.exposicoes_aberta && votacao.exposicoes_fechada_em && <span>Fim: <strong>{dataHora(votacao.exposicoes_fechada_em)}</strong></span>}
+      {/* Situação agora, em destaque */}
+      <div className={`hr-situacao ${aberta ? "aberta" : "fechada"}`}>
+        <span className="hr-situacao-ponto" aria-hidden="true" />
+        <div className="hr-situacao-texto">
+          <strong>{aberta ? "A avaliação está aberta" : "A avaliação está fechada"}</strong>
+          <span>
+            {aberta
+              ? votacao.exposicoes_aberta_em ? `Desde ${dataHora(votacao.exposicoes_aberta_em)}` : "Liberada pelo Painel"
+              : votacao.exposicoes_fechada_em
+                ? `${votacao.exposicoes_aberta_em ? `De ${dataHora(votacao.exposicoes_aberta_em)} até` : "Fechou em"} ${dataHora(votacao.exposicoes_fechada_em)}`
+                : "Ainda não foi liberada"}
+          </span>
           {votacao.exposicoes_abrir_em && <span>Abre sozinha: <strong>{dataHora(votacao.exposicoes_abrir_em)}</strong></span>}
           {votacao.exposicoes_fechar_em && <span>Fecha sozinha: <strong>{dataHora(votacao.exposicoes_fechar_em)}</strong></span>}
-          {!votacao.exposicoes_abrir_em && !votacao.exposicoes_fechar_em && <span className="suave">Nenhum horário marcado</span>}
-          {!votacao.exposicoes_aberta && (votacao.exposicoes_aberta_em || votacao.exposicoes_fechada_em) && <BotaoLimpar />}
         </div>
-      </section>
+        {temHorario && (
+          <a href="#programar" className="botao-detalhes"><Icone nome="lapis" tamanho={16} /> Editar horário</a>
+        )}
+        {!aberta && (votacao.exposicoes_aberta_em || votacao.exposicoes_fechada_em) && <BotaoLimpar />}
+      </div>
+
+      <form action={programarHorarios} className="bloco hr-form" id="programar">
+        <h2 className="bloco-titulo"><Icone nome="calendario" tamanho={22} /> Programar horário</h2>
+        <div className="hr-passos">
+          <div className="hr-passo">
+            <span className="hr-num">1</span>
+            <div className="hr-passo-corpo">
+              <label htmlFor="abrir">Abre em</label>
+              {aberta ? (
+                <p className="hr-fixo">Já está aberta{votacao.exposicoes_aberta_em ? ` desde ${dataHora(votacao.exposicoes_aberta_em)}` : ""}.</p>
+              ) : (
+                <>
+                  <input id="abrir" name="abrir" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_abrir_em)} />
+                  <small>Deixe vazio para abrir pelo botão Liberar.</small>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="hr-passo">
+            <span className="hr-num">2</span>
+            <div className="hr-passo-corpo">
+              <label htmlFor="fechar">Fecha em</label>
+              <input id="fechar" name="fechar" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_fechar_em)} />
+              <small>Deixe vazio para fechar pelo botão Encerrar.</small>
+            </div>
+          </div>
+        </div>
+        <div className="hr-rodape">
+          <span className="hr-marcado">
+            {temHorario ? (
+              <>
+                {votacao.exposicoes_abrir_em && <>Abre sozinha: <strong>{dataHora(votacao.exposicoes_abrir_em)}</strong></>}
+                {votacao.exposicoes_abrir_em && votacao.exposicoes_fechar_em && " · "}
+                {votacao.exposicoes_fechar_em && <>Fecha sozinha: <strong>{dataHora(votacao.exposicoes_fechar_em)}</strong></>}
+              </>
+            ) : "Nenhum horário marcado."}
+          </span>
+          <div className="hr-botoes">
+            {temHorario && <button className="botao secundario" name="acao" value="limpar">Apagar horários</button>}
+            <button className="botao" name="acao" value="salvar">Salvar horário</button>
+          </div>
+        </div>
+      </form>
     </>
   );
 }
