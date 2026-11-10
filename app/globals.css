@@ -2005,9 +2005,15 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .admin { display: block; background: #fff !important; min-height: 0; }
   .admin-principal { padding: 10mm 12mm !important; margin: 0 !important; max-width: none !important; }
   .so-imprimir { display: flex; }
-  .diag-impresso { justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 3px solid #d96200; padding-bottom: 5px; margin-bottom: 10px; color: var(--verde-escuro); font-size: 0.95rem; }
-  /* Uma exposição logo depois da outra, sem pular página (sem espaços em branco) */
-  .diag-pagina { border-top: 0 !important; padding-top: 0 !important; margin-top: 14px !important; }
+  .diag-impresso { justify-content: space-between; align-items: center; gap: 12px; border-bottom: 3px solid #d96200; padding-bottom: 8px; margin-bottom: 12px; color: var(--verde-escuro); }
+  .diag-impresso-logos { display: flex; align-items: center; gap: 14px; }
+  .diag-impresso-logos img { height: 15mm; width: auto; }
+  .diag-impresso-sep { width: 1.5px; height: 12mm; background: var(--verde-borda); }
+  .diag-impresso-texto { display: grid; text-align: right; }
+  .diag-impresso-texto strong { font-size: 1.35rem; }
+  .diag-impresso-texto span { font-size: 0.9rem; color: var(--suave); }
+  /* PDF de todas: cada exposição numa folha */
+  .diag-pagina { break-before: page; border-top: 0 !important; padding-top: 0 !important; margin-top: 0 !important; }
   .diag-destaque { padding: 10px 14px !important; margin-bottom: 8px !important; break-inside: avoid; }
   .diag-posicao { width: 64px !important; height: 64px !important; }
   .diag-posicao span { font-size: 1.9rem !important; }

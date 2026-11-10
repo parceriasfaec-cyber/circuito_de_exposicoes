@@ -141,9 +141,19 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
 
   return (
     <>
+      {/* Cabeçalho do relatório impresso, com as logos (repete em cada exposição) */}
       <div className="diag-impresso so-imprimir">
-        <strong>Circuito Cearense de Exposição · Avaliação por Circuito</strong>
-        <span>{cicloNome} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
+        <div className="diag-impresso-logos">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/marcas/sistema-cor.png" alt="Sistema FAEC, SENAR Ceará e Sindicato Rural" width={900} height={331} />
+          <span className="diag-impresso-sep" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/marcas/logo-circuito-largo.png" alt="Circuito Cearense de Exposição" width={953} height={394} />
+        </div>
+        <div className="diag-impresso-texto">
+          <strong>Avaliação por Circuito</strong>
+          <span>{cicloNome} · gerado em {new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }).replace(",", " às")}</span>
+        </div>
       </div>
       <section className="diag-destaque">
         <div className="diag-posicao">
