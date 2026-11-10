@@ -218,7 +218,7 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
         <div className="tabela">
           <table className="tabela-simples diag-tabela">
             <thead>
-              <tr><th>Pergunta</th><th className="num">Esta exposição</th><th className="num">Média do Circuito</th><th>Diferença</th><th className="num">Total de pontos</th></tr>
+              <tr><th>Pergunta</th><th className="num">Total de Pontos</th><th className="num">Média da Exposição</th><th className="num">Média do Circuito</th><th>Diferença</th></tr>
             </thead>
             <tbody>
               {comparadas.map((p) => {
@@ -227,6 +227,7 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
                 return (
                   <tr key={p.ordem} className={fraco ? "diag-fraco" : forte ? "diag-forte" : undefined}>
                     <td><span className="diag-num">{p.ordem}</span> {p.titulo}</td>
+                    <td className="num"><strong>{p.pontos ?? 0}</strong></td>
                     <td className="num"><strong>{fmt(p.exp)}</strong></td>
                     <td className="num">{fmt(p.circuito)}</td>
                     <td>
@@ -239,7 +240,6 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
                       </div>
                       <small className={p.dif < 0 ? "diag-neg" : "diag-pos"}>{sinal(p.dif)}</small>
                     </td>
-                    <td className="num"><strong>{p.pontos ?? 0}</strong></td>
                   </tr>
                 );
               })}
@@ -247,10 +247,10 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
             <tfoot>
               <tr className="diag-total">
                 <td>Total</td>
+                <td className="num"><strong>{comparadas.reduce((n, p) => n + (p.pontos ?? 0), 0)}</strong></td>
                 <td className="num"><strong>{fmt(alvo.media_produtor)}</strong></td>
                 <td className="num">{formatarMedia(mediaCircuito)}</td>
                 <td><small className={(alvo.media_produtor ?? 0) < mediaCircuito ? "diag-neg" : "diag-pos"}>{sinal((alvo.media_produtor ?? 0) - mediaCircuito)}</small></td>
-                <td className="num"><strong>{comparadas.reduce((n, p) => n + (p.pontos ?? 0), 0)}</strong></td>
               </tr>
             </tfoot>
           </table>
