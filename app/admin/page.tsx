@@ -7,7 +7,7 @@ import { cicloEscolhido } from "@/lib/ciclo";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarMedia } from "@/lib/escala";
-import { encerrarVotacao, liberarVotacao, programarHorarios } from "./actions";
+import { encerrarVotacao, liberarVotacao } from "./actions";
 import Login from "./Login";
 
 export const dynamic = "force-dynamic";
@@ -31,17 +31,7 @@ const curto = nomeCurto;
 const dataHora = (d: Date | null) =>
   d ? d.toLocaleString("pt-BR", { timeZone: TZ, dateStyle: "short", timeStyle: "short" }).replace(",", " às") : "—";
 
-/** Date -> "2026-12-12T08:00" na hora de Fortaleza, para o campo datetime-local. */
-const paraCampo = (d: Date | null) => {
-  if (!d) return "";
-  const p = Object.fromEntries(
-    new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
-      .formatToParts(d).map((x) => [x.type, x.value]),
-  );
-  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
-};
-
-export default async function Admin({ searchParams }: { searchParams: Promise<{ ciclo?: string; horario?: string; horario_erro?: string }> }) {
+export default async function Admin({ searchParams }: { searchParams: Promise<{ ciclo?: string }> }) {
   if (!(await ehAdmin())) {
     return (
       <>
@@ -177,34 +167,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           </div>
         </div>
       </div>
-
-      <section className="bloco horario-aval" id="horario">
-        <h2 className="bloco-titulo"><Icone nome="calendario" tamanho={22} /> Horário da avaliação das exposições</h2>
-        <p className="suave" style={{ margin: "6px 0 10px" }}>
-          Marque quando a avaliação abre e quando fecha. Ela abre e fecha sozinha nesses horários (hora de Fortaleza). Os botões
-          Liberar e Encerrar continuam funcionando a qualquer momento.
-        </p>
-        {params.horario === "ok" && <div className="ok">Horário salvo.</div>}
-        {params.horario === "limpo" && <div className="ok">Horários apagados. Abrir e fechar agora só pelos botões.</div>}
-        {params.horario_erro && <div className="erro" role="alert">{params.horario_erro}</div>}
-        <form action={programarHorarios} className="horario-form">
-          <div>
-            <label htmlFor="abrir">Abrir em</label>
-            <input id="abrir" name="abrir" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_abrir_em)} disabled={votacao.exposicoes_aberta} />
-            {votacao.exposicoes_aberta && <small className="suave">Já está aberta.</small>}
-          </div>
-          <div>
-            <label htmlFor="fechar">Fechar em</label>
-            <input id="fechar" name="fechar" type="datetime-local" defaultValue={paraCampo(votacao.exposicoes_fechar_em)} />
-          </div>
-          <div className="horario-botoes">
-            <button className="botao" name="acao" value="salvar">Salvar horário</button>
-            {(votacao.exposicoes_abrir_em || votacao.exposicoes_fechar_em) && (
-              <button className="botao secundario" name="acao" value="limpar">Apagar horários</button>
-            )}
-          </div>
-        </form>
-      </section>
 
       <div className="painel-grade">
         <section className="bloco">

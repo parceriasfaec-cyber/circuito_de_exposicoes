@@ -13,6 +13,7 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
     titulo: "Avaliação das exposições",
     itens: [
       { href: "/admin", rotulo: "Painel", icone: "painel", exato: true },
+      { href: "/admin/horario", rotulo: "Prazo e horário", icone: "calendario" },
       { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
       { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
       { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },

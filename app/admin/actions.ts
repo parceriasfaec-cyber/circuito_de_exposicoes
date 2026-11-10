@@ -98,12 +98,12 @@ export async function programarHorarios(form: FormData) {
   await exigirAdmin();
   if (form.get("acao") === "limpar") {
     await sql()`update exposicao_cearense.votacao set exposicoes_abrir_em = null, exposicoes_fechar_em = null where id = 1`;
-    revalidatePath("/admin");
-    redirect("/admin?horario=limpo#horario");
+    revalidatePath("/admin", "layout");
+    redirect("/admin/horario?horario=limpo");
   }
   const abrir = horaFortaleza(form.get("abrir"));
   const fechar = horaFortaleza(form.get("fechar"));
-  const erro = (m: string) => redirect(`/admin?horario_erro=${encodeURIComponent(m)}#horario`);
+  const erro = (m: string) => redirect(`/admin/horario?horario_erro=${encodeURIComponent(m)}`);
   if (abrir === "invalida" || fechar === "invalida") erro("Data ou hora inválida.");
   const a = abrir as Date | null;
   const f = fechar as Date | null;
@@ -114,7 +114,7 @@ export async function programarHorarios(form: FormData) {
   if (a && a.getTime() <= agora - 60_000) erro("O horário de abrir já passou. Para abrir agora, use o botão Liberar avaliação.");
   await sql()`update exposicao_cearense.votacao set exposicoes_abrir_em = ${a}, exposicoes_fechar_em = ${f} where id = 1`;
   revalidatePath("/admin");
-  redirect("/admin?horario=ok#horario");
+  redirect("/admin/horario?horario=ok");
 }
 
 /** Encerra só a avaliação das exposições (modo=exposicoes) ou só a votação das cidades (modo=cidades). */

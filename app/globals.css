@@ -1914,3 +1914,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .horario-botoes .botao { margin: 0; }
 @media (max-width: 760px) { .horario-form { grid-template-columns: 1fr; } }
 .prod-empresa { font-size: 0.88rem; font-weight: 700; color: var(--verde); }
+.horario-situacao { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
