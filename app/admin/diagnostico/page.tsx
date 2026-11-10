@@ -101,7 +101,7 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   );
 }
 
-/** Diagnóstico de uma exposição: posição, números, comparação pergunta a pergunta e distribuição das notas. */
+/** Diagnóstico de uma exposição: posição, números e comparação pergunta a pergunta. */
 async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = false }: {
   alvo: Ranking; avaliadas: Ranking[]; ranking: Ranking[]; cid: string; cicloNome: string; todas?: boolean;
 }) {
@@ -125,10 +125,6 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
     join exposicoes e on e.id = q.exposicao_id
     where e.ciclo_id = ${cid}
     group by q.ordem order by q.ordem`;
-  const notas = await db<{ nota: number; n: number }[]>`
-    select r.nota::int nota, count(*)::int n from respostas r join perguntas q on q.id = r.pergunta_id
-    where q.exposicao_id = ${alvo.exposicao_id} group by r.nota`;
-  const totalNotas = notas.reduce((s, x) => s + x.n, 0);
 
   const comparadas = perguntas
     .filter((p) => p.exp !== null && p.circuito !== null)
@@ -251,24 +247,6 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
         <p className="suave" style={{ margin: "10px 0 0" }}>Notas de 1 (muito ruim) a 5 (excelente). Em vermelho, as perguntas em que a exposição mais ficou abaixo da média.</p>
       </section>
 
-      {totalNotas > 0 && (
-        <section className="bloco">
-          <h2 className="bloco-titulo"><Icone nome="prancheta" tamanho={22} /> Como foram as notas</h2>
-          <div className="diag-notas">
-            {[1, 2, 3, 4, 5].map((n) => {
-              const q = notas.find((x) => x.nota === n)?.n ?? 0;
-              const pct = Math.round((q / totalNotas) * 100);
-              return (
-                <div key={n} className="diag-nota">
-                  <span className="diag-nota-rotulo">Nota {n}</span>
-                  <div className="diag-nota-barra"><span className={`n${n}`} style={{ width: `${pct}%` }} /></div>
-                  <span className="diag-nota-pct">{pct}% <small>({q})</small></span>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
 
     </>
   );
