@@ -5,12 +5,21 @@ import Icone from "@/components/Icone";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { mascararDocumento, normalizar } from "@/lib/texto";
+import { normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
 type Linha = { id: string; nome: string; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null };
 const POR_PAGINA = 25;
+
+/** Documento completo, com pontuação (tela só do organizador). */
+function documentoCompleto(tipo: string | null, doc: string | null) {
+  if (!tipo || !doc) return "Sem documento";
+  const d = doc.replace(/\D/g, "");
+  if (tipo === "CPF" && d.length === 11) return `CPF: ${d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")}`;
+  if (tipo === "CNPJ" && d.length === 14) return `CNPJ: ${d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5")}`;
+  return `${tipo}: ${doc}`;
+}
 
 export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
@@ -60,15 +69,14 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           <thead>
             <tr>
               <th><span><Icone nome="usuario" tamanho={18} /> Produtor</span></th>
-              <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
               <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
-              <th className="centro">Total</th>
+              <th className="centro">Total de Exposições</th>
               <th className="centro">Ações</th>
             </tr>
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum produtor encontrado.</td></tr>
+              <tr><td colSpan={4} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum produtor encontrado.</td></tr>
             )}
             {visiveis.map((l) => {
               const exps = l.exposicoes ?? [];
@@ -79,11 +87,10 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                       <span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={20} /></span>
                       <div>
                         <div className="nome">{l.nome}</div>
-                        <div className="doc">{mascararDocumento(l.tipo_documento, l.documento)}</div>
+                        <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="c-municipio"><span className="municipio"><Icone nome="local" tamanho={16} />{l.municipio}</span></td>
                   <td className="c-exposicoes">
                     {exps.length > 0 ? (
                       <div className="prod-chips">{exps.map((e, i) => <span key={i} className="prod-chip">{e}</span>)}</div>
