@@ -44,23 +44,29 @@ async function exigirAdmin() {
 }
 
 /**
- * Libera a votação com um código novo. O formulário manda modo=cidades para a votação das cidades credenciadas
+ * Libera a votação. O código do dia é o mesmo o dia todo (só muda quando muda a data). O formulário manda modo=cidades para a votação das cidades credenciadas
  * e quem=avaliaram para deixar votar só quem avaliou alguma exposição.
  */
 export async function liberarVotacao(form?: FormData) {
   await exigirAdmin();
   const modo = form?.get("modo") === "cidades" ? "cidades" : "exposicoes";
   const quem = modo === "cidades" && form?.get("quem") === "avaliaram" ? "avaliaram" : "todos";
-  const codigo = String(randomInt(0, 10000)).padStart(4, "0");
+  const novo = String(randomInt(0, 10000)).padStart(4, "0");
+  // O código do dia só muda quando muda a data (Fortaleza): liberar de novo no mesmo dia mantém o mesmo código.
   await sql()`
     update exposicao_cearense.votacao
-    set aberta = true, codigo_do_dia = ${codigo}, aberta_em = now(), fechada_em = null, modo = ${modo}, cidades_quem = ${quem}
+    set aberta = true,
+        codigo_do_dia = case
+          when codigo_do_dia ~ '^[0-9]{4}$'
+           and (aberta_em at time zone 'America/Fortaleza')::date = (now() at time zone 'America/Fortaleza')::date
+          then codigo_do_dia else ${novo} end,
+        aberta_em = now(), fechada_em = null, modo = ${modo}, cidades_quem = ${quem}
     where id = 1`;
   revalidatePath("/admin");
   revalidatePath("/admin/proximo");
 }
 
-/** Muda quem pode votar nas cidades com a votação já aberta, sem gerar código novo. Votos já feitos continuam valendo. */
+/** Muda quem pode votar nas cidades com a votação já aberta, sem mudar o código. Votos já feitos continuam valendo. */
 export async function alterarQuemVota(form: FormData) {
   await exigirAdmin();
   const quem = form.get("quem") === "avaliaram" ? "avaliaram" : "todos";

@@ -129,7 +129,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           {votacaoCidades
             ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}. Podem votar: ${quemVota.toLowerCase()}.`
             : votacao.aberta
-              ? "Agora está liberada a votação das exposições. Ao liberar a das cidades, ela é encerrada e sai um código novo."
+              ? "Agora está liberada a votação das exposições. Ao liberar a das cidades, ela é encerrada. O código do dia continua o mesmo."
               : t.apresentaram < 2
                 ? "Para liberar a votação, marque em Credenciados pelo menos 2 municípios que fizeram a apresentação."
                 : "Votação das cidades fechada."}
