@@ -942,23 +942,23 @@ body { font-size: 1rem; }
 /* ---------- Tela de entrada no computador: imagem completa (logos + boi) com o cartão no meio ---------- */
 @media (min-width: 900px) {
   .pagina:has(.form-voto),
-  .pagina:has(.moldura-voto .aviso) {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) {
     background: url("/marcas/fundo-tela.jpg") center top / 100% auto no-repeat, #1d5e2c;
     min-height: max(100vh, 69.9vw);
   }
   /* as logos e o título já estão na imagem */
   .pagina:has(.form-voto) .topo-claro,
-  .pagina:has(.moldura-voto .aviso) .topo-claro { display: none; }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro { display: none; }
   .pagina:has(.form-voto) .conteudo,
-  .pagina:has(.moldura-voto .aviso) .conteudo { padding-top: 13.8vw; padding-bottom: 12vw; }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .conteudo { padding-top: 13.8vw; padding-bottom: 12vw; }
   .pagina:has(.form-voto) .moldura-voto,
-  .pagina:has(.moldura-voto .aviso) .moldura-voto { max-width: min(820px, 56vw); margin-top: 0; }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .moldura-voto { max-width: min(820px, 56vw); margin-top: 0; }
 }
 
 /* ---------- Tela de entrada: imagem preenche a tela e o cartão fica centralizado ---------- */
 @media (min-width: 900px) {
   .pagina:has(.form-voto),
-  .pagina:has(.moldura-voto .aviso) {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) {
     /* altura em que a imagem aparece: a tela inteira, ou a largura / 1,43 (proporção da imagem) */
     --alt: max(100vh, 69.9vw);
     min-height: 100vh;
@@ -967,7 +967,7 @@ body { font-size: 1rem; }
     background: url("/marcas/fundo-tela.jpg") center top / cover no-repeat, #1d5e2c;
   }
   .pagina:has(.form-voto) .conteudo,
-  .pagina:has(.moldura-voto .aviso) .conteudo {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .conteudo {
     flex: 1;
     display: flex;
     align-items: center;
@@ -978,7 +978,7 @@ body { font-size: 1rem; }
     padding: calc(var(--alt) * 0.19) 16px calc(var(--alt) * 0.15);
   }
   .pagina:has(.form-voto) .moldura-voto,
-  .pagina:has(.moldura-voto .aviso) .moldura-voto {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .moldura-voto {
     width: 100%;
     max-width: min(760px, 52vw);
     margin: 0 auto;
@@ -988,34 +988,34 @@ body { font-size: 1rem; }
 /* ---------- Tela de entrada: imagem sem logos + logos pelo código (Sistema menor, Circuito maior) ---------- */
 @media (min-width: 900px) {
   .pagina:has(.form-voto),
-  .pagina:has(.moldura-voto .aviso) {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) {
     background: url("/marcas/fundo-tela-limpo.jpg") center top / cover no-repeat, #1d5e2c;
   }
   .pagina:has(.form-voto) .topo-claro,
-  .pagina:has(.moldura-voto .aviso) .topo-claro {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro {
     display: flex;
     background: none;
     padding: 2.2vh 3vw 0;
     min-height: 0;
   }
   .pagina:has(.form-voto) .topo-claro-marcas .sistema,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-marcas .sistema { height: clamp(3rem, 5.2vh, 4.2rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-marcas .sistema { height: clamp(3rem, 5.2vh, 4.2rem); }
   .pagina:has(.form-voto) .topo-claro-marcas .circuito,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-marcas .circuito { height: clamp(5rem, 11vh, 8rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-marcas .circuito { height: clamp(5rem, 11vh, 8rem); }
   .pagina:has(.form-voto) .topo-claro-sep,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-sep { height: clamp(3rem, 7vh, 5rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-sep { height: clamp(3rem, 7vh, 5rem); }
   .pagina:has(.form-voto) .topo-claro-titulo,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-titulo { align-self: flex-start; margin-top: 3.2vh; }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-titulo { align-self: flex-start; margin-top: 3.2vh; }
   .pagina:has(.form-voto) .conteudo,
-  .pagina:has(.moldura-voto .aviso) .conteudo { padding: 2vh 16px calc(var(--alt) * 0.15); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .conteudo { padding: 2vh 16px calc(var(--alt) * 0.15); }
 }
 @media (min-width: 900px) {
   .pagina:has(.form-voto) .topo-claro-marcas .circuito,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-marcas .circuito { height: clamp(6rem, 14vh, 10rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-marcas .circuito { height: clamp(6rem, 14vh, 10rem); }
   .pagina:has(.form-voto) .topo-claro-marcas .sistema,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-marcas .sistema { height: clamp(3.2rem, 6vh, 4.6rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-marcas .sistema { height: clamp(3.2rem, 6vh, 4.6rem); }
   .pagina:has(.form-voto) .topo-claro-sep,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-sep { height: clamp(3.6rem, 8vh, 6rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-sep { height: clamp(3.6rem, 8vh, 6rem); }
 }
 
 /* ---------- Logos nunca espremem: mantêm a proporção original ---------- */
@@ -1047,7 +1047,7 @@ body { font-size: 1rem; }
 .lateral-marca img { width: 180px; }
 @media (min-width: 900px) {
   .pagina:has(.form-voto) .topo-claro-marcas .circuito,
-  .pagina:has(.moldura-voto .aviso) .topo-claro-marcas .circuito { height: clamp(4.4rem, 9.5vh, 7rem); }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro-marcas .circuito { height: clamp(4.4rem, 9.5vh, 7rem); }
 }
 @media (max-width: 560px) {
   .topo-claro-marcas .circuito { height: 2.5rem; }
