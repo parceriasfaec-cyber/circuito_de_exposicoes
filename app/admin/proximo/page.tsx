@@ -22,7 +22,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
     from credenciamentos where ano = ${ano}`;
   const { prazo, aberto, apresentacao } = await lerPrazo(ano);
   const votacao = await lerVotacao();
-  const votacaoCidades = votacao.aberta && votacao.modo === "cidades";
+  const votacaoCidades = votacao.cidades_aberta;
   const resultado = await resultadoCidades(ano);
   const [p] = await sql()<{ produtores: number; avaliaram: number }[]>`
     select count(distinct pa.produtor_id)::int produtores,
@@ -114,7 +114,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
                 <QuemVota atual={votacao.cidades_quem} produtores={p.produtores} avaliaram={p.avaliaram} />
                 <button className="botao secundario">Salvar quem pode votar</button>
               </form>
-              <form action={encerrarVotacao}><button className="botao perigo">■ Encerrar votação das cidades</button></form>
+              <form action={encerrarVotacao}><input type="hidden" name="modo" value="cidades" /><button className="botao perigo">■ Encerrar votação das cidades</button></form>
             </>
           ) : (
             <form action={liberarVotacao} className="liberar-cidades">
@@ -128,11 +128,11 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
         <p className={votacaoCidades ? "status-aberta" : "status-fechada"} style={{ margin: "0 0 4px", fontWeight: 800 }}>
           {votacaoCidades
             ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}. Podem votar: ${quemVota.toLowerCase()}.`
-            : votacao.aberta
-              ? "Agora está liberada a votação das exposições. Ao liberar a das cidades, ela é encerrada. O código do dia continua o mesmo."
-              : t.apresentaram < 2
+            : t.apresentaram < 2
                 ? "Para liberar a votação, marque em Credenciados pelo menos 2 municípios que fizeram a apresentação."
-                : "Votação das cidades fechada."}
+                : votacao.exposicoes_aberta
+                  ? "Votação das cidades fechada. A avaliação das exposições está aberta e continua aberta quando você liberar as cidades (mesmo código)."
+                  : "Votação das cidades fechada."}
         </p>
         <p className="suave" style={{ margin: "0 0 14px" }}>
           {resultado.vagas ? `As ${resultado.vagas} mais votadas aparecem como classificadas.` : "Defina as vagas para marcar as classificadas."}

@@ -44,23 +44,26 @@ async function exigirAdmin() {
 }
 
 /**
- * Libera a votação. O código do dia é o mesmo o dia todo (só muda quando muda a data). O formulário manda modo=cidades para a votação das cidades credenciadas
- * e quem=avaliaram para deixar votar só quem avaliou alguma exposição.
+ * Libera a avaliação das exposições (modo=exposicoes) ou a votação das cidades (modo=cidades, com quem=todos|avaliaram).
+ * As duas são independentes e podem ficar abertas juntas. O código do dia é o mesmo para as duas e só muda quando
+ * muda a data (Fortaleza): liberar de novo no mesmo dia mantém o mesmo código.
  */
 export async function liberarVotacao(form?: FormData) {
   await exigirAdmin();
-  const modo = form?.get("modo") === "cidades" ? "cidades" : "exposicoes";
-  const quem = modo === "cidades" && form?.get("quem") === "avaliaram" ? "avaliaram" : "todos";
+  const cidades = form?.get("modo") === "cidades";
+  const quem = form?.get("quem") === "avaliaram" ? "avaliaram" : "todos";
   const novo = String(randomInt(0, 10000)).padStart(4, "0");
-  // O código do dia só muda quando muda a data (Fortaleza): liberar de novo no mesmo dia mantém o mesmo código.
   await sql()`
     update exposicao_cearense.votacao
-    set aberta = true,
-        codigo_do_dia = case
+    set codigo_do_dia = case
           when codigo_do_dia ~ '^[0-9]{4}$'
            and (aberta_em at time zone 'America/Fortaleza')::date = (now() at time zone 'America/Fortaleza')::date
           then codigo_do_dia else ${novo} end,
-        aberta_em = now(), fechada_em = null, modo = ${modo}, cidades_quem = ${quem}
+        aberta_em = now(),
+        exposicoes_aberta = exposicoes_aberta or ${!cidades},
+        cidades_aberta = cidades_aberta or ${cidades},
+        cidades_quem = case when ${cidades} then ${quem} else cidades_quem end,
+        aberta = true, fechada_em = null
     where id = 1`;
   revalidatePath("/admin");
   revalidatePath("/admin/proximo");
@@ -75,9 +78,19 @@ export async function alterarQuemVota(form: FormData) {
   redirect("/admin/proximo?quem=1");
 }
 
-export async function encerrarVotacao() {
+/** Encerra só a avaliação das exposições (modo=exposicoes) ou só a votação das cidades (modo=cidades). */
+export async function encerrarVotacao(form?: FormData) {
   await exigirAdmin();
-  await sql()`update exposicao_cearense.votacao set aberta = false, fechada_em = now() where id = 1`;
+  const cidades = form?.get("modo") === "cidades";
+  await sql()`
+    update exposicao_cearense.votacao
+    set exposicoes_aberta = exposicoes_aberta and ${cidades},
+        exposicoes_fechada_em = case when ${!cidades} then now() else exposicoes_fechada_em end,
+        cidades_aberta = cidades_aberta and ${!cidades},
+        cidades_fechada_em = case when ${cidades} then now() else cidades_fechada_em end,
+        aberta = (exposicoes_aberta and ${cidades}) or (cidades_aberta and ${!cidades}),
+        fechada_em = now()
+    where id = 1`;
   revalidatePath("/admin");
   revalidatePath("/admin/proximo");
 }

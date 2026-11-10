@@ -17,10 +17,18 @@ async function ipDoCliente() {
   return (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || h.get("x-real-ip") || "desconhecido";
 }
 
-/** Confere se a votação está liberada e o código do dia (com limite de erros por IP). */
-async function conferirCodigo(form: FormData): Promise<{ erro: string } | { votacao: Votacao & { aberta_em: Date } }> {
+type Destino = "inicio" | "avaliar" | "votar";
+const lerDestino = (form: FormData): Destino => {
+  const d = String(form.get("destino") ?? "");
+  return d === "avaliar" || d === "votar" ? d : "inicio";
+};
+
+/** Confere se a votação do destino está liberada e o código do dia (com limite de erros por IP). */
+async function conferirCodigo(form: FormData, destino: Destino): Promise<{ erro: string } | { votacao: Votacao & { codigo_do_dia: string } }> {
   const votacao = await lerVotacao();
-  if (!votacao.aberta || !votacao.aberta_em) return { erro: "A votação não está liberada agora." };
+  if (destino === "avaliar" && !votacao.exposicoes_aberta) return { erro: "A avaliação das exposições não está liberada agora." };
+  if (destino === "votar" && !votacao.cidades_aberta) return { erro: "A votação das cidades não está liberada agora." };
+  if (!votacao.aberta || !votacao.codigo_do_dia) return { erro: "A votação não está liberada agora." };
   if (!segredoConfigurado()) return { erro: "O sistema ainda está sendo configurado. Procure a organização." };
 
   const db = sql();
@@ -36,27 +44,28 @@ async function conferirCodigo(form: FormData): Promise<{ erro: string } | { vota
     await db`insert into tentativas_codigo (ip) values (${ip})`;
     return { erro: "Código do dia incorreto. Confira o número que aparece no telão." };
   }
-  return { votacao: { ...votacao, aberta_em: votacao.aberta_em } };
+  return { votacao: { ...votacao, codigo_do_dia: votacao.codigo_do_dia } };
 }
 
-/** Só entra quem está na lista de alguma exposição do ciclo ativo; depois vai para a votação liberada. */
-async function concluirEntrada(produtorId: string, votacao: Votacao & { aberta_em: Date }): Promise<EstadoEntrada> {
+/** Só entra quem está na lista de alguma exposição do ciclo ativo; depois vai para o destino escolhido. */
+async function concluirEntrada(produtorId: string, votacao: Votacao & { codigo_do_dia: string }, destino: Destino): Promise<EstadoEntrada> {
   const [{ n }] = await sql()<{ n: number }[]>`
     select count(*)::int n from participacoes pa
     join exposicoes e on e.id = pa.exposicao_id
     join ciclos c on c.id = e.ciclo_id and c.ativo
     where pa.produtor_id = ${produtorId}`;
   if (n === 0) return { erro: "Você não está na lista de participantes das exposições deste ano. Procure a organização." };
-  if (votacao.modo === "cidades" && votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(produtorId))) {
+  if (destino === "votar" && votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(produtorId))) {
     return { erro: "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano." };
   }
 
-  await iniciarSessaoProdutor(produtorId, votacao.aberta_em);
-  redirect(votacao.modo === "cidades" ? "/votar/cidades" : "/votar/exposicoes");
+  await iniciarSessaoProdutor(produtorId, votacao.codigo_do_dia);
+  redirect(destino === "avaliar" ? "/avaliar" : destino === "votar" ? "/votar" : "/");
 }
 
 export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEntrada> {
-  const r = await conferirCodigo(form);
+  const destino = lerDestino(form);
+  const r = await conferirCodigo(form, destino);
   if ("erro" in r) return r;
   const votacao = r.votacao;
   const db = sql();
@@ -92,12 +101,12 @@ export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEn
     return { erro: "Escolha como quer se identificar." };
   }
 
-  return concluirEntrada(produtorId, votacao);
+  return concluirEntrada(produtorId, votacao, destino);
 }
 
 export async function sair() {
   await encerrarSessaoProdutor();
-  redirect("/votar");
+  redirect("/");
 }
 
 export type EstadoAvaliacao = { erro?: string };
@@ -108,7 +117,7 @@ export type EstadoAvaliacao = { erro?: string };
  */
 export async function avaliarTudo(_: EstadoAvaliacao, form: FormData): Promise<EstadoAvaliacao> {
   const s = await produtorDaSessao();
-  if (!s) redirect("/votar");
+  if (!s) redirect("/avaliar");
 
   const db = sql();
   const pendentes = await db<{ exposicao_id: string }[]>`
@@ -118,7 +127,7 @@ export async function avaliarTudo(_: EstadoAvaliacao, form: FormData): Promise<E
     join ciclos c on c.id = e.ciclo_id and c.ativo
     left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
     where pa.produtor_id = ${s.produtorId} and a.produtor_id is null`;
-  if (pendentes.length === 0) redirect("/votar/exposicoes?ja=1");
+  if (pendentes.length === 0) redirect("/avaliar?ja=1");
 
   const envio: { exposicaoId: string; notas: number[] }[] = [];
   for (const { exposicao_id } of pendentes) {
@@ -141,10 +150,10 @@ export async function avaliarTudo(_: EstadoAvaliacao, form: FormData): Promise<E
     });
   } catch (e) {
     const err = e as { code?: string; message?: string };
-    if (err.code === "23505") redirect("/votar/exposicoes?ja=1");
-    if (err.message?.includes("fechada")) return { erro: "A votação foi encerrada." };
+    if (err.code === "23505") redirect("/avaliar?ja=1");
+    if (err.message?.includes("fechada")) return { erro: "A avaliação foi encerrada." };
     console.error(e);
     return { erro: "Não foi possível salvar. Nada foi gravado. Tente de novo." };
   }
-  redirect("/votar/exposicoes?ok=1");
+  redirect("/avaliar?ok=1");
 }

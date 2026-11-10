@@ -14,31 +14,35 @@ export default async function Telao() {
   if (!(await ehAdmin())) redirect("/admin");
   const votacao = await lerVotacao();
   const ano = await anoCredenciamento();
-  const cidades = votacao.modo === "cidades";
+  const cidades = votacao.cidades_aberta;
+  const ambas = votacao.cidades_aberta && votacao.exposicoes_aberta;
 
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
   const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  const url = `${proto}://${host}/votar`;
+  // Um QR Code só para as duas: o início mostra "Avaliar as exposições" e "Votar nas cidades".
+  const url = `${proto}://${host}/`;
   const svg = await QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M" });
 
-  // Votação das cidades encerrada: o telão mostra o resultado (durante a votação, só o QR Code, para não influenciar).
-  const resultado = cidades && !votacao.aberta ? await resultadoCidades(ano) : null;
+  // Nada aberto: o telão mostra o resultado das cidades, se já houve votos (durante a votação, só o QR Code, para não influenciar).
+  const resultado = !votacao.aberta ? await resultadoCidades(ano) : null;
 
   return (
     <PaginaPublica>
     <div className="telao">
       <LogoCircuito />
-      <FaixaTitulo>{cidades ? `Votação das cidades do Circuito ${ano}` : "Avalie as exposições do Circuito"}</FaixaTitulo>
+      <FaixaTitulo>
+        {ambas ? "Avalie as exposições e vote nas cidades" : cidades ? `Votação das cidades do Circuito ${ano}` : votacao.aberta ? "Avalie as exposições do Circuito" : `Votação das cidades do Circuito ${ano}`}
+      </FaixaTitulo>
       {votacao.aberta ? (
         <>
           <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
           <div>
             <div className="suave" style={{ fontSize: "1.3rem" }}>
-              Leia o QR Code com a câmera do celular, digite o código do dia{cidades ? " e escolha 2 cidades" : ""}
+              Leia o QR Code com a câmera do celular e digite o código do dia{ambas ? "" : cidades ? " para escolher 2 cidades" : " para avaliar"}
             </div>
             <div className="codigo">{votacao.codigo_do_dia}</div>
-            <div className="suave">{url}</div>
+            <div className="suave">{url.replace(/\/$/, "")}</div>
           </div>
         </>
       ) : resultado && resultado.votantes > 0 ? (

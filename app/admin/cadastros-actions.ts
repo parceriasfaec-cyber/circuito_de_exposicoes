@@ -205,7 +205,7 @@ export async function criarCiclo(_: EstadoForm, form: FormData): Promise<EstadoF
     await db.begin(async (tx) => {
       if (ativar) {
         await tx`update ciclos set ativo = false where ativo`;
-        await tx`update votacao set aberta = false, fechada_em = now() where id = 1 and aberta`;
+        await tx`update votacao set aberta = false, fechada_em = now(), exposicoes_aberta = false, cidades_aberta = false, exposicoes_fechada_em = now(), cidades_fechada_em = now() where id = 1 and (aberta or exposicoes_aberta or cidades_aberta)`;
       }
       const [c] = await tx<{ id: string }[]>`
         insert into ciclos (ano, nome, ativo) values (${ano}, ${"Circuito " + ano}, ${ativar}) returning id`;
@@ -238,7 +238,7 @@ export async function ativarCiclo(form: FormData) {
     await tx`update ciclos set ativo = false where ativo and id <> ${id}`;
     await tx`update ciclos set ativo = true where id = ${id}`;
     // Ao trocar de ciclo a votação é encerrada; o organizador libera de novo no evento.
-    await tx`update votacao set aberta = false, fechada_em = now() where id = 1 and aberta`;
+    await tx`update votacao set aberta = false, fechada_em = now(), exposicoes_aberta = false, cidades_aberta = false, exposicoes_fechada_em = now(), cidades_fechada_em = now() where id = 1 and (aberta or exposicoes_aberta or cidades_aberta)`;
   });
   revalidatePath("/admin");
   redirect("/admin/ciclos?ativado=1");

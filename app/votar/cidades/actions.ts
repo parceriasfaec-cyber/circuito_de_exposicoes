@@ -16,6 +16,7 @@ export async function votarCidades(_: EstadoVotoCidades, form: FormData): Promis
   const ids = [...new Set(form.getAll("cidade").map(String))].filter((x) => UUID.test(x));
   if (ids.length !== 2) return { erro: "Escolha exatamente 2 cidades." };
   const votacao = await lerVotacao();
+  if (!votacao.cidades_aberta) return { erro: "A votação das cidades foi encerrada." };
   if (votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(s.produtorId))) {
     return { erro: "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano." };
   }
@@ -25,10 +26,10 @@ export async function votarCidades(_: EstadoVotoCidades, form: FormData): Promis
     await sql()`select votar_cidades(${s.produtorId}::uuid, ${ano}::smallint, ${ids}::uuid[])`;
   } catch (e) {
     const err = e as { code?: string; message?: string };
-    if (err.code === "23505") redirect("/votar/cidades?ja=1");
+    if (err.code === "23505") redirect("/votar?ja=1");
     if (err.message?.includes("fechada")) return { erro: "A votação das cidades foi encerrada." };
     console.error(e);
     return { erro: "Não foi possível salvar o voto. Nada foi gravado. Tente de novo." };
   }
-  redirect("/votar/cidades?ok=1");
+  redirect("/votar?ok=1");
 }

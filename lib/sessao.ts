@@ -49,24 +49,27 @@ function verificar(token: string | undefined): string | null {
 
 const base = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/" };
 
-/** Sessão do produtor: vale só para a votação liberada naquele momento (aberta_em). */
-export async function iniciarSessaoProdutor(produtorId: string, abertaEm: Date) {
-  (await cookies()).set(COOKIE_PRODUTOR, assinar(`${produtorId}|${abertaEm.getTime()}`), { ...base, maxAge: 60 * 60 * 12 });
+/**
+ * Sessão do produtor: vale enquanto o código do dia for o mesmo e alguma votação estiver aberta.
+ * Assim, quem entrou para avaliar as exposições também pode votar nas cidades sem entrar de novo.
+ */
+export async function iniciarSessaoProdutor(produtorId: string, codigo: string) {
+  (await cookies()).set(COOKIE_PRODUTOR, assinar(`${produtorId}|${codigo}`), { ...base, maxAge: 60 * 60 * 12 });
 }
 
-export async function lerSessaoProdutor(): Promise<{ produtorId: string; abertaEm: number } | null> {
+export async function lerSessaoProdutor(): Promise<{ produtorId: string; codigo: string } | null> {
   const v = verificar((await cookies()).get(COOKIE_PRODUTOR)?.value);
   if (!v) return null;
-  const [produtorId, t] = v.split("|");
-  return { produtorId, abertaEm: Number(t) };
+  const [produtorId, codigo] = v.split("|");
+  return { produtorId, codigo };
 }
 
-/** Produtor logado, desde que a votação continue liberada (a mesma liberação do login). */
+/** Produtor logado, desde que alguma votação continue aberta com o mesmo código do dia do login. */
 export async function produtorDaSessao() {
   const s = await lerSessaoProdutor();
   if (!s) return null;
   const v = await lerVotacao();
-  if (!v.aberta || !v.aberta_em || v.aberta_em.getTime() !== s.abertaEm) return null;
+  if (!v.aberta || !v.codigo_do_dia || v.codigo_do_dia !== s.codigo) return null;
   return s;
 }
 

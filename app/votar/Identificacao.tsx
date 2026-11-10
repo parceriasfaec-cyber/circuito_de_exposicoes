@@ -6,7 +6,7 @@ import { entrar, type EstadoEntrada } from "./actions";
 
 type Opcao = { id: string; nome: string; municipio: string; repetido: boolean };
 
-export default function Identificacao() {
+export default function Identificacao({ destino }: { destino: "inicio" | "avaliar" | "votar" }) {
   const [estado, acao, enviando] = useActionState<EstadoEntrada, FormData>(entrar, {});
   const [modo, setModo] = useState<"documento" | "nome">("documento");
   const [busca, setBusca] = useState("");
@@ -36,6 +36,7 @@ export default function Identificacao() {
   return (
     <form action={acao} className="form-voto">
       <input type="hidden" name="modo" value={modo} />
+      <input type="hidden" name="destino" value={destino} />
 
       <div className="abas com-icone" role="tablist">
         <button type="button" className={modo === "documento" ? "ativa" : ""} onClick={() => setModo("documento")}>

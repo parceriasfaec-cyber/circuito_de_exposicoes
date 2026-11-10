@@ -1694,3 +1694,14 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .cidades-envio-linha .botao { justify-content: center; }
   .cidades-envio-aviso { text-align: center; }
 }
+
+/* Início (QR Code): escolher entre avaliar as exposições e votar nas cidades */
+.escolha-voto { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 12px; }
+.escolha-voto-opcao {
+  display: grid; justify-items: center; gap: 6px; text-align: center; text-decoration: none;
+  padding: 20px 16px; border-radius: 18px; border: 2px solid var(--verde-escuro); background: var(--verde-claro); color: var(--verde-escuro);
+}
+.escolha-voto-opcao:hover { background: var(--verde-escuro); color: #fff; }
+.escolha-voto-opcao:hover small { color: #e3f1d8; }
+.escolha-voto-opcao strong { font-size: 1.2rem; font-weight: 900; }
+.escolha-voto-opcao small { color: var(--texto); font-size: 0.88rem; }

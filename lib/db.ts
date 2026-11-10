@@ -22,21 +22,31 @@ export function sql() {
 }
 
 export type Votacao = {
+  /** Alguma das duas está aberta (avaliação das exposições ou votação das cidades). */
   aberta: boolean;
+  exposicoes_aberta: boolean;
+  cidades_aberta: boolean;
+  /** Mesmo código para as duas; só muda quando muda a data. */
   codigo_do_dia: string | null;
+  /** Última vez que alguma das duas foi liberada (o código do dia vale para essa data). */
   aberta_em: Date | null;
-  fechada_em: Date | null;
-  /** Qual votação o código do dia libera: a das exposições ou a das cidades credenciadas. */
-  modo: "exposicoes" | "cidades";
+  exposicoes_fechada_em: Date | null;
+  cidades_fechada_em: Date | null;
   /** Na votação das cidades: todos os produtores ou só quem avaliou alguma exposição do ciclo ativo. */
   cidades_quem: "todos" | "avaliaram";
 };
 
 export async function lerVotacao(): Promise<Votacao> {
   const [v] = await sql()<Votacao[]>`
-    select aberta, codigo_do_dia, aberta_em, fechada_em, modo, cidades_quem
+    select (exposicoes_aberta or cidades_aberta) aberta, exposicoes_aberta, cidades_aberta, codigo_do_dia, aberta_em,
+           exposicoes_fechada_em, cidades_fechada_em, cidades_quem
     from exposicao_cearense.votacao where id = 1`;
-  return v ?? { aberta: false, codigo_do_dia: null, aberta_em: null, fechada_em: null, modo: "exposicoes", cidades_quem: "todos" };
+  return (
+    v ?? {
+      aberta: false, exposicoes_aberta: false, cidades_aberta: false, codigo_do_dia: null, aberta_em: null,
+      exposicoes_fechada_em: null, cidades_fechada_em: null, cidades_quem: "todos",
+    }
+  );
 }
 
 /** O produtor fez a avaliação de pelo menos uma exposição do ciclo ativo? */

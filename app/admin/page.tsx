@@ -100,17 +100,19 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="kpi">
           <span className="kpi-icone"><Icone nome="usuarios" tamanho={30} /></span>
           <div className="kpi-corpo">
-            <div className="kpi-rotulo">Votação</div>
-            <div className={`kpi-valor ${votacao.aberta ? "status-aberta" : "status-fechada"}`}>{votacao.aberta ? "Liberada" : "Fechada"}</div>
+            <div className="kpi-rotulo">Avaliação das exposições</div>
+            <div className={`kpi-valor ${votacao.exposicoes_aberta ? "status-aberta" : "status-fechada"}`}>{votacao.exposicoes_aberta ? "Liberada" : "Fechada"}</div>
             <div className="kpi-nota">
-              {votacao.aberta ? `${votacao.modo === "cidades" ? "Votação das cidades · " : ""}Liberada em ${dataHora(votacao.aberta_em)}` : `Encerrada em ${dataHora(votacao.fechada_em)}`}
+              {votacao.exposicoes_aberta
+                ? `Link: /avaliar${votacao.cidades_aberta ? " · cidades também aberta" : ""}`
+                : votacao.exposicoes_fechada_em ? `Encerrada em ${dataHora(votacao.exposicoes_fechada_em)}` : "Ainda não foi liberada"}
             </div>
           </div>
           <div className="kpi-acao">
-            {votacao.aberta ? (
-              <form action={encerrarVotacao}><button className="botao perigo pequeno">■ Encerrar votação</button></form>
+            {votacao.exposicoes_aberta ? (
+              <form action={encerrarVotacao}><input type="hidden" name="modo" value="exposicoes" /><button className="botao perigo pequeno">■ Encerrar avaliação</button></form>
             ) : (
-              <form action={liberarVotacao}><button className="botao pequeno">▶ Liberar votação</button></form>
+              <form action={liberarVotacao}><input type="hidden" name="modo" value="exposicoes" /><button className="botao pequeno">▶ Liberar avaliação</button></form>
             )}
           </div>
         </div>

@@ -1,27 +1,30 @@
-import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
+import MolduraVoto from "@/components/MolduraVoto";
 import { lerVotacao } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
+import ConteudoCidades from "./cidades/ConteudoCidades";
 import Identificacao from "./Identificacao";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Votação das Cidades · Circuito Cearense de Exposição" };
 
-export default async function Votar() {
+/** Link direto da votação das cidades. */
+export default async function Votar({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
+  const { ok } = await searchParams;
   const votacao = await lerVotacao();
-  if (votacao.aberta && (await produtorDaSessao())) redirect(votacao.modo === "cidades" ? "/votar/cidades" : "/votar/exposicoes");
-
-  if (!votacao.aberta) {
-    return (
-      <Aviso titulo="A votação ainda não está liberada.">
-        <p>Ela é aberta pela organização no encerramento do evento.</p>
-        <p>Quando for liberada, leia de novo o QR Code ou atualize esta página.</p>
-      </Aviso>
-    );
-  }
-
+  const s = votacao.cidades_aberta ? await produtorDaSessao() : null;
   return (
-    <>
-      <Identificacao />
-    </>
+    <MolduraVoto tipo="cidades">
+      {!votacao.cidades_aberta ? (
+        <Aviso titulo="A votação das cidades ainda não está liberada.">
+          <p>Ela é aberta pela organização no dia das apresentações dos municípios.</p>
+          <p>Quando for liberada, leia de novo o QR Code ou atualize esta página.</p>
+        </Aviso>
+      ) : s ? (
+        <ConteudoCidades s={s} ok={ok} />
+      ) : (
+        <Identificacao destino="votar" />
+      )}
+    </MolduraVoto>
   );
 }
