@@ -32,7 +32,7 @@ export default async function Telao() {
     <div className="telao">
       <LogoCircuito />
       <FaixaTitulo>
-        {ambas ? `Avalie as exposições e escolha as cidades do Circuito ${ano}` : cidades ? `Votação das cidades do Circuito ${ano}` : votacao.aberta ? "Avalie as exposições do Circuito" : `Votação das cidades do Circuito ${ano}`}
+        {ambas ? `Avalie as exposições e escolha as 2 novas cidades para ${ano}` : cidades ? `Votação das cidades do Circuito ${ano}` : votacao.aberta ? "Avalie as exposições do Circuito" : `Votação das cidades do Circuito ${ano}`}
       </FaixaTitulo>
       {votacao.aberta ? (
         <>
