@@ -1591,3 +1591,10 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .cred-item.grande p { font-size: 0.88rem; }
   .cred-assinatura { font-size: 1.2rem; }
 }
+
+/* Painel: escolher quem pode votar nas cidades antes de liberar */
+.liberar-cidades { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.quem-vota { border: 1.5px solid var(--borda); border-radius: 12px; padding: 6px 14px 10px; margin: 0; background: #fff; }
+.quem-vota legend { font-weight: 800; color: var(--verde-escuro); padding: 0 6px; font-size: 0.92rem; }
+.quem-vota label { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-weight: 600; cursor: pointer; }
+.quem-vota input { width: auto; margin: 0; accent-color: var(--verde-escuro); }

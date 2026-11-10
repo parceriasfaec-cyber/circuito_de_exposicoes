@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
 import { anoCredenciamento } from "@/lib/credenciamento";
-import { lerVotacao, sql } from "@/lib/db";
+import { avaliouAlgumaExposicao, lerVotacao, sql } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 import { sair } from "../actions";
 import EscolherCidades from "./EscolherCidades";
@@ -11,7 +11,9 @@ export const dynamic = "force-dynamic";
 export default async function VotarCidades({ searchParams }: { searchParams: Promise<{ ok?: string; ja?: string }> }) {
   const s = await produtorDaSessao();
   if (!s) redirect("/votar");
-  if ((await lerVotacao()).modo !== "cidades") redirect("/votar/exposicoes");
+  const votacao = await lerVotacao();
+  if (votacao.modo !== "cidades") redirect("/votar/exposicoes");
+  const podeVotar = votacao.cidades_quem === "todos" || (await avaliouAlgumaExposicao(s.produtorId));
   const params = await searchParams;
 
   const db = sql();
@@ -26,7 +28,7 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
     where v.produtor_id = ${s.produtorId} and v.ano = ${ano}
     order by m.nome`;
 
-  const cidades = votos.length
+  const cidades = votos.length || !podeVotar
     ? []
     : await db<{ id: string; municipio: string; instituicao: string }[]>`
         select c.id, m.nome municipio, c.instituicao from credenciamentos c
@@ -45,6 +47,10 @@ export default async function VotarCidades({ searchParams }: { searchParams: Pro
         <Aviso titulo={params.ok ? "Voto enviado. Obrigado!" : "Você já votou nas cidades."} sucesso>
           <p>Suas escolhas: <strong>{votos.map((v) => v.municipio).join(" e ")}</strong>.</p>
           <p>O resultado será mostrado no telão ao final da votação.</p>
+        </Aviso>
+      ) : !podeVotar ? (
+        <Aviso titulo="A votação das cidades é só para quem avaliou.">
+          <p>Só pode escolher as cidades quem fez a avaliação de alguma exposição deste ano. Em caso de dúvida, procure a organização.</p>
         </Aviso>
       ) : cidades.length < 2 ? (
         <Aviso titulo="Ainda não há cidades para votar.">

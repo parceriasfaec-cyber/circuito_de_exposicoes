@@ -55,8 +55,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const ranking = await db<Ranking[]>`
     select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, pontos::int, media_produtor::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
-  // Exposições com a mesma média: mostra as notas de desempate (perguntas 2, 5 e 9) embaixo da média.
-  const empatada = (r: Ranking) => r.media_produtor !== null && ranking.filter((x) => x.media_produtor === r.media_produtor).length > 1;
   const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
     with pa as (
       select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}
@@ -166,11 +164,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       <td className="num pontos">{r.questionarios ? r.pontos.toLocaleString("pt-BR") : "—"}</td>
                       <td className="num">
                         <strong>{formatarMedia(r.media_produtor)}</strong>
-                        {empatada(r) && (
-                          <div className="desempate" title="Desempate pela média das perguntas 2, 5 e 9, nessa ordem">
-                            P2 {formatarMedia(r.media_p2)} · P5 {formatarMedia(r.media_p5)} · P9 {formatarMedia(r.media_p9)}
-                          </div>
-                        )}
                       </td>
                     </tr>
                   );

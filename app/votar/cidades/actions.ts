@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { anoCredenciamento } from "@/lib/credenciamento";
-import { sql } from "@/lib/db";
+import { avaliouAlgumaExposicao, lerVotacao, sql } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 
 export type EstadoVotoCidades = { erro?: string };
@@ -15,6 +15,10 @@ export async function votarCidades(_: EstadoVotoCidades, form: FormData): Promis
 
   const ids = [...new Set(form.getAll("cidade").map(String))].filter((x) => UUID.test(x));
   if (ids.length !== 2) return { erro: "Escolha exatamente 2 cidades." };
+  const votacao = await lerVotacao();
+  if (votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(s.produtorId))) {
+    return { erro: "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano." };
+  }
   const ano = await anoCredenciamento();
 
   try {

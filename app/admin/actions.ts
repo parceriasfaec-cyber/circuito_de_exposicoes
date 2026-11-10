@@ -43,14 +43,18 @@ async function exigirAdmin() {
   if (!(await ehAdmin())) redirect("/admin");
 }
 
-/** Libera a votação com um código novo. O formulário manda modo=cidades para a votação das cidades credenciadas. */
+/**
+ * Libera a votação com um código novo. O formulário manda modo=cidades para a votação das cidades credenciadas
+ * e quem=avaliaram para deixar votar só quem avaliou alguma exposição.
+ */
 export async function liberarVotacao(form?: FormData) {
   await exigirAdmin();
   const modo = form?.get("modo") === "cidades" ? "cidades" : "exposicoes";
+  const quem = modo === "cidades" && form?.get("quem") === "avaliaram" ? "avaliaram" : "todos";
   const codigo = String(randomInt(0, 10000)).padStart(4, "0");
   await sql()`
     update exposicao_cearense.votacao
-    set aberta = true, codigo_do_dia = ${codigo}, aberta_em = now(), fechada_em = null, modo = ${modo}
+    set aberta = true, codigo_do_dia = ${codigo}, aberta_em = now(), fechada_em = null, modo = ${modo}, cidades_quem = ${quem}
     where id = 1`;
   revalidatePath("/admin");
   revalidatePath("/admin/proximo");

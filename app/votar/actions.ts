@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { lerVotacao, sql, type Votacao } from "@/lib/db";
+import { avaliouAlgumaExposicao, lerVotacao, sql, type Votacao } from "@/lib/db";
 import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao, segredoConfigurado } from "@/lib/sessao";
 import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
 import { QTD_PERGUNTAS } from "@/lib/escala";
@@ -47,6 +47,9 @@ async function concluirEntrada(produtorId: string, votacao: Votacao & { aberta_e
     join ciclos c on c.id = e.ciclo_id and c.ativo
     where pa.produtor_id = ${produtorId}`;
   if (n === 0) return { erro: "Você não está na lista de participantes das exposições deste ano. Procure a organização." };
+  if (votacao.modo === "cidades" && votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(produtorId))) {
+    return { erro: "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano." };
+  }
 
   await iniciarSessaoProdutor(produtorId, votacao.aberta_em);
   redirect(votacao.modo === "cidades" ? "/votar/cidades" : "/votar/exposicoes");

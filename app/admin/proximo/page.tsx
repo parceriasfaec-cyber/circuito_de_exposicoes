@@ -24,6 +24,13 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
   const votacao = await lerVotacao();
   const votacaoCidades = votacao.aberta && votacao.modo === "cidades";
   const resultado = await resultadoCidades(ano);
+  const [p] = await sql()<{ produtores: number; avaliaram: number }[]>`
+    select count(distinct pa.produtor_id)::int produtores,
+           count(distinct pa.produtor_id) filter (where exists (
+             select 1 from avaliacoes a join exposicoes e2 on e2.id = a.exposicao_id
+             where a.produtor_id = pa.produtor_id and e2.ciclo_id = c.id))::int avaliaram
+    from participacoes pa join exposicoes e on e.id = pa.exposicao_id join ciclos c on c.id = e.ciclo_id and c.ativo`;
+  const quemVota = votacao.cidades_quem === "avaliaram" ? `Só quem avaliou (${p.avaliaram})` : `Todos os produtores (${p.produtores})`;
 
   return (
     <>
@@ -64,7 +71,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <div className="kpi-corpo">
             <div className="kpi-rotulo">Votação das cidades</div>
             <div className={`kpi-valor ${votacaoCidades ? "status-aberta" : "status-fechada"}`}>{votacaoCidades ? "Liberada" : "Fechada"}</div>
-            <div className="kpi-nota">{votacaoCidades ? `Código do dia: ${votacao.codigo_do_dia}` : "Libere no dia das apresentações"}</div>
+            <div className="kpi-nota">{votacaoCidades ? `Código do dia: ${votacao.codigo_do_dia} · ${quemVota}` : "Libere no dia das apresentações"}</div>
           </div>
         </div>
 
@@ -103,8 +110,19 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           {votacaoCidades ? (
             <form action={encerrarVotacao}><button className="botao perigo">■ Encerrar votação das cidades</button></form>
           ) : (
-            <form action={liberarVotacao}>
+            <form action={liberarVotacao} className="liberar-cidades">
               <input type="hidden" name="modo" value="cidades" />
+              <fieldset className="quem-vota">
+                <legend>Quem pode votar nas cidades</legend>
+                <label>
+                  <input type="radio" name="quem" value="todos" defaultChecked={votacao.cidades_quem !== "avaliaram"} />
+                  Todos os produtores <span className="suave">({p.produtores})</span>
+                </label>
+                <label>
+                  <input type="radio" name="quem" value="avaliaram" defaultChecked={votacao.cidades_quem === "avaliaram"} />
+                  Só quem fez a avaliação das exposições <span className="suave">({p.avaliaram})</span>
+                </label>
+              </fieldset>
               <button className="botao" disabled={t.apresentaram < 2}>▶ Liberar votação das cidades</button>
             </form>
           )}
@@ -112,7 +130,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
         </div>
         <p className={votacaoCidades ? "status-aberta" : "status-fechada"} style={{ margin: "0 0 4px", fontWeight: 800 }}>
           {votacaoCidades
-            ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}.`
+            ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}. Podem votar: ${quemVota.toLowerCase()}.`
             : votacao.aberta
               ? "Agora está liberada a votação das exposições. Ao liberar a das cidades, ela é encerrada e sai um código novo."
               : t.apresentaram < 2
