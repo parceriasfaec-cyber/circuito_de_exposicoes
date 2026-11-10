@@ -2,17 +2,17 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
-import RankingCidades, { empateNaVaga } from "@/components/RankingCidades";
-import { anoCredenciamento, diaMes, lerPrazo, resultadoCidades } from "@/lib/credenciamento";
+import RankingCidades from "@/components/RankingCidades";
+import { anoCredenciamento, diaMes, empateNaVaga, lerPrazo, resultadoCidades } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { encerrarVotacao, liberarVotacao } from "../actions";
+import { alterarQuemVota, encerrarVotacao, liberarVotacao } from "../actions";
 import { salvarVagas } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 /** Painel das exposições do próximo ano: credenciados, apresentações e votação das cidades. */
-export default async function PainelProximoAno({ searchParams }: { searchParams: Promise<{ vagas?: string }> }) {
+export default async function PainelProximoAno({ searchParams }: { searchParams: Promise<{ vagas?: string; quem?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const ano = await anoCredenciamento();
   const params = await searchParams;
@@ -99,6 +99,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <Link href="/admin/proximo/credenciados">Credenciados</Link>: {t.apresentaram} de {t.credenciados}.
         </p>
         {params.vagas && <div className="ok">Número de vagas salvo.</div>}
+        {params.quem && <div className="ok">Quem pode votar foi alterado. O código do dia continua o mesmo.</div>}
         <div className="prazo-form" style={{ marginBottom: 14 }}>
           <form action={salvarVagas} className="prazo-form">
             <div>
@@ -108,21 +109,17 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
             <button className="botao secundario">Salvar vagas</button>
           </form>
           {votacaoCidades ? (
-            <form action={encerrarVotacao}><button className="botao perigo">■ Encerrar votação das cidades</button></form>
+            <>
+              <form action={alterarQuemVota} className="liberar-cidades">
+                <QuemVota atual={votacao.cidades_quem} produtores={p.produtores} avaliaram={p.avaliaram} />
+                <button className="botao secundario">Salvar quem pode votar</button>
+              </form>
+              <form action={encerrarVotacao}><button className="botao perigo">■ Encerrar votação das cidades</button></form>
+            </>
           ) : (
             <form action={liberarVotacao} className="liberar-cidades">
               <input type="hidden" name="modo" value="cidades" />
-              <fieldset className="quem-vota">
-                <legend>Quem pode votar nas cidades</legend>
-                <label>
-                  <input type="radio" name="quem" value="todos" defaultChecked={votacao.cidades_quem !== "avaliaram"} />
-                  Todos os produtores <span className="suave">({p.produtores})</span>
-                </label>
-                <label>
-                  <input type="radio" name="quem" value="avaliaram" defaultChecked={votacao.cidades_quem === "avaliaram"} />
-                  Só quem fez a avaliação das exposições <span className="suave">({p.avaliaram})</span>
-                </label>
-              </fieldset>
+              <QuemVota atual={votacao.cidades_quem} produtores={p.produtores} avaliaram={p.avaliaram} />
               <button className="botao" disabled={t.apresentaram < 2}>▶ Liberar votação das cidades</button>
             </form>
           )}
@@ -146,9 +143,26 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
         {resultado.ranking.length === 0 ? (
           <p className="suave">Nenhum município marcado como Apresentou ainda.</p>
         ) : (
-          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} />
+          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} />
         )}
       </section>
     </>
+  );
+}
+
+/** Escolha de quem pode votar nas cidades (usada ao liberar e, com a votação aberta, para mudar sem trocar o código). */
+function QuemVota({ atual, produtores, avaliaram }: { atual: "todos" | "avaliaram"; produtores: number; avaliaram: number }) {
+  return (
+    <fieldset className="quem-vota">
+      <legend>Quem pode votar nas cidades</legend>
+      <label>
+        <input type="radio" name="quem" value="todos" defaultChecked={atual !== "avaliaram"} />
+        Todos os produtores <span className="suave">({produtores})</span>
+      </label>
+      <label>
+        <input type="radio" name="quem" value="avaliaram" defaultChecked={atual === "avaliaram"} />
+        Só quem fez a avaliação das exposições <span className="suave">({avaliaram})</span>
+      </label>
+    </fieldset>
   );
 }

@@ -1598,3 +1598,39 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .quem-vota legend { font-weight: 800; color: var(--verde-escuro); padding: 0 6px; font-size: 0.92rem; }
 .quem-vota label { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-weight: 600; cursor: pointer; }
 .quem-vota input { width: auto; margin: 0; accent-color: var(--verde-escuro); }
+
+/* Questionário: abas sem barra de rolagem (quebram de linha) e destaque da exposição que está sendo avaliada */
+.abas-exp {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 10px;
+  overflow: visible; padding: 4px 4px 14px; margin: 6px 0 12px;
+}
+.aba-exp { min-width: 0; position: relative; transition: transform 0.15s, box-shadow 0.15s; }
+.aba-exp-nome { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aba-exp:not(.ativa):hover { border-color: var(--verde); }
+.aba-exp.ativa { box-shadow: 0 0 0 3px var(--verde-vivo), 0 6px 14px rgba(20, 70, 30, 0.25); transform: translateY(-2px); }
+.aba-exp.ativa::after {
+  content: ""; position: absolute; left: 50%; bottom: -11px; transform: translateX(-50%);
+  border: 9px solid transparent; border-bottom: 0; border-top-color: var(--verde-escuro);
+}
+.painel-exp-topo {
+  background: var(--verde-claro); border: 2px solid var(--verde-borda); border-radius: 16px;
+  padding: 12px 16px 14px; margin-bottom: 18px;
+}
+.painel-exp-topo h3 { font-size: 1.6rem; font-weight: 900; margin: 4px 0 2px; }
+.painel-exp-periodo { color: var(--verde-escuro); font-weight: 700; }
+@media (max-width: 560px) {
+  .abas-exp { grid-template-columns: repeat(auto-fit, minmax(6.2rem, 1fr)); gap: 8px; margin: 4px 0 10px; padding: 3px 3px 12px; }
+  .aba-exp { min-width: 0; padding: 8px 6px; }
+  .painel-exp-topo h3 { font-size: 1.3rem; }
+}
+
+/* Paginação do ranking das cidades (painel) */
+.paginacao { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.paginacao .botao:disabled { opacity: 0.45; cursor: default; }
+.paginacao-numeros { display: flex; gap: 6px; flex-wrap: wrap; }
+.paginacao-num { font: inherit; font-weight: 800; min-width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid var(--borda); background: #fff; color: var(--verde-escuro); cursor: pointer; }
+.paginacao-num:hover { border-color: var(--verde); }
+.paginacao-num.ativa { background: var(--verde-escuro); border-color: var(--verde-escuro); color: #fff; }
+
+/* Ranking das exposições no Painel: números centralizados */
+.ranking-exposicoes th.num, .ranking-exposicoes td.num { text-align: center; }

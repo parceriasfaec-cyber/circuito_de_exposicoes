@@ -60,6 +60,15 @@ export async function liberarVotacao(form?: FormData) {
   revalidatePath("/admin/proximo");
 }
 
+/** Muda quem pode votar nas cidades com a votação já aberta, sem gerar código novo. Votos já feitos continuam valendo. */
+export async function alterarQuemVota(form: FormData) {
+  await exigirAdmin();
+  const quem = form.get("quem") === "avaliaram" ? "avaliaram" : "todos";
+  await sql()`update exposicao_cearense.votacao set cidades_quem = ${quem} where id = 1`;
+  revalidatePath("/admin/proximo");
+  redirect("/admin/proximo?quem=1");
+}
+
 export async function encerrarVotacao() {
   await exigirAdmin();
   await sql()`update exposicao_cearense.votacao set aberta = false, fechada_em = now() where id = 1`;

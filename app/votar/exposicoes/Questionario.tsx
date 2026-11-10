@@ -96,9 +96,9 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
       {exposicoes.map((e, i) => (
         <section key={e.id} className="painel-exp" hidden={i !== ativa} role="tabpanel">
           <div className="painel-exp-topo">
-            <span className="questionario-num">Exposição {i + 1} de {exposicoes.length}</span>
+            <span className="questionario-num">Você está avaliando · Exposição {i + 1} de {exposicoes.length}</span>
             <h3>{e.nome}</h3>
-            <div className="suave">{e.periodo}</div>
+            <div className="painel-exp-periodo">{e.periodo}</div>
           </div>
 
           {e.perguntas.map((p) => {

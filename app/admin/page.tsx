@@ -146,7 +146,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <section className="bloco">
           <h2 className="bloco-titulo"><Icone nome="trofeu" tamanho={22} /> Ranking das Exposições</h2>
           <div className="tabela">
-            <table className="tabela-simples">
+            <table className="tabela-simples ranking-exposicoes">
               <thead>
                 <tr><th>Posição</th><th>Exposição</th><th className="num">Questionários</th><th className="num">Pontos</th><th className="num">Média</th></tr>
               </thead>

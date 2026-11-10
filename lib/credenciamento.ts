@@ -55,6 +55,13 @@ export const diaMes = (iso: string, comAno = false) => {
 
 export type CidadeRanking = { posicao: number; municipio: string; instituicao: string; votos: number };
 
+/** Há empate na última vaga? (duas ou mais cidades na mesma posição ocupando a fronteira das vagas) */
+export function empateNaVaga(ranking: CidadeRanking[], vagas: number | null) {
+  if (!vagas) return false;
+  const dentro = ranking.filter((r) => r.votos > 0 && r.posicao <= vagas);
+  return dentro.length > vagas;
+}
+
 /** Resultado da votação das cidades: ranking, vagas definidas no painel e quantos produtores já votaram. */
 export async function resultadoCidades(ano: number) {
   const db = sql();

@@ -46,7 +46,7 @@ export default async function Telao() {
           <p style={{ fontSize: "1.3rem", margin: "0 0 12px" }}>
             Resultado: {resultado.votantes} {resultado.votantes === 1 ? "produtor votou" : "produtores votaram"}
           </p>
-          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} />
+          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} />
         </div>
       ) : (
         <p style={{ fontSize: "1.5rem" }}>A votação está fechada.</p>
