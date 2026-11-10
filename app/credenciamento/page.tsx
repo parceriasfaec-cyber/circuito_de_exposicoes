@@ -13,7 +13,7 @@ export async function generateMetadata() {
 const manuscrita = Kaushan_Script({ subsets: ["latin"], weight: "400" });
 
 /** Regra mostrada no quadro "Fique atento!" */
-const DURACAO_APRESENTACAO_MIN = 10;
+const DURACAO_APRESENTACAO_MIN = 5;
 
 export default async function Credenciamento({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { ok } = await searchParams;
@@ -48,8 +48,8 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                         <>Prepare o vídeo ou a apresentação. A organização vai informar a data.</>
                       )}
                     </li>
-                    <li>Destaque os motivos pelos quais a sua cidade merece sediar a exposição, em até <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>.</li>
-                    <li>Ao final das apresentações, as cidades serão avaliadas e votadas. As duas mais votadas receberão as exposições em {ano}.</li>
+                    <li>Destaque os motivos pelos quais a sua cidade merece sediar a exposição, em no máximo <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>.</li>
+                    <li>Ao final das apresentações, as cidades serão avaliadas e votadas pelos presentes que participaram de pelo menos 1 etapa do Circuito {ano - 1}. As duas mais votadas receberão as exposições em {ano}.</li>
                   </ol>
                 </div>
                 <p className="suave" style={{ margin: "14px 0 0" }}>Cada pessoa só pode credenciar um município. Em caso de dúvida, procure a organização do Circuito.</p>
@@ -92,14 +92,15 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             <div className="cred-item">
               <Icone nome="trofeu" tamanho={40} />
               <p>
-                Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong>. As{" "}
+                Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong> pelos presentes que
+                participaram de pelo menos 1 etapa do Circuito {ano - 1}. As{" "}
                 <strong className="sem-destaque">duas mais votadas</strong> receberão as exposições em {ano}.
               </p>
             </div>
             <div className="cred-item grande">
               <IconePlay />
               <p>
-                As apresentações deverão ter uma duração de <strong>{DURACAO_APRESENTACAO_MIN} min.</strong>
+                As apresentações deverão ter uma duração de, no máximo, <strong>{DURACAO_APRESENTACAO_MIN} min.</strong>
               </p>
             </div>
             <p className={`cred-assinatura ${manuscrita.className}`}>Contamos com a sua participação!</p>
