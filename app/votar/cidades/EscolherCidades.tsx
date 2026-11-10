@@ -31,6 +31,7 @@ export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
     setMarcadas((m) => (m.includes(id) ? m.filter((x) => x !== id) : m.length < ESCOLHAS ? [...m, id] : m));
   }
   const faltam = ESCOLHAS - marcadas.length;
+  const porId = useMemo(() => new Map(cidades.map((c) => [c.id, c])), [cidades]);
 
   const visiveis = useMemo(() => {
     const q = normalizar(busca);
@@ -58,6 +59,23 @@ export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
         <div className="cidades-contador-num">
           <strong>{marcadas.length} / {ESCOLHAS}</strong>
           <small>{faltam === 0 ? "Pronto para enviar" : `Falta${faltam > 1 ? "m" : ""} ${faltam} voto${faltam > 1 ? "s" : ""}`}</small>
+        </div>
+        <div className="cidades-escolhidas-linha">
+          {marcadas.length === 0 ? (
+            <span className="cidades-escolhidas-vazio">Toque nos municípios da lista para escolher.</span>
+          ) : (
+            marcadas.map((id, i) => {
+              const c = porId.get(id);
+              return c ? (
+                <button key={id} type="button" className="cidade-chip" onClick={() => alternar(id)} aria-label={`Tirar ${c.municipio}`} title="Tocar para tirar">
+                  <span className="cidade-chip-num">{i + 1}</span>
+                  {c.municipio}
+                  <span className="cidade-chip-x" aria-hidden="true">×</span>
+                </button>
+              ) : null;
+            })
+          )}
+          {marcadas.length > 0 && <span className="cidades-escolhidas-dica">Errou? Toque no × para tirar.</span>}
         </div>
       </div>
 

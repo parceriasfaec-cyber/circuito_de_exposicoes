@@ -1858,3 +1858,11 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .diag-posicao { width: 72px; height: 72px; }
   .diag-posicao span { font-size: 1.8rem; }
 }
+
+/* Votação das cidades: escolhidas dentro do contador, com X para tirar */
+.cidades-escolhidas-linha { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding-top: 6px; border-top: 1px dashed var(--verde-borda); }
+.cidade-chip { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800; font-size: 0.9rem; padding: 4px 6px 4px 4px; border-radius: 999px; border: 1.5px solid var(--verde-escuro); background: #fff; color: var(--verde-escuro); cursor: pointer; }
+@media (hover: hover) { .cidade-chip:hover { background: #fbeee9; border-color: #a3341b; color: #a3341b; } .cidade-chip:hover .cidade-chip-num { background: #a3341b; } }
+.cidade-chip-num { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--verde-escuro); color: #fff; font-size: 0.72rem; }
+.cidade-chip-x { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--verde-claro); font-size: 1rem; line-height: 1; }
+.cidades-escolhidas-vazio, .cidades-escolhidas-dica { color: var(--suave); font-size: 0.8rem; font-style: italic; }
