@@ -1634,3 +1634,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 
 /* Ranking das exposições no Painel: números centralizados */
 .ranking-exposicoes th.num, .ranking-exposicoes td.num { text-align: center; }
+.desempate-linha { font-size: 0.78rem; font-weight: 700; color: var(--verde-escuro); margin-top: 2px; white-space: nowrap; }

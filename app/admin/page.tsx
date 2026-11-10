@@ -55,6 +55,16 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const ranking = await db<Ranking[]>`
     select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, pontos::int, media_produtor::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
+  // Exposições com a mesma média: mostra embaixo a pergunta que decidiu o desempate (a primeira entre 2, 5 e 9 com notas diferentes).
+  const desempate = (r: Ranking): { pergunta: number; nota: number | null } | "total" | null => {
+    if (r.media_produtor === null) return null;
+    const grupo = ranking.filter((x) => x.media_produtor === r.media_produtor);
+    if (grupo.length < 2) return null;
+    for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"]] as const) {
+      if (new Set(grupo.map((x) => x[campo])).size > 1) return { pergunta, nota: r[campo] };
+    }
+    return "total";
+  };
   const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
     with pa as (
       select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}
@@ -164,6 +174,15 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       <td className="num pontos">{r.questionarios ? r.pontos.toLocaleString("pt-BR") : "—"}</td>
                       <td className="num">
                         <strong>{formatarMedia(r.media_produtor)}</strong>
+                        {(() => {
+                          const d = desempate(r);
+                          if (!d) return null;
+                          return (
+                            <div className="desempate-linha">
+                              {d === "total" ? "Empate total: a organização decide" : `Desempate · pergunta ${d.pergunta}: ${formatarMedia(d.nota)}`}
+                            </div>
+                          );
+                        })()}
                       </td>
                     </tr>
                   );
