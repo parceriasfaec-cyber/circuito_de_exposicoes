@@ -1885,3 +1885,6 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .prod-quadro .rodape-tabela { padding: 0; }
   .prod-tabela td.c-total { grid-column: 2; grid-row: 1; justify-self: end; }
 }
+.prod-filtro { align-items: center; margin: 0 0 12px; }
+.prod-filtro-rotulo { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: var(--verde-escuro); margin-right: 4px; }
+.prod-filtro .filtro { text-decoration: none; }
