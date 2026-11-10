@@ -109,7 +109,9 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
             <div><strong>{alvo.questionarios}</strong><small>{alvo.questionarios === 1 ? "avaliação" : "avaliações"}{prog ? ` de ${prog.na_lista} na lista` : ""}</small></div>
             {acima && (
               <div>
-                <strong>{sinal((alvo.media_produtor ?? 0) - (acima.media_produtor ?? 0))}</strong>
+                <strong className={(alvo.media_produtor ?? 0) < (acima.media_produtor ?? 0) ? "diag-neg" : undefined}>
+                  {sinal((alvo.media_produtor ?? 0) - (acima.media_produtor ?? 0))}
+                </strong>
                 <small>para {nomeCurto(acima.nome)} ({acima.posicao}º)</small>
               </div>
             )}

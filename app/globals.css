@@ -1956,3 +1956,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 /* Ranking: a linha do desempate quebra em duas para a tabela caber sem barra de rolagem */
 .ranking-exposicoes .desempate-linha { white-space: normal; line-height: 1.25; font-size: 0.74rem; max-width: 9.5rem; margin: 3px auto 0; }
 .ranking-exposicoes th, .ranking-exposicoes td { padding-left: 8px; padding-right: 8px; }
+.diag-numeros strong.diag-neg { color: #b42318; }
