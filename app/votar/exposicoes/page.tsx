@@ -58,15 +58,15 @@ export default async function MinhasExposicoes({ searchParams }: { searchParams:
               <p>Muito obrigado pela sua opinião. Pode fechar esta página.</p>
             </Aviso>
           </div>
-          {lista.map((e) => (
-            <div key={e.id} className="cartao exposicao">
-              <div>
+          <ul className="lista-avaliadas" aria-label="Exposições avaliadas">
+            {lista.map((e) => (
+              <li key={e.id}>
+                <span className="lista-avaliadas-check" aria-hidden="true">✓</span>
                 <strong>{e.nome}</strong>
-                <div className="suave">{formatarData(e.data_inicio)} a {formatarData(e.data_fim)}</div>
-              </div>
-              <span className="selo feito">Avaliada</span>
-            </div>
-          ))}
+                <span className="lista-avaliadas-data">{formatarData(e.data_inicio)} a {formatarData(e.data_fim)}</span>
+              </li>
+            ))}
+          </ul>
         </>
       ) : (
         <>
