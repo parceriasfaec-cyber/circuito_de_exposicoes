@@ -6,7 +6,7 @@ import Icone, { type NomeIcone } from "@/components/Icone";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { mascararDocumento, normalizar } from "@/lib/texto";
+import { documentoCompleto, normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
@@ -135,7 +135,7 @@ export default async function Avaliacoes({
                 <tr key={l.id}>
                   <td className="c-produtor">
                     <div className="nome">{l.nome}</div>
-                    <div className="doc">{mascararDocumento(l.tipo_documento, l.documento)}</div>
+                    <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>
                   </td>
                   <td className="c-municipio"><span className="municipio"><Icone nome="local" tamanho={16} />{l.municipio}</span></td>
                   <td className="c-situacao">

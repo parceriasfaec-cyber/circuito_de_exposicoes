@@ -30,6 +30,15 @@ export function cnpjValido(cnpj: string) {
 }
 
 /** Documento com só os 2 últimos dígitos à mostra: CPF: •••.•••.•••-71 */
+/** Documento completo, com pontuação (só nas telas do organizador). */
+export function documentoCompleto(tipo: string | null, doc: string | null) {
+  if (!tipo || !doc) return "Sem documento";
+  const d = doc.replace(/\D/g, "");
+  if (tipo === "CPF" && d.length === 11) return `CPF: ${d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")}`;
+  if (tipo === "CNPJ" && d.length === 14) return `CNPJ: ${d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5")}`;
+  return `${tipo}: ${doc}`;
+}
+
 export function mascararDocumento(tipo: string | null, doc: string | null) {
   if (!tipo || !doc) return "sem documento";
   const fim = doc.slice(-2);

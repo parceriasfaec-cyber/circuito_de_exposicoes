@@ -5,21 +5,12 @@ import Icone from "@/components/Icone";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { normalizar } from "@/lib/texto";
+import { documentoCompleto, normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
 type Linha = { id: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null };
 const POR_PAGINA = 25;
-
-/** Documento completo, com pontuação (tela só do organizador). */
-function documentoCompleto(tipo: string | null, doc: string | null) {
-  if (!tipo || !doc) return "Sem documento";
-  const d = doc.replace(/\D/g, "");
-  if (tipo === "CPF" && d.length === 11) return `CPF: ${d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")}`;
-  if (tipo === "CNPJ" && d.length === 14) return `CNPJ: ${d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5")}`;
-  return `${tipo}: ${doc}`;
-}
 
 export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");

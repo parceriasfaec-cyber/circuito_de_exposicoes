@@ -5,7 +5,7 @@ import Icone from "@/components/Icone";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { formatarData, mascararDocumento } from "@/lib/texto";
+import { formatarData, documentoCompleto } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +64,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
           <div className="kpi-corpo">
             <div className="kpi-rotulo">Produtor</div>
             <div className="kpi-valor menor">{p.nome}</div>
-            <div className="kpi-nota">{mascararDocumento(p.tipo_documento, p.documento)}{p.atividade ? ` · ${p.atividade}` : ""}</div>
+            <div className="kpi-nota">{documentoCompleto(p.tipo_documento, p.documento)}{p.atividade ? ` · ${p.atividade}` : ""}</div>
           </div>
         </div>
         <div className="kpi">
