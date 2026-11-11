@@ -73,7 +73,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <div className="kpi-corpo">
             <div className="kpi-rotulo">Votação das cidades</div>
             <div className={`kpi-valor ${votacaoCidades ? "status-aberta" : "status-fechada"}`}>{votacaoCidades ? "Liberada" : "Fechada"}</div>
-            <div className="kpi-nota">{votacaoCidades ? `Código do dia: ${votacao.codigo_do_dia} · ${quemVota}` : "Libere no dia das apresentações"}</div>
+            <div className="kpi-nota">{votacaoCidades ? quemVota : "Libere no dia das apresentações"}</div>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <span className="vc-info-icone" aria-hidden="true">i</span>
           <p>
             No dia das apresentações, cada expositor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele lê o QR Code do telão e
-            entra do mesmo jeito da avaliação das exposições: documento ou nome, mais o código do dia.
+            entra do mesmo jeito da avaliação das exposições: com o ID de 5 números do expositor.
           </p>
           <div className="vc-info-lado">
             <Icone nome="calendario" tamanho={22} />
@@ -108,7 +108,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
         </div>
 
         {params.vagas && <div className="ok">Número de vagas salvo.</div>}
-        {params.quem && <div className="ok">Quem pode votar foi alterado. O código do dia continua o mesmo.</div>}
+        {params.quem && <div className="ok">Quem pode votar foi alterado.</div>}
 
         {/* Os campos ficam juntos no cartão, mas cada um pertence ao seu formulário (atributo form). */}
         <form id="form-vagas" action={salvarVagas} hidden />
@@ -161,7 +161,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <span className="vc-status-icone" aria-hidden="true">{votacaoCidades ? "✓" : "■"}</span>
           <span>
             {votacaoCidades
-              ? `Votação das cidades liberada. Código do dia: ${votacao.codigo_do_dia}. Podem votar: ${quemVota.toLowerCase()}.`
+              ? `Votação das cidades liberada. Podem votar: ${quemVota.toLowerCase()}.`
               : t.apresentaram < 2
                 ? "Para liberar a votação, marque em Credenciados pelo menos 2 municípios que fizeram a apresentação."
                 : votacao.exposicoes_aberta
