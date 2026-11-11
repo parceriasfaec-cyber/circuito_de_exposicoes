@@ -5,7 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
 import { normalizar } from "@/lib/texto";
-import { definirApresentacao } from "../actions";
+import { definirApresentacao, desmarcarTodasApresentacoes } from "../actions";
 import BotaoExcluir from "../BotaoExcluir";
 
 export type LinhaCredenciado = {
@@ -71,6 +71,22 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
     });
   }
 
+  function desmarcarTodos() {
+    if (!confirm(`Desmarcar a apresentação dos ${apresentaram} municípios? Eles saem da votação das cidades até serem marcados de novo.`)) return;
+    const antes = marcados;
+    setErro("");
+    setMarcados(Object.fromEntries(linhas.map((l) => [l.id, false])));
+    iniciar(async () => {
+      try {
+        const r = await desmarcarTodasApresentacoes();
+        if (!r.ok) throw new Error();
+      } catch {
+        setMarcados(antes);
+        setErro("Não foi possível desmarcar. Tente de novo.");
+      }
+    });
+  }
+
   const FILTROS: { id: Filtro; rotulo: string }[] = [
     { id: "todos", rotulo: "Todos" },
     { id: "faltam", rotulo: "Faltam apresentar" },
@@ -91,6 +107,9 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
               {f.rotulo} <span className="filtro-num">{contagem[f.id]}</span>
             </button>
           ))}
+          {apresentaram > 0 && (
+            <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
+          )}
         </div>
         <div className="busca-campo" style={{ maxWidth: 420 }}>
           <Icone nome="busca" tamanho={20} />

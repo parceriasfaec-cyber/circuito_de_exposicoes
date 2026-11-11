@@ -31,7 +31,7 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
     <>
       <CabecalhoAdmin
         titulo="Presença"
-        subtitulo="No dia do evento, digite o ID de 5 números do expositor. A presença fica marcada na hora."
+        subtitulo="No dia do evento, ache o expositor na lista (pelo ID, nome ou município) e toque em Marcar. Tocar de novo desmarca."
         ciclos={ciclos}
         ciclo={ciclo}
       />

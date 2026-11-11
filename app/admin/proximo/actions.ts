@@ -66,6 +66,16 @@ export async function definirApresentacao(id: string, apresentou: boolean): Prom
   return { ok: true };
 }
 
+/** Desmarca a apresentação de todos os credenciados do ano (botão "Desmarcar todos"). */
+export async function desmarcarTodasApresentacoes(): Promise<{ ok: boolean }> {
+  if (!(await ehAdmin())) return { ok: false };
+  const ano = await anoCredenciamento();
+  await sql()`update credenciamentos set apresentou = false where ano = ${ano} and apresentou`;
+  revalidatePath("/telao");
+  revalidatePath("/admin/proximo");
+  return { ok: true };
+}
+
 export type EstadoEdicao = { erro?: string };
 
 /** Salva a edição de um credenciado feita pelo organizador (mesmas regras do formulário público, sem olhar o prazo). */

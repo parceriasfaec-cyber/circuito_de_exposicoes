@@ -1124,6 +1124,7 @@ html:has(.admin) { font-size: 15px; }
 }
 .progresso-info { flex: 1; min-width: 0; display: grid; gap: 4px; }
 .progresso-info strong { color: var(--verde-escuro); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progresso-cidade { margin-top: -2px; color: var(--suave); font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .progresso-info small { font-size: 0.78rem; }
 .progresso-barra.escura span { background: var(--verde-escuro); }
 
@@ -2075,34 +2076,30 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .admin .lateral-marcas { display: none; }
 }
 
-/* Presença do dia do evento */
-.pres { display: grid; gap: 16px; }
-.pres-topo { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
-.pres label { display: block; font-weight: 800; color: var(--verde-escuro); margin-bottom: 8px; }
-.pres-linha { display: flex; gap: 12px; flex-wrap: wrap; }
-.pres-entrada input { flex: 1; min-width: 0; font-size: 2.2rem; font-weight: 900; letter-spacing: 0.25em; text-align: center; padding: 10px 14px; border: 2px solid var(--verde-borda); border-radius: 14px; font-variant-numeric: tabular-nums; }
-.pres-entrada input:focus { outline: 3px solid var(--verde-vivo); border-color: var(--verde); }
-.pres-entrada .botao { font-size: 1.05rem; }
-.pres-aviso { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 14px 16px; border-radius: 14px; font-size: 1.05rem; }
-.pres-aviso div { display: grid; gap: 2px; min-width: 0; }
-.pres-aviso strong { font-size: 1.2rem; }
-.pres-aviso.ok { background: var(--verde-claro); color: var(--verde-escuro); border: 2px solid var(--verde-vivo); }
-.pres-aviso.ja { background: #fff8db; color: #6b5200; border: 2px solid var(--amarelo); }
-.pres-aviso.erro { background: var(--alerta-claro); color: var(--alerta); border: 2px solid #f0b48f; }
-.pres-contador { display: grid; align-content: center; justify-items: center; gap: 6px; text-align: center; color: var(--suave); font-weight: 700; }
-.pres-numero { font-size: 3.2rem; font-weight: 900; line-height: 1; color: var(--verde-escuro); }
-.pres-barra { width: 100%; height: 10px; border-radius: 999px; background: var(--verde-claro); overflow: hidden; }
-.pres-barra span { display: block; height: 100%; background: var(--verde); border-radius: 999px; }
-.pres-busca input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--borda); border-radius: 12px; font: inherit; }
-.pres-titulo { margin: 0 0 10px; font-size: 1.15rem; color: var(--verde-escuro); }
-.pres-lista { list-style: none; margin: 10px 0 0; padding: 0; }
-.pres-lista li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--borda); }
-.pres-lista li:last-child { border-bottom: 0; }
-.pres-lista li > div { display: grid; gap: 2px; min-width: 0; }
-.pres-lista .suave { font-size: 0.88rem; font-variant-numeric: tabular-nums; }
-.pres-selo { flex: none; padding: 4px 10px; border-radius: 999px; background: var(--verde-claro); color: var(--verde-escuro); font-weight: 800; font-size: 0.85rem; }
-@media (max-width: 860px) {
-  .pres-topo { grid-template-columns: 1fr; }
-  .pres-entrada input { font-size: 1.8rem; }
-  .pres-entrada .botao { width: 100%; justify-content: center; }
+/* Presença do dia do evento: lista com todos e um toque marca */
+.pres { display: grid; gap: 14px; }
+.pres-cabeca { display: grid; gap: 14px; }
+.pres-contador { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 14px; color: var(--suave); font-weight: 700; }
+.pres-numero { grid-row: span 2; font-size: 3rem; font-weight: 900; line-height: 1; color: var(--verde-escuro); }
+.pres-barra { height: 10px; border-radius: 999px; background: var(--verde-claro); overflow: hidden; }
+.pres-barra span { display: block; height: 100%; background: var(--verde); border-radius: 999px; transition: width 0.3s; }
+.pres-busca { width: 100%; padding: 14px 16px; border: 2px solid var(--verde-borda); border-radius: 14px; font: inherit; font-size: 1.05rem; }
+.pres-busca:focus { outline: 3px solid var(--verde-vivo); border-color: var(--verde); }
+.pres-filtros { display: flex; flex-wrap: wrap; gap: 8px; }
+.pres-tabela th:first-child, .pres-tabela td:first-child { width: 1%; }
+.pres-tabela th:last-child, .pres-tabela td:last-child { width: 1%; white-space: nowrap; }
+.pres-tabela tr.presente td { background: #f3faee; }
+.pres-botao { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 150px; padding: 10px 16px; border-radius: 12px; border: 2px solid var(--verde); background: #fff; color: var(--verde-escuro); font: inherit; font-weight: 800; cursor: pointer; }
+.pres-botao:hover { background: var(--verde-claro); }
+.pres-botao.marcado { background: var(--verde); border-color: var(--verde); color: #fff; }
+.pres-botao.marcado:hover { background: var(--verde-escuro); }
+.pres-botao:disabled { opacity: 0.6; cursor: wait; }
+@media (max-width: 760px) {
+  .pres-tabela { min-width: 560px; }
+  .pres-tabela thead { display: table-header-group; }
+  .pres-tabela tbody tr { display: table-row; border: 0; padding: 0; margin: 0; }
+  .pres-tabela td { display: table-cell; padding: 10px 8px; border-bottom: 1px solid var(--borda); }
+  .pres-botao { min-width: 0; }
 }
+.filtro.desmarcar-todos { margin-left: auto; border-color: #f0b48f; color: var(--alerta); background: #fff; }
+.filtro.desmarcar-todos:hover { background: var(--alerta-claro); }

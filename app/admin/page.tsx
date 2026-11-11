@@ -251,7 +251,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                       <span className="progresso-foto">{iniciais}</span>
                     )}
                     <div className="progresso-info">
-                      <strong>{nome}</strong>
+                      {/* "EXPOBREJO (Brejo Santo)": nome do evento em cima e a cidade, entre parênteses, embaixo */}
+                      <strong>{nome.replace(/\s*\(.*\)$/, "")}</strong>
+                      {/\(.*\)$/.test(nome) && <span className="progresso-cidade">{nome.match(/\(.*\)$/)![0]}</span>}
                       <div className="andamento">
                         <div className="progresso-barra escura"><span style={{ width: `${p.v}%` }} /></div>
                         <span className="andamento-num">{p.v}%</span>

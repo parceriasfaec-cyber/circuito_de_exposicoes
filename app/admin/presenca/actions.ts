@@ -35,6 +35,14 @@ export async function marcarPresenca(cicloId: string, quem: { codigo?: string; i
   return { ok: true, jaEstava: !novo, id: p.id, nome: p.nome, municipio: p.municipio, codigo: p.codigo, hora: hora(r.marcado_em), marcadoEm: new Date(r.marcado_em).toISOString() };
 }
 
+/** Tira a presença de todos no ciclo (botão "Desmarcar todos"). */
+export async function desmarcarTodasPresencas(cicloId: string): Promise<{ ok: boolean }> {
+  if (!(await ehAdmin())) return { ok: false };
+  if (!UUID.test(cicloId)) return { ok: false };
+  await sql()`delete from presencas where ciclo_id = ${cicloId}`;
+  return { ok: true };
+}
+
 /** Desfaz uma presença marcada por engano. */
 export async function desmarcarPresenca(cicloId: string, produtorId: string): Promise<void> {
   if (!(await ehAdmin())) return;
