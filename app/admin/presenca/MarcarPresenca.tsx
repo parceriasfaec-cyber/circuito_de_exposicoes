@@ -17,6 +17,7 @@ export type Expositor = {
   marcado_em: Date | null;
   total_exposicoes: number;
   avaliadas: number;
+  votou_cidades: boolean;
   exposicoes: string | null;
 };
 
@@ -167,13 +168,14 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
               <th className="centro"><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
               <th className="centro"><span><Icone nome="prancheta" tamanho={18} /> Avaliação</span></th>
+              <th className="centro"><span><Icone nome="local" tamanho={18} /> Votação Municípios</span></th>
               <th className="centro"><span><Icone nome="escudo" tamanho={18} /> Status de Presença</span></th>
               <th className="centro">Ações</th>
             </tr>
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={6} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
+              <tr><td colSpan={7} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
             )}
             {daPagina.map((e) => (
               <tr key={e.id} className={e.presente ? "presente" : undefined}>
@@ -192,6 +194,13 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                     <span className="pres-status-ic avaliou" title="Avaliou" aria-label="Avaliou" role="img"><Icone nome="check" tamanho={18} /></span>
                   ) : (
                     <span className="pres-status-ic nao-avaliou" title="Não avaliou" aria-label="Não avaliou" role="img"><Icone nome="alerta" tamanho={18} /></span>
+                  )}
+                </td>
+                <td className="centro">
+                  {e.votou_cidades ? (
+                    <span className="pres-status-ic avaliou" title="Votou nos municípios" aria-label="Votou nos municípios" role="img"><Icone nome="check" tamanho={18} /></span>
+                  ) : (
+                    <span className="pres-status-ic sem-voto" title="Ainda não votou nos municípios" aria-label="Ainda não votou nos municípios" role="img">–</span>
                   )}
                 </td>
                 <td className="centro">

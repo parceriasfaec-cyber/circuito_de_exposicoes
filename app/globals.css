@@ -2103,7 +2103,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-tabela td:last-child { white-space: nowrap; }
 .pres-acao:disabled { opacity: 0.5; cursor: wait; }
 @media (max-width: 760px) {
-  .pres-tabela { min-width: 760px; }
+  .pres-tabela { min-width: 860px; }
   .pres-tabela thead { display: table-header-group; }
   .pres-tabela tbody tr { display: table-row; border: 0; padding: 0; margin: 0; }
   .pres-tabela td { display: table-cell; padding: 10px 8px; border-bottom: 1px solid var(--borda); }
@@ -2164,3 +2164,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-status-ic.avaliou { background: var(--verde); color: #fff; }
 .pres-status-ic.nao-avaliou { background: #fdecdf; color: var(--alerta); }
 .pres-acao:disabled { opacity: 0.35; cursor: not-allowed; }
+.pres-status-ic.sem-voto { background: #eceeec; color: #4d5a4d; font-weight: 900; font-size: 1.1rem; }

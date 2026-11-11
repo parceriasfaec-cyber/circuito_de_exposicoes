@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import { cicloEscolhido } from "@/lib/ciclo";
+import { anoCredenciamento } from "@/lib/credenciamento";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import MarcarPresenca, { type Expositor, type FiltroAval } from "./MarcarPresenca";
@@ -13,6 +14,7 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
   const params = await searchParams;
   const { ciclo, ciclos } = await cicloEscolhido(params.ciclo);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
+  const ano = await anoCredenciamento();
 
   // Expositores do ciclo (participam de alguma exposição dele) e quem já está presente.
   const expositores = await sql()<Expositor[]>`
@@ -22,6 +24,7 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
            pr.marcado_em,
            coalesce(x.total, 0)::int total_exposicoes,
            coalesce(x.avaliadas, 0)::int avaliadas,
+           exists (select 1 from votos_cidades v where v.produtor_id = p.id and v.ano = ${ano}) votou_cidades,
            x.exposicoes
     from produtores p
     left join lateral (
