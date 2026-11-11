@@ -101,12 +101,39 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
 
   return (
     <div className="pres">
-      <div className="cartao pres-cabeca">
-        <div className="pres-contador">
-          <span className="pres-numero">{presentes}</span>
-          <span>de {total} expositores presentes · {pct}%</span>
+      {/* Resumo no topo: presença (clicar filtra; clicar de novo mostra todos) e avaliação */}
+      <div className="cartao pres-resumo">
+        <span className="pres-resumo-icone" aria-hidden="true"><Icone nome="usuarios" tamanho={40} /></span>
+        <div className="pres-resumo-total">
+          <span className="pres-resumo-titulo">Presença dos Expositores</span>
+          <span className="pres-resumo-num"><strong>{presentes}</strong> / {total}</span>
           <div className="pres-barra" aria-hidden="true"><span style={{ width: `${pct}%` }} /></div>
         </div>
+        <div className="pres-resumo-grupo" role="group" aria-label="Filtro da presença">
+          <button type="button" aria-pressed={filtro === "presentes"} className={`pres-chip verde${filtro === "presentes" ? " ativo" : ""}`} onClick={() => { setFiltro(filtro === "presentes" ? "todos" : "presentes"); setPagina(0); }}>
+            <Icone nome="check" tamanho={18} /><span>Presentes<strong>{presentes}</strong></span>
+          </button>
+          <button type="button" aria-pressed={filtro === "faltam"} className={`pres-chip cinza${filtro === "faltam" ? " ativo" : ""}`} onClick={() => { setFiltro(filtro === "faltam" ? "todos" : "faltam"); setPagina(0); }}>
+            <Icone nome="relogio" tamanho={18} /><span>Pendentes<strong>{total - presentes}</strong></span>
+          </button>
+        </div>
+        <div className="pres-resumo-aval">
+          <span className="pres-resumo-titulo"><Icone nome="grafico" tamanho={18} /> Avaliação</span>
+          <div className="pres-resumo-grupo" role="group" aria-label="Filtro da avaliação">
+            <button type="button" aria-pressed={filtroAval === "todos"} className={`pres-chip escuro${filtroAval === "todos" ? " ativo" : ""}`} onClick={() => { setFiltroAval("todos"); setPagina(0); }}>
+              <span>Todos<strong>{total}</strong></span>
+            </button>
+            <button type="button" aria-pressed={filtroAval === "avaliou"} className={`pres-chip verde${filtroAval === "avaliou" ? " ativo" : ""}`} onClick={() => { setFiltroAval(filtroAval === "avaliou" ? "todos" : "avaliou"); setPagina(0); }}>
+              <Icone nome="check" tamanho={18} /><span>Avaliou<strong>{avaliaram}</strong></span>
+            </button>
+            <button type="button" aria-pressed={filtroAval === "nao"} className={`pres-chip laranja${filtroAval === "nao" ? " ativo" : ""}`} onClick={() => { setFiltroAval(filtroAval === "nao" ? "todos" : "nao"); setPagina(0); }}>
+              <Icone nome="alerta" tamanho={18} /><span>Não avaliou<strong>{total - avaliaram}</strong></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="pres-barra-busca">
         <input
           className="pres-busca"
           type="search"
@@ -115,24 +142,9 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
           onChange={(ev) => { setBusca(ev.target.value); setPagina(0); }}
           autoFocus
         />
-        <div className="pres-filtros" role="tablist">
-          {([["todos", `Todos (${total})`], ["presentes", `Presentes (${presentes})`], ["faltam", `Faltam (${total - presentes})`]] as const).map(([f, rotulo]) => (
-            <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`filtro${filtro === f ? " ativo" : ""}`} onClick={() => { setFiltro(f); setPagina(0); }}>
-              {rotulo}
-            </button>
-          ))}
-          {presentes > 0 && (
-            <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
-          )}
-        </div>
-        <div className="pres-filtros" role="tablist" aria-label="Filtro da avaliação">
-          <span className="pres-filtros-rotulo"><Icone nome="prancheta" tamanho={18} /> Avaliação:</span>
-          {([["todos", `Todos (${total})`], ["avaliou", `Avaliou (${avaliaram})`], ["nao", `Não avaliou (${total - avaliaram})`]] as const).map(([f, rotulo]) => (
-            <button key={f} type="button" role="tab" aria-selected={filtroAval === f} className={`filtro${filtroAval === f ? " ativo" : ""}`} onClick={() => { setFiltroAval(f); setPagina(0); }}>
-              {rotulo}
-            </button>
-          ))}
-        </div>
+        {presentes > 0 && (
+          <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
+        )}
       </div>
 
       {erro && <div className="erro" role="alert">{erro}</div>}
