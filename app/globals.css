@@ -765,7 +765,7 @@ body { font-size: 1rem; }
   position: relative;
   overflow: hidden;
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* logos no meio */
   align-items: center;
   gap: 20px;
   padding: 20px 40px 10px;
@@ -1882,6 +1882,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .prod-total { display: inline-grid; place-items: center; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 10px; background: var(--verde-escuro); color: #fff; font-weight: 900; font-variant-numeric: tabular-nums; }
 .prod-total.zero { background: #eef1ec; color: var(--suave); }
 .prod-quadro .botao-detalhes { border-radius: 12px; padding: 8px 16px; }
+.prod-quadro .botao-detalhes.so-icone { width: 40px; height: 40px; padding: 0; justify-content: center; }
 .prod-quadro .rodape-tabela { margin: 0; padding: 10px 12px 12px; }
 @media (max-width: 760px) {
   /* No celular continua tabela (ID | Expositor | ...), com rolagem para o lado */

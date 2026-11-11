@@ -287,6 +287,9 @@ export async function juntarProdutores(form: FormData) {
     await tx`insert into participacoes (produtor_id, exposicao_id)
              select ${destino}::uuid, exposicao_id from participacoes where produtor_id = ${origem}
              on conflict do nothing`;
+    await tx`insert into presencas (ciclo_id, produtor_id, marcado_em)
+             select ciclo_id, ${destino}::uuid, marcado_em from presencas where produtor_id = ${origem}
+             on conflict do nothing`;
     await tx`delete from produtores where id = ${origem}`;
     await tx`update produtores set
                tipo_documento = coalesce(tipo_documento, ${o.tipo_documento}),

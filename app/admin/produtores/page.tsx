@@ -136,7 +136,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                     <span className={`prod-total${exps.length === 0 ? " zero" : ""}`} title={`${exps.length} ${exps.length === 1 ? "exposição" : "exposições"}`}>{exps.length}</span>
                   </td>
                   <td className="c-acoes centro">
-                    <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes"><Icone nome="lapis" tamanho={16} /> Editar</Link>
+                    <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={18} /></Link>
                   </td>
                 </tr>
               );

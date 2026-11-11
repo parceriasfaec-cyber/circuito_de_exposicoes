@@ -20,6 +20,7 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
       { href: "/admin/produtores", rotulo: "Expositores", icone: "usuarios" },
       { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
       { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
+      { href: "/admin/presenca", rotulo: "Presença", icone: "check" },
       { href: "/admin/diagnostico", rotulo: "Avaliação por Circuito", icone: "alerta" },
     ],
   },
