@@ -19,8 +19,15 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
     select p.id, p.codigo, p.nome, p.empresa, p.municipio,
            pr.marcado_em is not null presente,
            to_char(pr.marcado_em at time zone 'America/Fortaleza', 'HH24:MI') hora,
-           pr.marcado_em
+           pr.marcado_em,
+           coalesce(x.total, 0)::int total_exposicoes,
+           x.exposicoes
     from produtores p
+    left join lateral (
+      select count(*) total, string_agg(e.nome, ', ' order by e.data_inicio) exposicoes
+      from participacoes pa join exposicoes e on e.id = pa.exposicao_id
+      where pa.produtor_id = p.id and e.ciclo_id = ${cid}
+    ) x on true
     left join presencas pr on pr.produtor_id = p.id and pr.ciclo_id = ${cid}
     where pr.produtor_id is not null
        or exists (select 1 from participacoes pa join exposicoes e on e.id = pa.exposicao_id

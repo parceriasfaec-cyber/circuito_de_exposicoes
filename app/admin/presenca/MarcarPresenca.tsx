@@ -14,6 +14,8 @@ export type Expositor = {
   presente: boolean;
   hora: string | null;
   marcado_em: Date | null;
+  total_exposicoes: number;
+  exposicoes: string | null;
 };
 
 type Filtro = "todos" | "presentes" | "faltam";
@@ -121,7 +123,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
             <tr>
               <th className="centro">ID</th>
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
-              <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
+              <th className="centro"><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
               <th className="centro"><span><Icone nome="escudo" tamanho={18} /> Status de Presença</span></th>
               <th className="centro">Ações</th>
             </tr>
@@ -137,7 +139,11 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
                   <div className="nome">{e.nome}</div>
                   {e.empresa && <div className="prod-empresa">{e.empresa}</div>}
                 </td>
-                <td>{e.municipio}</td>
+                <td className="centro">
+                  <span className={`prod-total${e.total_exposicoes === 0 ? " zero" : ""}`} title={e.exposicoes ?? "Nenhuma exposição neste ciclo"}>
+                    {e.total_exposicoes}
+                  </span>
+                </td>
                 <td className="centro">
                   {e.presente ? (
                     <span className="pres-status presente" title={e.hora ? `Marcado às ${e.hora}` : undefined}>

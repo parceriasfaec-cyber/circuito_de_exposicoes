@@ -2090,7 +2090,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-tabela th:last-child, .pres-tabela td:last-child { width: 1%; white-space: nowrap; }
 .pres-tabela tr.presente td { background: #f3faee; }
 .pres-tabela thead th span { justify-content: center; }
-.pres-tabela thead th:nth-child(2) span, .pres-tabela thead th:nth-child(3) span { justify-content: flex-start; }
+.pres-tabela thead th:nth-child(2) span { justify-content: flex-start; }
 .pres-status { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 999px; font-weight: 800; white-space: nowrap; }
 .pres-status small { font-weight: 700; opacity: 0.8; margin-left: 2px; }
 .pres-status.pendente { background: #eceeec; color: #3b453b; }
