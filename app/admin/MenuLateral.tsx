@@ -8,26 +8,32 @@ import { sair } from "./actions";
 
 type Item = { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean; exato?: boolean };
 
-/** Dois blocos: a avaliação das exposições do ciclo atual e as exposições do próximo ano (credenciamento e votação das cidades). */
+/** Três blocos por assunto: gestão do circuito, avaliação das exposições e credenciamento/votação das cidades do próximo ano. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
   {
-    titulo: "Avaliação das exposições",
+    titulo: "Gestão do circuito",
     itens: [
       { href: "/admin", rotulo: "Painel", icone: "painel", exato: true },
       { href: "/admin/horario", rotulo: "Prazo e horário", icone: "calendario" },
       { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
       { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
       { href: "/admin/produtores", rotulo: "Expositores", icone: "usuarios" },
+      { href: "/admin/presenca", rotulo: "Presença", icone: "check" },
+    ],
+  },
+  {
+    titulo: "Avaliação das exposições",
+    itens: [
       { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
       { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
-      { href: "/admin/presenca", rotulo: "Presença", icone: "check" },
       { href: "/admin/diagnostico", rotulo: "Avaliação por Circuito", icone: "alerta" },
     ],
   },
   {
-    titulo: `Exposições ${ano}`,
+    titulo: "Credenciamento e votação",
     itens: [
-      { href: "/admin/proximo", rotulo: `Painel ${ano}`, icone: "grafico", exato: true },
+      { href: "/admin/proximo", rotulo: "Painel de Votação", icone: "grafico", exato: true },
       { href: "/admin/proximo/credenciados", rotulo: "Credenciados", icone: "local" },
       { href: "/admin/proximo/prazos", rotulo: "Prazos", icone: "calendario" },
     ],
