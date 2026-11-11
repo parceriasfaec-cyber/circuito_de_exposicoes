@@ -86,12 +86,23 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
               className={`aba-exp${i === ativa ? " ativa" : ""}${feita ? " feita" : ""}`}
               onClick={() => irPara(i)}
             >
-              <span className="aba-exp-nome">{curto(e.nome)}</span>
+              {/* "EXPOAGRO (Crateús)": nome do evento em cima e a cidade embaixo, sem cortar */}
+              <span className="aba-exp-nome">{curto(e.nome).replace(/\s*\(.*\)$/, "")}</span>
+              {/\(.*\)$/.test(e.nome) && <span className="aba-exp-cidade">{e.nome.match(/\((.*)\)$/)![1]}</span>}
               <span className="aba-exp-status">{feita ? "✓" : `${respondidasDe(e)}/${e.perguntas.length}`}</span>
             </button>
           );
         })}
       </div>
+
+      {/* Legenda das notas, uma vez só, logo abaixo das abas */}
+      <ul className="legenda-notas" aria-label="O que significa cada nota">
+        <li><strong>1</strong> = muito ruim</li>
+        <li><strong>2</strong> = ruim</li>
+        <li><strong>3</strong> = regular</li>
+        <li><strong>4</strong> = bom</li>
+        <li><strong>5</strong> = excelente</li>
+      </ul>
 
       {exposicoes.map((e, i) => (
         <section key={e.id} className="painel-exp" hidden={i !== ativa} role="tabpanel">
