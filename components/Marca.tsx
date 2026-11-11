@@ -55,7 +55,6 @@ export function Topo() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="circuito" src="/marcas/logo-circuito-largo.png" alt="Circuito Cearense de Exposição" width={953} height={394} />
       </div>
-      <span className="topo-claro-titulo">Circuito Cearense de Exposição Agropecuária</span>
       <svg className="topo-claro-onda" viewBox="0 0 900 200" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 150 C 260 140, 560 70, 900 0 L900 34 C 600 92, 300 148, 0 156 Z" fill="#7cc242" />
         <path d="M200 156 C 460 146, 700 90, 900 34 L900 70 C 720 110, 480 150, 200 156 Z" fill="#2a7a3b" />
