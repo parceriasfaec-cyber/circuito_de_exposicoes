@@ -101,6 +101,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         <table className="tabela-org prod-tabela">
           <thead>
             <tr>
+              <th className="centro">ID</th>
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
               <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
               <th className="centro">Total de Exposições</th>
@@ -109,17 +110,18 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={4} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
+              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
             )}
             {visiveis.map((l) => {
               const exps = l.exposicoes ?? [];
               return (
                 <tr key={l.id}>
+                  <td className="c-id centro"><span className="prod-id">{l.codigo}</span></td>
                   <td className="c-produtor">
                     <div className="prod-pessoa">
                       <span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={20} /></span>
                       <div>
-                        <div className="nome">{l.nome} <span className="prod-id" title="ID do expositor">ID {l.codigo}</span></div>
+                        <div className="nome">{l.nome}</div>
                         {l.empresa && <div className="prod-empresa">{l.empresa}</div>}
                         <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>
                       </div>
