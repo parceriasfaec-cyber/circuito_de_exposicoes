@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Icone from "@/components/Icone";
+import Paginacao, { paginar } from "@/components/Paginacao";
 import { normalizar } from "@/lib/texto";
 import { desmarcarPresenca, desmarcarTodasPresencas, marcarPresenca } from "./actions";
 
@@ -20,6 +21,8 @@ export type Expositor = {
 
 type Filtro = "todos" | "presentes" | "faltam";
 
+const POR_PAGINA = 20;
+
 /** Lista com todos os expositores do ciclo: busca por ID, nome ou município e um toque marca (ou desmarca) a presença. */
 export default function MarcarPresenca({ cicloId, expositores: doServidor }: { cicloId: string; expositores: Expositor[] }) {
   // Cópia local: a linha, o contador e os filtros mudam na hora, sem recarregar a página.
@@ -27,6 +30,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
   useEffect(() => setExpositores(doServidor), [doServidor]);
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [pagina, setPagina] = useState(0);
   const [salvando, setSalvando] = useState<Set<string>>(new Set());
   const [erro, setErro] = useState<string | null>(null);
 
@@ -42,6 +46,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
         (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio}`).includes(q)),
     );
   }, [expositores, busca, filtro]);
+  const { atual, itens: daPagina } = paginar(visiveis, pagina, POR_PAGINA);
 
   const atualizar = (id: string, dados: Partial<Expositor>) =>
     setExpositores((lista) => lista.map((x) => (x.id === id ? { ...x, ...dados } : x)));
@@ -100,12 +105,12 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
           type="search"
           placeholder="Buscar por ID, nome, empresa ou município..."
           value={busca}
-          onChange={(ev) => setBusca(ev.target.value)}
+          onChange={(ev) => { setBusca(ev.target.value); setPagina(0); }}
           autoFocus
         />
         <div className="pres-filtros" role="tablist">
           {([["todos", `Todos (${total})`], ["presentes", `Presentes (${presentes})`], ["faltam", `Faltam (${total - presentes})`]] as const).map(([f, rotulo]) => (
-            <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`filtro${filtro === f ? " ativo" : ""}`} onClick={() => setFiltro(f)}>
+            <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`filtro${filtro === f ? " ativo" : ""}`} onClick={() => { setFiltro(f); setPagina(0); }}>
               {rotulo}
             </button>
           ))}
@@ -132,7 +137,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
             {visiveis.length === 0 && (
               <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
             )}
-            {visiveis.map((e) => (
+            {daPagina.map((e) => (
               <tr key={e.id} className={e.presente ? "presente" : undefined}>
                 <td className="centro"><span className="prod-id">{e.codigo}</span></td>
                 <td>
@@ -180,6 +185,8 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
           </tbody>
         </table>
       </div>
+
+      <Paginacao pagina={atual} porPagina={POR_PAGINA} total={visiveis.length} aoMudar={setPagina} rotulo="Páginas da presença" />
     </div>
   );
 }
