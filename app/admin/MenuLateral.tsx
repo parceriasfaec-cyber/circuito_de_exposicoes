@@ -14,7 +14,7 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
   {
     titulo: "Gestão do circuito",
     itens: [
-      { href: "/admin", rotulo: "Painel", icone: "painel", exato: true },
+      { href: "/admin", rotulo: "Painel de Avaliação", icone: "painel", exato: true },
       { href: "/admin/horario", rotulo: "Prazo e horário", icone: "calendario" },
       { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
       { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
