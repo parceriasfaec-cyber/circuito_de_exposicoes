@@ -11,7 +11,7 @@ import BotaoPdf, { ImprimirAoAbrir } from "./BotaoPdf";
 
 export const dynamic = "force-dynamic";
 
-type Ranking = { exposicao_id: string; posicao: number; nome: string; questionarios: number; pontos: number; media_produtor: number | null };
+type Ranking = { exposicao_id: string; posicao: number; nome: string; foto: string | null; questionarios: number; pontos: number; media_produtor: number | null };
 type Pergunta = { ordem: number; texto: string; exp: number | null; circuito: number | null; pontos: number | null };
 
 const fmt = (n: number | null) => (n === null ? "—" : formatarMedia(n));
@@ -29,8 +29,9 @@ export default async function Diagnostico({ searchParams }: { searchParams: Prom
   const db = sql();
 
   const ranking = await db<Ranking[]>`
-    select exposicao_id, posicao::int, nome, questionarios::int, pontos::int, media_produtor::float
-    from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
+    select r.exposicao_id, r.posicao::int, r.nome, e.foto, r.questionarios::int, r.pontos::int, r.media_produtor::float
+    from v_ranking r join exposicoes e on e.id = r.exposicao_id
+    where r.ciclo_id = ${cid} order by r.posicao, r.nome`;
   const avaliadas = ranking.filter((r) => r.questionarios > 0 && r.media_produtor !== null);
   const semAvaliacao = ranking.filter((r) => r.questionarios === 0);
 
@@ -157,6 +158,10 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
           <span>{alvo.posicao}º</span>
           <small>de {ranking.length}</small>
         </div>
+        {alvo.foto && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="diag-foto" src={`/exposicoes/${alvo.foto}.png`} alt="" width={192} height={192} />
+        )}
         <div className="diag-destaque-corpo">
           <span className="diag-etiqueta">{ehUltima ? "Sai do Circuito · última colocada entre as avaliadas" : todas ? `${alvo.posicao}º lugar no Circuito` : "Exposição escolhida"}</span>
           <h2>{alvo.nome}</h2>

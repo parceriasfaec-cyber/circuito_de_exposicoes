@@ -1818,6 +1818,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .diag-posicao { flex: none; display: grid; place-items: center; width: 96px; height: 96px; border-radius: 18px; background: #a3341b; color: #fff; line-height: 1; }
 .diag-posicao span { font-size: 2.4rem; font-weight: 900; }
 .diag-posicao small { font-size: 0.85rem; opacity: 0.85; }
+.diag-foto { flex: none; width: 96px; height: 96px; border-radius: 50%; object-fit: cover; background: #fff; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(29, 94, 44, 0.25); }
 .diag-destaque-corpo { flex: 1; min-width: 0; }
 .diag-etiqueta { display: inline-block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #a3341b; }
 .diag-destaque h2 { margin: 2px 0 10px; color: var(--verde-escuro); font-size: 1.5rem; }
@@ -1857,6 +1858,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .diag-destaque { flex-direction: column; align-items: flex-start; }
   .diag-posicao { width: 72px; height: 72px; }
   .diag-posicao span { font-size: 1.8rem; }
+  .diag-foto { width: 72px; height: 72px; }
 }
 
 /* Votação das cidades: escolhidas dentro do contador, com X para tirar */
@@ -2017,6 +2019,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .diag-destaque { padding: 10px 14px !important; margin-bottom: 8px !important; break-inside: avoid; }
   .diag-posicao { width: 64px !important; height: 64px !important; }
   .diag-posicao span { font-size: 1.9rem !important; }
+  .diag-foto { width: 64px !important; height: 64px !important; }
   .diag-destaque h2 { font-size: 1.35rem !important; margin-bottom: 6px !important; }
   .diag-aviso { margin-bottom: 8px !important; padding: 6px 10px !important; }
   .bloco { box-shadow: none !important; margin-bottom: 8px !important; break-inside: auto; }

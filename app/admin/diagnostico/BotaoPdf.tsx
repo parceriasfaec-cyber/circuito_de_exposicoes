@@ -30,8 +30,15 @@ export default function BotaoPdf({ arquivo, rotulo, href, secundario }: { arquiv
 /** Na página com todas as exposições aberta pelo botão "PDF de todas", abre a impressão assim que carrega. */
 export function ImprimirAoAbrir({ arquivo }: { arquivo: string }) {
   useEffect(() => {
-    const t = setTimeout(() => imprimir(arquivo), 600);
-    return () => clearTimeout(t);
+    let cancelado = false;
+    // Espera as imagens (logos e fotos das exposições) carregarem para não saírem em branco no PDF.
+    const carregadas = Promise.all(
+      Array.from(document.images).filter((i) => !i.complete).map((i) => new Promise((ok) => { i.onload = i.onerror = ok; })),
+    );
+    const t = setTimeout(() => {
+      Promise.race([carregadas, new Promise((ok) => setTimeout(ok, 4000))]).then(() => { if (!cancelado) imprimir(arquivo); });
+    }, 600);
+    return () => { cancelado = true; clearTimeout(t); };
   }, [arquivo]);
   return null;
 }
