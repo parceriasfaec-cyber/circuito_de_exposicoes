@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
 import { anoCredenciamento } from "@/lib/credenciamento";
-import { avaliouAlgumaExposicao, lerVotacao, sql } from "@/lib/db";
+import { AVISO_SO_PRESENTES, avaliouAlgumaExposicao, lerVotacao, podeAvaliarPorPresenca, sql } from "@/lib/db";
 import { formatarData } from "@/lib/texto";
 import { sair } from "../actions";
 import Questionario, { type ExposicaoQuestionario } from "./Questionario";
@@ -22,6 +22,24 @@ export default async function ConteudoAvaliacao({ s, ok, cidadesAberta }: { s: {
   const votacao = cidadesAberta ? await lerVotacao() : null;
   const [jaVotou] = cidadesAberta ? await db<{ n: number }[]>`select count(*)::int n from votos_cidades where produtor_id = ${s.produtorId} and ano = ${ano}` : [{ n: 0 }];
   const podeVotarCidades = !!votacao && (votacao.cidades_quem === "todos" || (await avaliouAlgumaExposicao(s.produtorId)));
+
+  // Avaliação só para presentes (opção em Prazo e horário): quem não teve a presença marcada não vê o questionário.
+  if (!(await podeAvaliarPorPresenca(s.produtorId, await lerVotacao()))) {
+    return (
+      <>
+        <div className="saudacao">
+          <h2>Olá, {produtor.nome.split(" ")[0]}!</h2>
+          <div className="suave">{produtor.nome} · {produtor.municipio}</div>
+        </div>
+        <Aviso titulo="Avaliação só para quem está presente">
+          <p>{AVISO_SO_PRESENTES}</p>
+        </Aviso>
+        <form action={sair} style={{ marginTop: 20 }}>
+          <button className="link">Sair</button>
+        </form>
+      </>
+    );
+  }
 
   const lista = await db<Linha[]>`
     select e.id, e.nome, e.data_inicio, e.data_fim, (a.produtor_id is not null) avaliada

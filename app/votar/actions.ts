@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { avaliouAlgumaExposicao, lerVotacao, sql, type Votacao } from "@/lib/db";
+import { AVISO_SO_PRESENTES, avaliouAlgumaExposicao, lerVotacao, podeAvaliarPorPresenca, sql, type Votacao } from "@/lib/db";
 import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao, segredoConfigurado } from "@/lib/sessao";
 import { soDigitos } from "@/lib/texto";
 import { QTD_PERGUNTAS } from "@/lib/escala";
@@ -48,6 +48,7 @@ async function concluirEntrada(produtorId: string, votacao: Votacao & { codigo_d
     join ciclos c on c.id = e.ciclo_id and c.ativo
     where pa.produtor_id = ${produtorId}`;
   if (n === 0) return { erro: "Você não está na lista de participantes das exposições deste ano. Procure a organização." };
+  if (destino === "avaliar" && !(await podeAvaliarPorPresenca(produtorId, votacao))) return { erro: AVISO_SO_PRESENTES };
   if (destino === "votar" && votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(produtorId))) {
     return { erro: "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano." };
   }
@@ -86,6 +87,7 @@ export type EstadoAvaliacao = { erro?: string };
 export async function avaliarTudo(_: EstadoAvaliacao, form: FormData): Promise<EstadoAvaliacao> {
   const s = await produtorDaSessao();
   if (!s) redirect("/avaliar");
+  if (!(await podeAvaliarPorPresenca(s.produtorId, await lerVotacao()))) return { erro: AVISO_SO_PRESENTES };
 
   const db = sql();
   const pendentes = await db<{ exposicao_id: string }[]>`

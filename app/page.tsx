@@ -32,7 +32,7 @@ export default async function Inicio() {
         join ciclos c on c.id = e.ciclo_id and c.ativo
         left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
         where pa.produtor_id = ${s.produtorId} and a.produtor_id is null`;
-      faltaAvaliar = n > 0;
+      faltaAvaliar = n > 0; // sem presença (quando exigida), a tela de avaliação mostra o aviso
     }
     if (votacao.cidades_aberta) {
       const [{ n }] = await db<{ n: number }[]>`select count(*)::int n from votos_cidades where produtor_id = ${s.produtorId} and ano = ${ano}`;

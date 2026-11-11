@@ -3,7 +3,8 @@ import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
 import { lerVotacao } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { programarHorarios } from "../actions";
+import { alterarQuemAvalia, programarHorarios } from "../actions";
+import { sql } from "@/lib/db";
 import BotaoLimpar from "./BotaoLimpar";
 
 export const dynamic = "force-dynamic";
@@ -23,13 +24,16 @@ const paraCampo = (d: Date | null) => {
 };
 
 /** Prazo e horário da avaliação das exposições: abre e fecha sozinha nos horários marcados. */
-export default async function HorarioAvaliacao({ searchParams }: { searchParams: Promise<{ horario?: string; horario_erro?: string }> }) {
+export default async function HorarioAvaliacao({ searchParams }: { searchParams: Promise<{ horario?: string; horario_erro?: string; quem?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const votacao = await lerVotacao();
 
   const aberta = votacao.exposicoes_aberta;
   const temHorario = Boolean(votacao.exposicoes_abrir_em || votacao.exposicoes_fechar_em);
+  const [cont] = await sql()<{ total: number; presentes: number }[]>`
+    select (select count(distinct pa.produtor_id)::int from participacoes pa join exposicoes e on e.id = pa.exposicao_id join ciclos c on c.id = e.ciclo_id and c.ativo) total,
+           (select count(*)::int from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo) presentes`;
 
   return (
     <>
@@ -39,6 +43,7 @@ export default async function HorarioAvaliacao({ searchParams }: { searchParams:
       {params.horario === "limpo" && <div className="ok">Horários apagados. Abrir e fechar agora só pelos botões do Painel.</div>}
       {params.horario === "historico" && <div className="ok">Início e fim excluídos.</div>}
       {params.horario_erro && <div className="erro" role="alert">{params.horario_erro}</div>}
+      {params.quem && <div className="ok">Quem pode avaliar: salvo.</div>}
 
       {/* Situação agora, em destaque */}
       <div className={`hr-situacao ${aberta ? "aberta" : "fechada"}`}>
@@ -101,6 +106,27 @@ export default async function HorarioAvaliacao({ searchParams }: { searchParams:
           <div className="hr-botoes">
             {temHorario && <button className="botao secundario" name="acao" value="limpar">Apagar horários</button>}
             <button className="botao" name="acao" value="salvar">Salvar horário</button>
+          </div>
+        </div>
+      </form>
+
+      {/* Condição de presença: pode ligar ou desligar a qualquer hora, com a avaliação aberta ou fechada */}
+      <form action={alterarQuemAvalia} className="bloco hr-form">
+        <h2 className="bloco-titulo"><Icone nome="check" tamanho={22} /> Quem pode avaliar</h2>
+        <fieldset className="vc-quem hr-quem">
+          <label>
+            <input type="radio" name="quem_avalia" value="todos" defaultChecked={!votacao.exposicoes_so_presentes} />
+            Todos os expositores <span className="suave">({cont.total})</span>
+          </label>
+          <label>
+            <input type="radio" name="quem_avalia" value="presentes" defaultChecked={votacao.exposicoes_so_presentes} />
+            Só quem teve a presença marcada <span className="suave">({cont.presentes} presentes agora)</span>
+          </label>
+        </fieldset>
+        <div className="hr-rodape">
+          <span className="suave">A presença é marcada na tela <strong>Presença</strong>. Pode mudar esta opção quando quiser.</span>
+          <div className="hr-botoes">
+            <button className="botao">Salvar</button>
           </div>
         </div>
       </form>

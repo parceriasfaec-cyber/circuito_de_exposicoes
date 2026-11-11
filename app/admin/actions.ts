@@ -72,6 +72,15 @@ export async function liberarVotacao(form?: FormData) {
   revalidatePath("/admin/proximo");
 }
 
+/** Quem pode avaliar as exposições: todos ou só quem teve a presença marcada (pode mudar a qualquer hora). */
+export async function alterarQuemAvalia(form: FormData) {
+  await exigirAdmin();
+  const soPresentes = form.get("quem_avalia") === "presentes";
+  await sql()`update exposicao_cearense.votacao set exposicoes_so_presentes = ${soPresentes} where id = 1`;
+  revalidatePath("/admin");
+  redirect("/admin/horario?quem=1");
+}
+
 /** Muda quem pode votar nas cidades com a votação já aberta, sem mudar o código. Votos já feitos continuam valendo. */
 export async function alterarQuemVota(form: FormData) {
   await exigirAdmin();
