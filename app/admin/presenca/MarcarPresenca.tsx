@@ -182,9 +182,9 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                 </td>
                 <td className="centro">
                   {avaliou(e) ? (
-                    <span className="pres-aval avaliou"><Icone nome="check" tamanho={16} /> Avaliou</span>
+                    <span className="pres-status-ic avaliou" title="Avaliou" aria-label="Avaliou" role="img"><Icone nome="check" tamanho={18} /></span>
                   ) : (
-                    <span className="pres-aval nao"><Icone nome="alerta" tamanho={16} /> Não avaliou</span>
+                    <span className="pres-status-ic nao-avaliou" title="Não avaliou" aria-label="Não avaliou" role="img"><Icone nome="alerta" tamanho={18} /></span>
                   )}
                 </td>
                 <td className="centro">
