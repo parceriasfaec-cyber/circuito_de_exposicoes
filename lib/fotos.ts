@@ -13,6 +13,7 @@ export const FOTOS = [
   { id: "expo-crato", rotulo: "Logo Expocrato (Crato)" },
   { id: "expo-expoece", rotulo: "Logo Expoece 70 anos" },
   { id: "expo-taua", rotulo: "Logo Fest Berro (Tauá)" },
+  { id: "expo-pec-brasil", rotulo: "Logo PEC Brasil" },
 ] as const;
 
 export type FotoId = (typeof FOTOS)[number]["id"];
