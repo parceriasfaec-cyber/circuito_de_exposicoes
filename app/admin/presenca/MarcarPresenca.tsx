@@ -155,7 +155,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
                   {e.total_exposicoes > 0 && e.avaliadas >= e.total_exposicoes ? (
                     <span className="pres-aval avaliou"><Icone nome="check" tamanho={16} /> Avaliou</span>
                   ) : (
-                    <span className="pres-aval nao">Não avaliou</span>
+                    <span className="pres-aval nao"><Icone nome="alerta" tamanho={16} /> Não avaliou</span>
                   )}
                 </td>
                 <td className="centro">
