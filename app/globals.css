@@ -2132,13 +2132,12 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-resumo-num strong { font-size: 2.2rem; font-weight: 900; color: var(--verde-escuro); }
 .pres-resumo-total .pres-barra { width: 100%; }
 .pres-resumo-grupo { display: flex; gap: 10px; flex-wrap: wrap; }
-.pres-resumo > .pres-resumo-grupo { padding-right: 22px; border-right: 1px solid var(--borda); }
+.pres-resumo-pres { padding-right: 22px; border-right: 1px solid var(--borda); }
 .pres-resumo-aval { display: grid; gap: 8px; }
 .pres-chip { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 6px; border: 1.5px solid transparent; font: inherit; cursor: pointer; text-align: left; }
 .pres-chip span { display: grid; line-height: 1.15; font-size: 0.85rem; font-weight: 700; }
 .pres-chip strong { font-size: 1.25rem; font-weight: 900; }
 .pres-chip.verde { background: #e3f1da; color: var(--verde-escuro); }
-.pres-chip.verde svg { background: var(--verde); color: #fff; border-radius: 50%; padding: 2px; }
 .pres-chip.cinza { background: #eceeec; color: #2f382f; }
 .pres-chip.laranja { background: #fdecdf; color: var(--alerta); }
 .pres-chip.escuro { background: #eef4ea; color: var(--verde-escuro); }
@@ -2149,6 +2148,13 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-barra-busca .pres-busca { flex: 1; }
 .pres-barra-busca .desmarcar-todos { margin-left: 0; white-space: nowrap; }
 @media (max-width: 860px) {
-  .pres-resumo-total, .pres-resumo > .pres-resumo-grupo { border-right: 0; padding-right: 0; }
+  .pres-resumo-total, .pres-resumo-pres { border-right: 0; padding-right: 0; }
   .pres-barra-busca { flex-wrap: wrap; }
 }
+.pres-chip { min-width: 128px; }
+.pres-chip-ic { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; }
+.pres-chip.verde .pres-chip-ic { background: var(--verde); color: #fff; }
+.pres-chip.cinza .pres-chip-ic { background: #d9ded9; color: #2f382f; }
+.pres-chip.laranja .pres-chip-ic { background: #f6c9ad; color: var(--alerta); }
+.pres-chip.escuro .pres-chip-ic { background: #d6e7cc; color: var(--verde-escuro); }
+.pres-chip.escuro.ativo .pres-chip-ic { background: rgba(255, 255, 255, 0.2); color: #fff; }

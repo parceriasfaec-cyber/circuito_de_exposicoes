@@ -109,25 +109,28 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
           <span className="pres-resumo-num"><strong>{presentes}</strong> / {total}</span>
           <div className="pres-barra" aria-hidden="true"><span style={{ width: `${pct}%` }} /></div>
         </div>
+        <div className="pres-resumo-aval pres-resumo-pres">
+          <span className="pres-resumo-titulo"><Icone nome="escudo" tamanho={18} /> Presença</span>
         <div className="pres-resumo-grupo" role="group" aria-label="Filtro da presença">
           <button type="button" aria-pressed={filtro === "presentes"} className={`pres-chip verde${filtro === "presentes" ? " ativo" : ""}`} onClick={() => { setFiltro(filtro === "presentes" ? "todos" : "presentes"); setPagina(0); }}>
-            <Icone nome="check" tamanho={18} /><span>Presentes<strong>{presentes}</strong></span>
+            <span className="pres-chip-ic"><Icone nome="check" tamanho={16} /></span><span>Presentes<strong>{presentes}</strong></span>
           </button>
           <button type="button" aria-pressed={filtro === "faltam"} className={`pres-chip cinza${filtro === "faltam" ? " ativo" : ""}`} onClick={() => { setFiltro(filtro === "faltam" ? "todos" : "faltam"); setPagina(0); }}>
-            <Icone nome="relogio" tamanho={18} /><span>Pendentes<strong>{total - presentes}</strong></span>
+            <span className="pres-chip-ic"><Icone nome="relogio" tamanho={16} /></span><span>Pendentes<strong>{total - presentes}</strong></span>
           </button>
+        </div>
         </div>
         <div className="pres-resumo-aval">
           <span className="pres-resumo-titulo"><Icone nome="grafico" tamanho={18} /> Avaliação</span>
           <div className="pres-resumo-grupo" role="group" aria-label="Filtro da avaliação">
             <button type="button" aria-pressed={filtroAval === "todos"} className={`pres-chip escuro${filtroAval === "todos" ? " ativo" : ""}`} onClick={() => { setFiltroAval("todos"); setPagina(0); }}>
-              <span>Todos<strong>{total}</strong></span>
+              <span className="pres-chip-ic"><Icone nome="usuarios" tamanho={16} /></span><span>Todos<strong>{total}</strong></span>
             </button>
             <button type="button" aria-pressed={filtroAval === "avaliou"} className={`pres-chip verde${filtroAval === "avaliou" ? " ativo" : ""}`} onClick={() => { setFiltroAval(filtroAval === "avaliou" ? "todos" : "avaliou"); setPagina(0); }}>
-              <Icone nome="check" tamanho={18} /><span>Avaliou<strong>{avaliaram}</strong></span>
+              <span className="pres-chip-ic"><Icone nome="check" tamanho={16} /></span><span>Avaliou<strong>{avaliaram}</strong></span>
             </button>
             <button type="button" aria-pressed={filtroAval === "nao"} className={`pres-chip laranja${filtroAval === "nao" ? " ativo" : ""}`} onClick={() => { setFiltroAval(filtroAval === "nao" ? "todos" : "nao"); setPagina(0); }}>
-              <Icone nome="alerta" tamanho={18} /><span>Não avaliou<strong>{total - avaliaram}</strong></span>
+              <span className="pres-chip-ic"><Icone nome="alerta" tamanho={16} /></span><span>Não avaliou<strong>{total - avaliaram}</strong></span>
             </button>
           </div>
         </div>
