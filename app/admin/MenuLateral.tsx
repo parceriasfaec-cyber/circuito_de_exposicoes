@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Icone, { type NomeIcone } from "@/components/Icone";
+import { sair } from "./actions";
 
 type Item = { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean; exato?: boolean };
 
@@ -73,6 +74,14 @@ export default function MenuLateral({ anoProximo }: { anoProximo: number }) {
             })}
           </div>
         ))}
+        <div className="lateral-grupo">
+          <form action={sair}>
+            <button type="submit" className="lateral-sair">
+              <Icone nome="sair" tamanho={20} />
+              Sair
+            </button>
+          </form>
+        </div>
       </nav>
 
       <div className="lateral-marcas">

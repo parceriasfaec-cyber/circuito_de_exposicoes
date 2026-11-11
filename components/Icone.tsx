@@ -24,6 +24,7 @@ const caminhos: Record<string, React.ReactNode> = {
   lapis: <><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z" /><path d="M13.5 6.5l4 4" /></>,
   usuarioCheio: <><circle cx="12" cy="7.5" r="4.2" fill="currentColor" stroke="none" /><path d="M3.5 21c0-4.6 3.9-7.5 8.5-7.5s8.5 2.9 8.5 7.5z" fill="currentColor" stroke="none" /></>,
   calendario: <><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" /><path d="M3.5 10h17" /><path d="M8 3v4" /><path d="M16 3v4" /><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01" strokeWidth="3" /></>,
+  sair: <><path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" /><path d="M9 12h11" /><path d="M16 8l4 4-4 4" /></>,
   documento: <><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /><path d="M9 12h6M9 16h6" /></>,
   entrar: <><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" /><path d="M3 12h11" /><path d="M10 8l4 4-4 4" /></>,
   estrela:<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.8z" />,

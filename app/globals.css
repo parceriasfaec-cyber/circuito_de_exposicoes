@@ -482,11 +482,12 @@ tr.podio td { background: var(--verde-claro); }
 .lateral-marca span { font-family: var(--fonte-texto), sans-serif; font-weight: 900; text-transform: uppercase; font-size: 1.05rem; line-height: 1.15; letter-spacing: 0.6px; }
 .lateral-botao { display: none; }
 .lateral-menu { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; }
-.lateral-menu a {
+.lateral-menu a, .lateral-menu .lateral-sair {
   display: flex; align-items: center; gap: 12px; padding: 11px 20px; color: #e8f2e3; text-decoration: none; font-weight: 700;
   border-left: 4px solid transparent;
 }
-.lateral-menu a:hover { background: rgba(255, 255, 255, 0.08); }
+.lateral-menu a:hover, .lateral-menu .lateral-sair:hover { background: rgba(255, 255, 255, 0.08); }
+.lateral-menu .lateral-sair { width: 100%; background: none; border-top: 0; border-right: 0; border-bottom: 0; font-family: inherit; text-align: left; cursor: pointer; }
 .lateral-menu a.ativo { background: #2f8a42; color: #fff; border-left-color: var(--verde-vivo); }
 .lateral-marcas { margin-top: auto; padding: 18px 20px 26px; display: grid; gap: 16px; }
 .lateral-marcas img { width: 150px; height: auto; display: block; }
@@ -614,7 +615,7 @@ body { -webkit-font-smoothing: antialiased; }
 .tabela-org .doc { font-size: 0.86rem; letter-spacing: 0.3px; margin-top: 2px; }
 .tabela-org thead th { font-weight: 700; font-size: 0.98rem; letter-spacing: 0.2px; }
 .lista-exp { font-size: 0.95rem; }
-.lateral-menu a { font-weight: 600; font-size: 1rem; }
+.lateral-menu a, .lateral-menu .lateral-sair { font-weight: 600; font-size: 1rem; }
 .lateral-menu a.ativo { font-weight: 800; }
 .admin-cab-texto h1, .cab-titulo h1 { font-weight: 800; letter-spacing: -0.2px; }
 .kpi-valor { font-weight: 800; letter-spacing: -0.3px; }
@@ -631,7 +632,7 @@ body { font-size: 1rem; }
 .tabela-org td { font-size: 1rem; padding: 13px 14px; }
 .tabela-org .doc { font-size: 0.88rem; }
 .lateral { width: 250px; }
-.lateral-menu a { font-size: 1.02rem; padding: 12px 22px; }
+.lateral-menu a, .lateral-menu .lateral-sair { font-size: 1.02rem; padding: 12px 22px; }
 .lateral-marca span { font-size: 1.15rem; }
 .kpi-rotulo { font-size: 1rem; }
 .kpi-nota { font-size: 0.85rem; }
@@ -646,7 +647,7 @@ body { font-size: 1rem; }
 .kpi-icone { width: 3.6rem; height: 3.6rem; }
 .kpi-icone svg { width: 1.8rem; height: 1.8rem; }
 .bloco-titulo svg { width: 1.35rem; height: 1.35rem; }
-.lateral-menu a svg { width: 1.2rem; height: 1.2rem; }
+.lateral-menu a svg, .lateral-menu .lateral-sair svg { width: 1.2rem; height: 1.2rem; }
 .rosca svg { width: 11rem; height: 11rem; }
 .legenda { font-size: 1.05rem; gap: 14px; }
 .ponto { width: 1rem; height: 1rem; }
