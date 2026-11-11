@@ -2158,3 +2158,6 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-chip.laranja .pres-chip-ic { background: #f6c9ad; color: var(--alerta); }
 .pres-chip.escuro .pres-chip-ic { background: #d6e7cc; color: var(--verde-escuro); }
 .pres-chip.escuro.ativo .pres-chip-ic { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.pres-status-ic { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; }
+.pres-status-ic.presente { background: var(--verde); color: #fff; }
+.pres-status-ic.pendente { background: #eceeec; color: #4d5a4d; }

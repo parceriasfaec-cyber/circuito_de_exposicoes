@@ -189,11 +189,11 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                 </td>
                 <td className="centro">
                   {e.presente ? (
-                    <span className="pres-status presente" title={e.hora ? `Marcado às ${e.hora}` : undefined}>
-                      <Icone nome="check" tamanho={18} /> Presente{e.hora ? <small>{e.hora}</small> : null}
+                    <span className="pres-status-ic presente" title={e.hora ? `Presente · marcado às ${e.hora}` : "Presente"} aria-label={e.hora ? `Presente, marcado às ${e.hora}` : "Presente"} role="img">
+                      <Icone nome="check" tamanho={18} />
                     </span>
                   ) : (
-                    <span className="pres-status pendente"><Icone nome="relogio" tamanho={18} /> Pendente</span>
+                    <span className="pres-status-ic pendente" title="Pendente" aria-label="Pendente" role="img"><Icone nome="relogio" tamanho={18} /></span>
                   )}
                 </td>
                 <td className="centro">
