@@ -19,14 +19,13 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
       { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
       { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
       { href: "/admin/produtores", rotulo: "Expositores", icone: "usuarios" },
-      { href: "/admin/presenca", rotulo: "Presença", icone: "check" },
+      { href: "/admin/presenca", rotulo: "Presença e avaliação", icone: "check" },
     ],
   },
   {
     titulo: "Avaliação das exposições",
     itens: [
       { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
-      { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
       { href: "/admin/diagnostico", rotulo: "Avaliação por Circuito", icone: "alerta" },
     ],
   },

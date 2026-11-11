@@ -55,7 +55,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
       <CabecalhoAdmin titulo={p.nome} subtitulo="Detalhes da avaliação do expositor." ciclos={ciclos} ciclo={ciclo} />
 
       <div className="barra">
-        <Link href={`/admin/avaliacoes?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Quem já avaliou</Link>
+        <Link href={`/admin/presenca?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Presença e avaliação</Link>
       </div>
 
       <div className="kpis" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>

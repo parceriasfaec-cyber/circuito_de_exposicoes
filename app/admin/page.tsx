@@ -159,7 +159,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <div className="kpi-nota">Avaliaram todas as exposições de que participaram</div>
           </div>
           <div className="kpi-acao">
-            <Link className="botao secundario pequeno" href="/admin/avaliacoes"><Icone nome="olho" tamanho={16} /> Ver quem já avaliou</Link>
+            <Link className="botao secundario pequeno" href="/admin/presenca?aval=avaliou"><Icone nome="olho" tamanho={16} /> Ver quem já avaliou</Link>
           </div>
         </div>
 

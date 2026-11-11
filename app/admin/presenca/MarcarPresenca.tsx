@@ -21,16 +21,20 @@ export type Expositor = {
 };
 
 type Filtro = "todos" | "presentes" | "faltam";
+export type FiltroAval = "todos" | "avaliou" | "nao";
+
+const avaliou = (e: { total_exposicoes: number; avaliadas: number }) => e.total_exposicoes > 0 && e.avaliadas >= e.total_exposicoes;
 
 const POR_PAGINA = 20;
 
 /** Lista com todos os expositores do ciclo: busca por ID, nome ou município e um toque marca (ou desmarca) a presença. */
-export default function MarcarPresenca({ cicloId, expositores: doServidor }: { cicloId: string; expositores: Expositor[] }) {
+export default function MarcarPresenca({ cicloId, expositores: doServidor, avalInicial = "todos" }: { cicloId: string; expositores: Expositor[]; avalInicial?: FiltroAval }) {
   // Cópia local: a linha, o contador e os filtros mudam na hora, sem recarregar a página.
   const [expositores, setExpositores] = useState(doServidor);
   useEffect(() => setExpositores(doServidor), [doServidor]);
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [filtroAval, setFiltroAval] = useState<FiltroAval>(avalInicial);
   const [pagina, setPagina] = useState(0);
   const [salvando, setSalvando] = useState<Set<string>>(new Set());
   const [erro, setErro] = useState<string | null>(null);
@@ -44,9 +48,11 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
     return expositores.filter(
       (e) =>
         (filtro === "todos" || (filtro === "presentes") === e.presente) &&
+        (filtroAval === "todos" || (filtroAval === "avaliou") === avaliou(e)) &&
         (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio}`).includes(q)),
     );
-  }, [expositores, busca, filtro]);
+  }, [expositores, busca, filtro, filtroAval]);
+  const avaliaram = expositores.filter(avaliou).length;
   const { atual, itens: daPagina } = paginar(visiveis, pagina, POR_PAGINA);
 
   const atualizar = (id: string, dados: Partial<Expositor>) =>
@@ -119,6 +125,14 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
             <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
           )}
         </div>
+        <div className="pres-filtros" role="tablist" aria-label="Filtro da avaliação">
+          <span className="pres-filtros-rotulo"><Icone nome="prancheta" tamanho={18} /> Avaliação:</span>
+          {([["todos", `Todos (${total})`], ["avaliou", `Avaliou (${avaliaram})`], ["nao", `Não avaliou (${total - avaliaram})`]] as const).map(([f, rotulo]) => (
+            <button key={f} type="button" role="tab" aria-selected={filtroAval === f} className={`filtro${filtroAval === f ? " ativo" : ""}`} onClick={() => { setFiltroAval(f); setPagina(0); }}>
+              {rotulo}
+            </button>
+          ))}
+        </div>
       </div>
 
       {erro && <div className="erro" role="alert">{erro}</div>}
@@ -152,7 +166,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
                   </span>
                 </td>
                 <td className="centro">
-                  {e.total_exposicoes > 0 && e.avaliadas >= e.total_exposicoes ? (
+                  {avaliou(e) ? (
                     <span className="pres-aval avaliou"><Icone nome="check" tamanho={16} /> Avaliou</span>
                   ) : (
                     <span className="pres-aval nao"><Icone nome="alerta" tamanho={16} /> Não avaliou</span>
@@ -178,6 +192,14 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
                   >
                     <Icone nome={e.presente ? "atualizar" : "usuarioMais"} tamanho={22} />
                   </button>
+                  <a
+                    className="pres-acao editar"
+                    href={`/admin/avaliacoes/${e.id}?ciclo=${cicloId}`}
+                    title="Ver a avaliação (notas de cada exposição)"
+                    aria-label={`Ver a avaliação de ${e.nome}`}
+                  >
+                    <Icone nome="olho" tamanho={20} />
+                  </a>
                   <a
                     className="pres-acao editar"
                     href={`/admin/produtores/${e.id}?ciclo=${cicloId}`}

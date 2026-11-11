@@ -3,12 +3,12 @@ import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import MarcarPresenca, { type Expositor } from "./MarcarPresenca";
+import MarcarPresenca, { type Expositor, type FiltroAval } from "./MarcarPresenca";
 
 export const dynamic = "force-dynamic";
 
 /** Presença do dia do evento: o organizador digita o ID do expositor e a presença fica marcada na hora. */
-export default async function Presenca({ searchParams }: { searchParams: Promise<{ ciclo?: string }> }) {
+export default async function Presenca({ searchParams }: { searchParams: Promise<{ ciclo?: string; aval?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const { ciclo, ciclos } = await cicloEscolhido(params.ciclo);
@@ -39,13 +39,13 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
   return (
     <>
       <CabecalhoAdmin
-        titulo="Presença"
-        subtitulo="No dia do evento, ache o expositor na lista (pelo ID, nome ou município) e toque no ícone para marcar a presença. O lápis abre o cadastro para corrigir o nome."
+        titulo="Presença e avaliação"
+        subtitulo="No dia do evento, ache o expositor na lista (pelo ID, nome ou município) e toque no ícone para marcar a presença. O olho mostra as notas da avaliação e o lápis abre o cadastro."
         ciclos={ciclos}
         ciclo={ciclo}
       />
       {ciclo ? (
-        <MarcarPresenca cicloId={cid} expositores={expositores} />
+        <MarcarPresenca cicloId={cid} expositores={expositores} avalInicial={(["avaliou", "nao"].includes(params.aval ?? "") ? params.aval : "todos") as FiltroAval} />
       ) : (
         <div className="cartao"><p style={{ margin: 0 }}>Cadastre um ciclo primeiro.</p></div>
       )}

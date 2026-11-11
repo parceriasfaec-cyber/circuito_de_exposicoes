@@ -2120,3 +2120,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-aval { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-weight: 800; font-size: 0.88rem; white-space: nowrap; }
 .pres-aval.avaliou { background: #dff0d4; color: var(--verde-escuro); }
 .pres-aval.nao { background: #fdecdf; color: var(--alerta); }
+.pres-filtros-rotulo { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: var(--verde-escuro); margin-right: 4px; }
