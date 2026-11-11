@@ -78,7 +78,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
       </div>
 
       <nav className="filtros prod-filtro" aria-label="Filtrar por exposição">
-        <span className="prod-filtro-rotulo"><Icone nome="local" tamanho={18} /> Exposição:</span>
+        <span className="prod-filtro-rotulo"><Icone nome="local" tamanho={18} /> Total de Participantes por Exposição:</span>
         <Link href={url(1, null, null)} className={`filtro${expEscolhida === null ? " ativo" : ""}`}>Todas <span className="filtro-num">{achados.length}</span></Link>
         {nomesExposicoes.map((e) => (
           <Link key={e} href={url(1, null, e)} className={`filtro${expEscolhida === e ? " ativo" : ""}`} title={`Expositores que participaram de ${e}`}>
@@ -88,7 +88,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
       </nav>
 
       <nav className="filtros prod-filtro" aria-label="Filtrar pelo total de exposições">
-        <span className="prod-filtro-rotulo"><Icone nome="trofeu" tamanho={18} /> Total de exposições:</span>
+        <span className="prod-filtro-rotulo"><Icone nome="trofeu" tamanho={18} /> Participantes por Nº de Exposições:</span>
         <Link href={url(1, null)} className={`filtro${totalEscolhido === null ? " ativo" : ""}`}>Todos <span className="filtro-num">{naExposicao.length}</span></Link>
         {totais.map((t) => (
           <Link key={t} href={url(1, t)} className={`filtro${totalEscolhido === t ? " ativo" : ""}`} title={`Expositores com ${t} ${t === 1 ? "exposição" : "exposições"}`}>
