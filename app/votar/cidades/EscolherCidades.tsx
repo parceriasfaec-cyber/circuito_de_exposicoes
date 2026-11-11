@@ -7,25 +7,14 @@ import { votarCidades, type EstadoVotoCidades } from "./actions";
 type Cidade = { id: string; municipio: string; instituicao: string };
 const ESCOLHAS = 2;
 
-/** Filtros por letra inicial do município. */
-const FAIXAS = [
-  { id: "todos", rotulo: "Todos", de: "a", ate: "z" },
-  { id: "af", rotulo: "A – F", de: "a", ate: "f" },
-  { id: "gl", rotulo: "G – L", de: "g", ate: "l" },
-  { id: "mr", rotulo: "M – R", de: "m", ate: "r" },
-  { id: "sz", rotulo: "S – Z", de: "s", ate: "z" },
-] as const;
-type Faixa = (typeof FAIXAS)[number]["id"];
-
 /**
- * Escolha dos 2 municípios. Com muitas cidades: contador no topo, busca por nome, filtro por letra
- * e lista compacta que rola dentro do quadro; o botão de enviar fica sempre à vista.
+ * Escolha dos 2 municípios: contador no topo, busca por nome e a lista com todos os municípios,
+ * compacta, que rola dentro do quadro; o botão de enviar fica sempre à vista.
  */
 export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
   const [estado, acao, enviando] = useActionState<EstadoVotoCidades, FormData>(votarCidades, {});
   const [marcadas, setMarcadas] = useState<string[]>([]);
   const [busca, setBusca] = useState("");
-  const [faixa, setFaixa] = useState<Faixa>("todos");
 
   function alternar(id: string) {
     setMarcadas((m) => (m.includes(id) ? m.filter((x) => x !== id) : m.length < ESCOLHAS ? [...m, id] : m));
@@ -35,17 +24,12 @@ export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
 
   const visiveis = useMemo(() => {
     const q = normalizar(busca);
-    const f = FAIXAS.find((x) => x.id === faixa)!;
-    return cidades.filter((c) => {
-      const nome = normalizar(c.municipio);
-      const letra = nome.charAt(0);
-      return (faixa === "todos" || (letra >= f.de && letra <= f.ate)) && (!q || nome.includes(q));
-    });
-  }, [cidades, busca, faixa]);
+    return q ? cidades.filter((c) => normalizar(c.municipio).includes(q)) : cidades;
+  }, [cidades, busca]);
 
   return (
     <form action={acao} className="form-cidades">
-      {/* As escolhidas vão como campos escondidos: continuam no voto mesmo se a busca ou o filtro esconderem a cidade. */}
+      {/* As escolhidas vão como campos escondidos: continuam no voto mesmo se a busca esconder a cidade. */}
       {marcadas.map((id) => <input key={id} type="hidden" name="cidade" value={id} />)}
 
       <div className="cidades-contador" aria-live="polite">
@@ -87,13 +71,6 @@ export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
       </div>
 
       <div className="cidades-filtros">
-        <div className="cidades-faixas" role="group" aria-label="Filtrar pela letra inicial">
-          {FAIXAS.map((f) => (
-            <button key={f.id} type="button" className={`cidades-faixa${faixa === f.id ? " ativa" : ""}`} aria-pressed={faixa === f.id} onClick={() => setFaixa(f.id)}>
-              {f.rotulo}
-            </button>
-          ))}
-        </div>
         <span className="cidades-total">{cidades.length} opções</span>
       </div>
 
