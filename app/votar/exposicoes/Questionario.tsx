@@ -95,15 +95,6 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
         })}
       </div>
 
-      {/* Legenda das notas, uma vez só, logo abaixo das abas */}
-      <ul className="legenda-notas" aria-label="O que significa cada nota">
-        <li><strong>1</strong> = muito ruim</li>
-        <li><strong>2</strong> = ruim</li>
-        <li><strong>3</strong> = regular</li>
-        <li><strong>4</strong> = bom</li>
-        <li><strong>5</strong> = excelente</li>
-      </ul>
-
       {exposicoes.map((e, i) => (
         <section key={e.id} className="painel-exp" hidden={i !== ativa} role="tabpanel">
           <div className="painel-exp-topo">
@@ -144,7 +135,7 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
                     </label>
                   ))}
                 </div>
-                <div className="escala"><span>1 = muito ruim</span><span>5 = excelente</span></div>
+                <Legenda />
                 {mostrarFaltas && !respostas[chave] && <div className="falta-aviso">Escolha uma nota de 1 a 5</div>}
               </fieldset>
             );
@@ -184,5 +175,18 @@ export default function Questionario({ exposicoes }: { exposicoes: ExposicaoQues
         </button>
       </div>
     </form>
+  );
+}
+
+/** Legenda das notas, embaixo dos botões de cada pergunta. */
+function Legenda() {
+  return (
+    <ul className="legenda-notas" aria-label="O que significa cada nota">
+      <li><strong>1</strong> = muito ruim</li>
+      <li><strong>2</strong> = ruim</li>
+      <li><strong>3</strong> = regular</li>
+      <li><strong>4</strong> = bom</li>
+      <li><strong>5</strong> = excelente</li>
+    </ul>
   );
 }
