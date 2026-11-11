@@ -2167,5 +2167,5 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-acao:disabled { opacity: 0.35; cursor: not-allowed; }
 .pres-status-ic.sem-voto { background: #eceeec; color: #4d5a4d; font-weight: 900; font-size: 1.1rem; }
 /* Legenda das notas da avaliação */
-.legenda-notas { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; margin: 8px 0 0; padding: 8px 10px; border: 1px solid var(--verde-borda); border-radius: 10px; background: #f6fbf2; color: var(--texto); font-size: 0.88rem; }
-.legenda-notas strong { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; margin-right: 4px; border-radius: 6px; background: var(--verde-escuro); color: #fff; font-size: 0.85rem; }
+.legenda-notas { list-style: none; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; margin: 6px 0 0; padding: 0 2px; color: var(--suave); font-size: 0.8rem; }
+.legenda-notas strong { color: var(--verde); font-weight: 800; }
