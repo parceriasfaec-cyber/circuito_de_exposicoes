@@ -35,17 +35,26 @@ export async function marcarPresenca(cicloId: string, quem: { codigo?: string; i
   return { ok: true, jaEstava: !novo, id: p.id, nome: p.nome, municipio: p.municipio, codigo: p.codigo, hora: hora(r.marcado_em), marcadoEm: new Date(r.marcado_em).toISOString() };
 }
 
-/** Tira a presença de todos no ciclo (botão "Desmarcar todos"). */
-export async function desmarcarTodasPresencas(cicloId: string): Promise<{ ok: boolean }> {
-  if (!(await ehAdmin())) return { ok: false };
-  if (!UUID.test(cicloId)) return { ok: false };
-  await sql()`delete from presencas where ciclo_id = ${cicloId}`;
-  return { ok: true };
+/** Já avaliou alguma exposição do ciclo: a presença dele não pode mais ser tirada. */
+const AVALIOU_NO_CICLO = (cicloId: string) => sql()`
+  exists (select 1 from avaliacoes a join exposicoes e on e.id = a.exposicao_id
+          where a.produtor_id = presencas.produtor_id and e.ciclo_id = ${cicloId})`;
+
+/** Tira a presença de todos no ciclo (botão "Desmarcar todos"), menos de quem já avaliou. */
+export async function desmarcarTodasPresencas(cicloId: string): Promise<{ ok: boolean; mantidos: number }> {
+  if (!(await ehAdmin())) return { ok: false, mantidos: 0 };
+  if (!UUID.test(cicloId)) return { ok: false, mantidos: 0 };
+  await sql()`delete from presencas where ciclo_id = ${cicloId} and not ${AVALIOU_NO_CICLO(cicloId)}`;
+  const [{ n }] = await sql()<{ n: number }[]>`select count(*)::int n from presencas where ciclo_id = ${cicloId}`;
+  return { ok: true, mantidos: n };
 }
 
 /** Desfaz uma presença marcada por engano. */
-export async function desmarcarPresenca(cicloId: string, produtorId: string): Promise<void> {
-  if (!(await ehAdmin())) return;
-  if (!UUID.test(cicloId) || !UUID.test(produtorId)) return;
-  await sql()`delete from presencas where ciclo_id = ${cicloId} and produtor_id = ${produtorId}`;
+export async function desmarcarPresenca(cicloId: string, produtorId: string): Promise<{ ok: boolean; erro?: string }> {
+  if (!(await ehAdmin())) return { ok: false, erro: "Sua sessão expirou. Entre de novo no painel." };
+  if (!UUID.test(cicloId) || !UUID.test(produtorId)) return { ok: false, erro: "Expositor não encontrado." };
+  const apagadas = await sql()`
+    delete from presencas where ciclo_id = ${cicloId} and produtor_id = ${produtorId} and not ${AVALIOU_NO_CICLO(cicloId)}`;
+  if (apagadas.count === 0) return { ok: false, erro: "Este expositor já avaliou: a presença dele não pode ser desmarcada." };
+  return { ok: true };
 }

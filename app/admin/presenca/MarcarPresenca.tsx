@@ -71,8 +71,9 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
     ocupar(e.id, true);
     try {
       if (e.presente) {
-        await desmarcarPresenca(cicloId, e.id);
-        atualizar(e.id, { presente: false, hora: null, marcado_em: null });
+        const r = await desmarcarPresenca(cicloId, e.id);
+        if (r.ok) atualizar(e.id, { presente: false, hora: null, marcado_em: null });
+        else setErro(r.erro ?? "Não foi possível desmarcar.");
       } else {
         const r = await marcarPresenca(cicloId, { id: e.id });
         if (r.ok) atualizar(e.id, { presente: true, hora: r.hora, marcado_em: new Date(r.marcadoEm) });
@@ -86,10 +87,16 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   }
 
   async function desmarcarTodos() {
-    if (!confirm(`Tirar a presença dos ${presentes} expositores marcados?`)) return;
+    const fixos = expositores.filter((x) => x.presente && x.avaliadas > 0).length;
+    const tirar = presentes - fixos;
+    if (tirar === 0) {
+      setErro("Todos os presentes já avaliaram: a presença deles não pode ser desmarcada.");
+      return;
+    }
+    if (!confirm(`Tirar a presença de ${tirar} expositor${tirar > 1 ? "es" : ""}?${fixos ? ` ${fixos} já avali${fixos > 1 ? "aram" : "ou"} e continua${fixos > 1 ? "m" : ""} presente${fixos > 1 ? "s" : ""}.` : ""}`)) return;
     const antes = expositores;
     setErro(null);
-    setExpositores((lista) => lista.map((x) => ({ ...x, presente: false, hora: null, marcado_em: null })));
+    setExpositores((lista) => lista.map((x) => (x.avaliadas > 0 ? x : { ...x, presente: false, hora: null, marcado_em: null })));
     try {
       const r = await desmarcarTodasPresencas(cicloId);
       if (!r.ok) throw new Error();
@@ -201,8 +208,8 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                     type="button"
                     className={`pres-acao${e.presente ? " desfazer" : ""}`}
                     onClick={() => alternar(e)}
-                    disabled={salvando.has(e.id)}
-                    title={e.presente ? "Desfazer presença" : "Marcar presença"}
+                    disabled={salvando.has(e.id) || (e.presente && e.avaliadas > 0)}
+                    title={e.presente ? (e.avaliadas > 0 ? "Já avaliou: a presença não pode ser desmarcada" : "Desfazer presença") : "Marcar presença"}
                     aria-label={`${e.presente ? "Desfazer presença de" : "Marcar presença de"} ${e.nome}`}
                   >
                     <Icone nome={e.presente ? "atualizar" : "usuarioMais"} tamanho={22} />
