@@ -31,7 +31,7 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
     <>
       <CabecalhoAdmin
         titulo="Presença"
-        subtitulo="No dia do evento, ache o expositor na lista (pelo ID, nome ou município) e toque em Marcar. Tocar de novo desmarca."
+        subtitulo="No dia do evento, ache o expositor na lista (pelo ID, nome ou município) e toque no ícone para marcar a presença. O lápis abre o cadastro para corrigir o nome."
         ciclos={ciclos}
         ciclo={ciclo}
       />

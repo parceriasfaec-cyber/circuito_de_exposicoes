@@ -2089,17 +2089,23 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-tabela th:first-child, .pres-tabela td:first-child { width: 1%; }
 .pres-tabela th:last-child, .pres-tabela td:last-child { width: 1%; white-space: nowrap; }
 .pres-tabela tr.presente td { background: #f3faee; }
-.pres-botao { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 150px; padding: 10px 16px; border-radius: 12px; border: 2px solid var(--verde); background: #fff; color: var(--verde-escuro); font: inherit; font-weight: 800; cursor: pointer; }
-.pres-botao:hover { background: var(--verde-claro); }
-.pres-botao.marcado { background: var(--verde); border-color: var(--verde); color: #fff; }
-.pres-botao.marcado:hover { background: var(--verde-escuro); }
-.pres-botao:disabled { opacity: 0.6; cursor: wait; }
+.pres-tabela thead th span { justify-content: center; }
+.pres-tabela thead th:nth-child(2) span, .pres-tabela thead th:nth-child(3) span { justify-content: flex-start; }
+.pres-status { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 999px; font-weight: 800; white-space: nowrap; }
+.pres-status small { font-weight: 700; opacity: 0.8; margin-left: 2px; }
+.pres-status.pendente { background: #eceeec; color: #3b453b; }
+.pres-status.presente { background: #dff0d4; color: var(--verde-escuro); }
+.pres-status.presente svg { background: var(--verde); color: #fff; border-radius: 50%; padding: 2px; }
+.pres-acao { display: inline-grid; place-items: center; width: 64px; height: 42px; border-radius: 12px; border: 2px solid var(--verde); background: #fff; color: var(--verde-escuro); cursor: pointer; }
+.pres-acao:hover { background: var(--verde-claro); }
+.pres-acao.editar { width: 42px; margin-left: 8px; border-color: var(--verde-borda); text-decoration: none; }
+.pres-tabela td:last-child { white-space: nowrap; }
+.pres-acao:disabled { opacity: 0.5; cursor: wait; }
 @media (max-width: 760px) {
-  .pres-tabela { min-width: 560px; }
+  .pres-tabela { min-width: 640px; }
   .pres-tabela thead { display: table-header-group; }
   .pres-tabela tbody tr { display: table-row; border: 0; padding: 0; margin: 0; }
   .pres-tabela td { display: table-cell; padding: 10px 8px; border-bottom: 1px solid var(--borda); }
-  .pres-botao { min-width: 0; }
 }
 .filtro.desmarcar-todos { margin-left: auto; border-color: #f0b48f; color: var(--alerta); background: #fff; }
 .filtro.desmarcar-todos:hover { background: var(--alerta-claro); }

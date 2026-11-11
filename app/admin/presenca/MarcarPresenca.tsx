@@ -121,13 +121,14 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
             <tr>
               <th className="centro">ID</th>
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
-              <th>Município</th>
-              <th className="centro">Presença</th>
+              <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
+              <th className="centro"><span><Icone nome="escudo" tamanho={18} /> Status de Presença</span></th>
+              <th className="centro">Ações</th>
             </tr>
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={4} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
+              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
             )}
             {visiveis.map((e) => (
               <tr key={e.id} className={e.presente ? "presente" : undefined}>
@@ -138,16 +139,35 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
                 </td>
                 <td>{e.municipio}</td>
                 <td className="centro">
+                  {e.presente ? (
+                    <span className="pres-status presente" title={e.hora ? `Marcado às ${e.hora}` : undefined}>
+                      <Icone nome="check" tamanho={18} /> Presente{e.hora ? <small>{e.hora}</small> : null}
+                    </span>
+                  ) : (
+                    <span className="pres-status pendente"><Icone nome="relogio" tamanho={18} /> Pendente</span>
+                  )}
+                </td>
+                <td className="centro">
                   <button
                     type="button"
-                    className={`pres-botao${e.presente ? " marcado" : ""}`}
+                    className={`pres-acao${e.presente ? " desfazer" : ""}`}
                     onClick={() => alternar(e)}
                     disabled={salvando.has(e.id)}
-                    aria-pressed={e.presente}
-                    title={e.presente ? "Tocar para desmarcar" : "Tocar para marcar presença"}
+                    title={e.presente ? "Desfazer presença" : "Marcar presença"}
+                    aria-label={`${e.presente ? "Desfazer presença de" : "Marcar presença de"} ${e.nome}`}
                   >
-                    {salvando.has(e.id) ? "Salvando..." : e.presente ? <><Icone nome="check" tamanho={18} /> Presente {e.hora}</> : "Marcar"}
+                    <Icone nome={e.presente ? "atualizar" : "usuarioMais"} tamanho={22} />
                   </button>
+                  <a
+                    className="pres-acao editar"
+                    href={`/admin/produtores/${e.id}?ciclo=${cicloId}`}
+                    target="_blank"
+                    rel="noopener"
+                    title="Editar cadastro (abre em outra aba)"
+                    aria-label={`Editar cadastro de ${e.nome}`}
+                  >
+                    <Icone nome="lapis" tamanho={20} />
+                  </a>
                 </td>
               </tr>
             ))}
