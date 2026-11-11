@@ -25,7 +25,7 @@ export default function FormCiclo({ ciclos }: { ciclos: { id: string; nome: stri
         </div>
       </div>
       <p className="suave" style={{ margin: "8px 0 0" }}>
-        Ao copiar, as exposições vêm com o mesmo nome, município e local, e as datas passam para o novo ano. Os produtores
+        Ao copiar, as exposições vêm com o mesmo nome, município e local, e as datas passam para o novo ano. Os expositores
         não são copiados: marque de novo, no cadastro de cada um, as exposições em que participou neste ano.
       </p>
       <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, color: "var(--texto)" }}>

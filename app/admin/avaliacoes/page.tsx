@@ -88,7 +88,7 @@ export default async function Avaliacoes({
 
   return (
     <>
-      <CabecalhoAdmin titulo="Quem já avaliou" subtitulo="Cada produtor avalia uma única vez as exposições em que participou." ciclos={ciclos} ciclo={ciclo} />
+      <CabecalhoAdmin titulo="Quem já avaliou" subtitulo="Cada expositor avalia uma única vez as exposições em que participou." ciclos={ciclos} ciclo={ciclo} />
 
       <div className="barra">
         <div className="filtros">
@@ -116,12 +116,12 @@ export default async function Avaliacoes({
       </form>
 
       {visiveis.length === 0 ? (
-        <div className="cartao"><p style={{ margin: 0 }}>Nenhum produtor encontrado.</p></div>
+        <div className="cartao"><p style={{ margin: 0 }}>Nenhum expositor encontrado.</p></div>
       ) : (
         <table className="tabela-org">
           <thead>
             <tr>
-              <th><span><Icone nome="usuario" tamanho={18} /> Produtor</span></th>
+              <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
               <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
               <th><span><Icone nome="grafico" tamanho={18} /> Situação</span></th>
               <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
@@ -171,7 +171,7 @@ export default async function Avaliacoes({
       <div className="rodape-tabela">
         <span className="total">
           <Icone nome="grafico" tamanho={20} />
-          Total de produtores: {filtradas.length}
+          Total de expositores: {filtradas.length}
           {filtradas.length !== linhas.length && <span className="suave" style={{ fontWeight: 600 }}> (de {linhas.length})</span>}
         </span>
         {paginas > 1 && (

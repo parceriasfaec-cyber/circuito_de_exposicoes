@@ -58,7 +58,7 @@ export default async function EditarExposicao({ params, searchParams }: { params
           ) : (
             <form action={excluirExposicao} className="acoes-form" style={{ marginTop: 8 }}>
               <input type="hidden" name="id" value={id} />
-              <span className="suave">Remove a exposição, as perguntas e a ligação com {participantes} produtores.</span>
+              <span className="suave">Remove a exposição, as perguntas e a ligação com {participantes} expositores.</span>
               <button className="botao perigo pequeno">Excluir exposição</button>
             </form>
           )}

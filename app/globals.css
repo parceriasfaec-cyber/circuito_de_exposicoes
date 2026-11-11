@@ -1916,6 +1916,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .horario-botoes { display: flex; gap: 8px; flex-wrap: wrap; }
 .horario-botoes .botao { margin: 0; }
 @media (max-width: 760px) { .horario-form { grid-template-columns: 1fr; } }
+.prod-id { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: #eef6e8; color: var(--verde-escuro); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle; white-space: nowrap; }
 .prod-empresa { font-size: 0.88rem; font-weight: 700; color: var(--verde); }
 .horario-situacao { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .horario-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; }

@@ -154,7 +154,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="kpi">
           <span className="kpi-icone"><Icone nome="checkCirculo" tamanho={30} /></span>
           <div className="kpi-corpo">
-            <div className="kpi-rotulo">Produtores que já avaliaram</div>
+            <div className="kpi-rotulo">Expositores que já avaliaram</div>
             <div className="kpi-valor">{t.completos} de {t.produtores}</div>
             <div className="kpi-nota">Avaliaram todas as exposições de que participaram</div>
           </div>
@@ -216,7 +216,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           <p className="ranking-nota">
             <span className="ranking-nota-i" aria-hidden="true">i</span>
             <span>
-              <strong>Pontos</strong> = soma das notas. <strong>Média</strong> = pontos ÷ produtores que avaliaram (de 10 a 50).
+              <strong>Pontos</strong> = soma das notas. <strong>Média</strong> = pontos ÷ expositores que avaliaram (de 10 a 50).
               No empate, vence a maior média na pergunta 2, depois na 5 e na 9.
             </span>
           </p>

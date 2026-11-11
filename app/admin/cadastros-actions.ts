@@ -165,11 +165,11 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
           and p.id <> coalesce(${id || null}::uuid, '00000000-0000-0000-0000-000000000000')
         group by p.id limit 1`;
       return {
-        erro: "Já existe um produtor com esse nome nesse município. Se for a mesma pessoa, junte os dois cadastros; se não, informe um documento para diferenciar.",
+        erro: "Já existe um expositor com esse nome nesse município. Se for a mesma pessoa, junte os dois cadastros; se não, informe um documento para diferenciar.",
         homonimo: h ? { id: h.id, nome: h.nome, municipio: h.municipio, exposicoes: h.exposicoes ?? [] } : undefined,
       };
     }
-    if (err.code === "23505") return { erro: "Esse documento já está cadastrado para outro produtor." };
+    if (err.code === "23505") return { erro: "Esse documento já está cadastrado para outro expositor." };
     console.error(e);
     return { erro: "Não foi possível salvar." };
   }

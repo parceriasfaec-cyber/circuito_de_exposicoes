@@ -7,7 +7,7 @@ const lilita = Lilita_One({ subsets: ["latin"], weight: "400", variable: "--font
 
 export const metadata: Metadata = {
   title: "Avaliação das Exposições",
-  description: "Circuito Cearense de Exposição Agropecuária: avaliação das exposições pelos produtores",
+  description: "Circuito Cearense de Exposição Agropecuária: avaliação das exposições pelos expositores",
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#1d5e2c" };

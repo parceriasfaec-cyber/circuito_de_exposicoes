@@ -52,7 +52,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
 
   return (
     <>
-      <CabecalhoAdmin titulo={p.nome} subtitulo="Detalhes da avaliação do produtor." ciclos={ciclos} ciclo={ciclo} />
+      <CabecalhoAdmin titulo={p.nome} subtitulo="Detalhes da avaliação do expositor." ciclos={ciclos} ciclo={ciclo} />
 
       <div className="barra">
         <Link href={`/admin/avaliacoes?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Quem já avaliou</Link>
@@ -62,7 +62,7 @@ export default async function DetalheProdutor({ params, searchParams }: { params
         <div className="kpi">
           <span className="kpi-icone"><Icone nome="usuario" tamanho={28} /></span>
           <div className="kpi-corpo">
-            <div className="kpi-rotulo">Produtor</div>
+            <div className="kpi-rotulo">Expositor</div>
             <div className="kpi-valor menor">{p.nome}</div>
             <div className="kpi-nota">{documentoCompleto(p.tipo_documento, p.documento)}{p.atividade ? ` · ${p.atividade}` : ""}</div>
           </div>

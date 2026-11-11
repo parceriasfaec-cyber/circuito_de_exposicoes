@@ -17,7 +17,7 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
       { href: "/admin/horario", rotulo: "Prazo e horário", icone: "calendario" },
       { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
       { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
-      { href: "/admin/produtores", rotulo: "Produtores", icone: "usuarios" },
+      { href: "/admin/produtores", rotulo: "Expositores", icone: "usuarios" },
       { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
       { href: "/admin/avaliacoes", rotulo: "Quem já avaliou", icone: "prancheta" },
       { href: "/admin/diagnostico", rotulo: "Avaliação por Circuito", icone: "alerta" },

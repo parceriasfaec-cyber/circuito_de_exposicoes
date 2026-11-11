@@ -183,7 +183,7 @@ async function Relatorio({ alvo, avaliadas, ranking, cid, cicloNome, todas = fal
 
       {poucas && (
         <div className="aviso-mini diag-aviso">
-          <Icone nome="alerta" tamanho={18} /> Atenção: só {alvo.questionarios} {alvo.questionarios === 1 ? "produtor avaliou" : "produtores avaliaram"} esta exposição.
+          <Icone nome="alerta" tamanho={18} /> Atenção: só {alvo.questionarios} {alvo.questionarios === 1 ? "expositor avaliou" : "expositores avaliaram"} esta exposição.
           Com tão poucas avaliações, a posição pode mudar muito. Vale esperar mais respostas antes de decidir.
         </div>
       )}

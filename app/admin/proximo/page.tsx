@@ -30,7 +30,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
              select 1 from avaliacoes a join exposicoes e2 on e2.id = a.exposicao_id
              where a.produtor_id = pa.produtor_id and e2.ciclo_id = c.id))::int avaliaram
     from participacoes pa join exposicoes e on e.id = pa.exposicao_id join ciclos c on c.id = e.ciclo_id and c.ativo`;
-  const quemVota = votacao.cidades_quem === "avaliaram" ? `Só quem avaliou (${p.avaliaram})` : `Todos os produtores (${p.produtores})`;
+  const quemVota = votacao.cidades_quem === "avaliaram" ? `Só quem avaliou (${p.avaliaram})` : `Todos os expositores (${p.produtores})`;
 
   return (
     <>
@@ -78,7 +78,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
         <div className="kpi destaque">
           <span className="kpi-icone"><Icone nome="grafico" tamanho={30} /></span>
           <div className="kpi-corpo">
-            <div className="kpi-rotulo">Produtores que votaram</div>
+            <div className="kpi-rotulo">Expositores que votaram</div>
             <div className="kpi-valor">{resultado.votantes}</div>
             <div className="kpi-nota">Cada um escolhe 2 cidades</div>
           </div>
@@ -93,7 +93,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
         <div className="vc-info">
           <span className="vc-info-icone" aria-hidden="true">i</span>
           <p>
-            No dia das apresentações, cada produtor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele lê o QR Code do telão e
+            No dia das apresentações, cada expositor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele lê o QR Code do telão e
             entra do mesmo jeito da avaliação das exposições: documento ou nome, mais o código do dia.
           </p>
           <div className="vc-info-lado">
@@ -130,7 +130,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
             <legend className="vc-rotulo"><Icone nome="usuarios" tamanho={22} /> Quem pode votar nas cidades</legend>
             <label>
               <input type="radio" name="quem" value="todos" form="form-quem" defaultChecked={votacao.cidades_quem !== "avaliaram"} />
-              Todos os produtores <span className="suave">({p.produtores})</span>
+              Todos os expositores <span className="suave">({p.produtores})</span>
             </label>
             <label>
               <input type="radio" name="quem" value="avaliaram" form="form-quem" defaultChecked={votacao.cidades_quem === "avaliaram"} />

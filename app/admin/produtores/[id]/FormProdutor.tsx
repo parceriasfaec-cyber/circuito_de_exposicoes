@@ -72,10 +72,10 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
           </div>
         )}
       </div>
-      {!tipo && <p className="suave" style={{ marginTop: 8 }}>Sem documento, o produtor se identifica escolhendo o próprio nome na lista (e o município, se houver nome igual).</p>}
+      {!tipo && <p className="suave" style={{ marginTop: 8 }}>Sem documento, o expositor se identifica escolhendo o próprio nome na lista (e o município, se houver nome igual).</p>}
 
       <h3 style={{ margin: "22px 0 4px", color: "var(--verde-escuro)" }}>Exposições em que participou no {cicloNome}</h3>
-      <p className="suave" style={{ margin: 0 }}>O produtor só avalia as exposições marcadas aqui.</p>
+      <p className="suave" style={{ margin: 0 }}>O expositor só avalia as exposições marcadas aqui.</p>
       <div className="marcar">
         {exposicoes.map((e) => {
           const travada = avaliadas.has(e.id);
@@ -92,7 +92,7 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
       {estado.erro && <div className="erro" role="alert">{estado.erro}</div>}
 
       <div className="acoes-form">
-        <button className="botao" disabled={salvando}>{salvando ? "Salvando..." : novo ? "Cadastrar produtor" : "Salvar alterações"}</button>
+        <button className="botao" disabled={salvando}>{salvando ? "Salvando..." : novo ? "Cadastrar expositor" : "Salvar alterações"}</button>
         <Link href="/admin/produtores" className="link">Cancelar</Link>
       </div>
     </form>
@@ -111,7 +111,7 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
             onSubmit={(e) => { if (!confirm(`Juntar os dois cadastros em "${h.nome}"? As exposições deste cadastro passam para ele e este cadastro é apagado.`)) e.preventDefault(); }}>
             <input type="hidden" name="origem" value={dados.id} />
             <input type="hidden" name="destino" value={h.id} />
-            <button className="botao">Juntar com este produtor</button>
+            <button className="botao">Juntar com este expositor</button>
             <span className="suave">As exposições deste cadastro passam para o de {h.nome}, e este cadastro é apagado.</span>
           </form>
         )}

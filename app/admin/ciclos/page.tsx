@@ -34,7 +34,7 @@ export default async function Ciclos({ searchParams }: { searchParams: Promise<{
           <tr>
             <th><span><Icone nome="painel" tamanho={18} /> Ciclo</span></th>
             <th className="num">Exposições</th>
-            <th className="num">Produtores na lista</th>
+            <th className="num">Expositores na lista</th>
             <th className="num">Avaliações</th>
             <th>Situação</th>
             <th style={{ textAlign: "center" }}>Ações</th>
@@ -73,7 +73,7 @@ export default async function Ciclos({ searchParams }: { searchParams: Promise<{
       </section>
 
       <p className="suave">
-        O ciclo <strong>ativo</strong> é o que os produtores avaliam. Os outros ficam guardados com as suas avaliações e
+        O ciclo <strong>ativo</strong> é o que os expositores avaliam. Os outros ficam guardados com as suas avaliações e
         o seu ranking, e podem ser vistos pelo seletor de ciclo no alto das telas.
       </p>
     </>

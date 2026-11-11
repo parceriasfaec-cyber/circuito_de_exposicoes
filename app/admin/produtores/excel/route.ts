@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 type Linha = {
   id: string;
+  codigo: string;
   expositor: string;
   empresa: string | null;
   tipo: string | null;
@@ -63,7 +64,7 @@ export async function GET(req: Request) {
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const todasLinhas = await sql()<Linha[]>`
-    select p.id, p.nome expositor, p.empresa, p.tipo_documento tipo, p.documento, p.municipio, p.atividade,
+    select p.id, p.codigo, p.nome expositor, p.empresa, p.tipo_documento tipo, p.documento, p.municipio, p.atividade,
            e.nome exposicao, regexp_replace(e.nome, '^Exposição (Agropecuária )?(de|do|da) ', '') exposicao_curta, e.data_inicio, e.data_fim
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
@@ -81,7 +82,7 @@ export async function GET(req: Request) {
   }
   const passa = (l: Linha) => {
     const exps = expsDe.get(l.id)!;
-    if (q && !normalizar(`${l.expositor} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) return false;
+    if (q && !normalizar(`${l.codigo} ${l.expositor} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) return false;
     if (exp && !exps.has(exp)) return false;
     if (total !== null && exps.size !== total) return false;
     return true;
@@ -93,7 +94,7 @@ export async function GET(req: Request) {
 
   // Aba 1: um produtor por linha, com todas as exposições dele
   const porExpositor = wb.addWorksheet("Por expositor");
-  porExpositor.addRow(["Expositor", "Empresa", "CPF / CNPJ", "Município", "Atividade", "Qtd. exposições", "Exposições"]);
+  porExpositor.addRow(["ID", "Expositor", "Empresa", "CPF / CNPJ", "Município", "Atividade", "Qtd. exposições", "Exposições"]);
   const pessoas = new Map<string, { l: Linha; exps: Set<string> }>();
   for (const l of linhas) {
     const k = `${l.expositor}|${l.documento ?? ""}|${l.municipio}`;
@@ -103,27 +104,28 @@ export async function GET(req: Request) {
   }
   for (const { l, exps } of [...pessoas.values()].sort((a, b) => comparar(a.l.expositor, b.l.expositor))) {
     const lista = [...exps].sort(comparar);
-    porExpositor.addRow([l.expositor, l.empresa ?? "", doc(l.tipo, l.documento), l.municipio, l.atividade ?? "", lista.length, lista.join("; ")]);
+    porExpositor.addRow([l.codigo, l.expositor, l.empresa ?? "", doc(l.tipo, l.documento), l.municipio, l.atividade ?? "", lista.length, lista.join("; ")]);
   }
-  estilizar(porExpositor, [42, 32, 22, 18, 22, 10, 70]);
+  estilizar(porExpositor, [9, 42, 32, 22, 18, 22, 10, 70]);
 
   // Aba 2: exposição em ordem alfabética e, dentro dela, os expositores
   const porExposicao = wb.addWorksheet("Por exposição");
-  porExposicao.addRow(["Exposição", "Período", "Expositor", "CPF / CNPJ", "Município"]);
+  porExposicao.addRow(["Exposição", "Período", "ID", "Expositor", "CPF / CNPJ", "Município"]);
   for (const l of linhas.filter((x) => x.exposicao && (!exp || x.exposicao_curta === exp)).sort((a, b) => comparar(a.exposicao!, b.exposicao!) || comparar(a.expositor, b.expositor))) {
     porExposicao.addRow([
       l.exposicao,
       l.data_inicio && l.data_fim ? `${formatarData(l.data_inicio)} a ${formatarData(l.data_fim)}` : "",
+      l.codigo,
       l.expositor,
       doc(l.tipo, l.documento),
       l.municipio,
     ]);
   }
-  estilizar(porExposicao, [32, 25, 42, 22, 18]);
+  estilizar(porExposicao, [32, 25, 9, 42, 22, 18]);
 
   const arquivo = await wb.xlsx.writeBuffer();
   const base = [ciclo?.nome ?? "circuito", exp ?? "", total !== null ? `${total}-exposicoes` : ""].filter(Boolean).join(" ");
-  const nome = `produtores-${normalizar(base).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}.xlsx`;
+  const nome = `expositores-${normalizar(base).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}.xlsx`;
   return new Response(arquivo as ArrayBuffer, {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
