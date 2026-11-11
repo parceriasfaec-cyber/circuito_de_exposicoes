@@ -16,7 +16,7 @@ type Linha = {
   instituicao: string;
   responsavel: string;
   funcao: string;
-  cpf: string;
+  cpf: string | null;
   email: string;
   telefone: string | null;
   periodo1_inicio: Date;

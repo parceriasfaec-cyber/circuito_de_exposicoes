@@ -3,7 +3,7 @@ import { cpfValido, maiusculaInicial, soDigitos } from "./texto";
 export type DadosCredenciamento = {
   codigo: number;
   responsavel: string;
-  cpf: string;
+  cpf: string | null;
   email: string;
   telefone: string;
   funcao: string;
@@ -25,7 +25,7 @@ export function lerDadosCredenciamento(form: FormData, ano: number): { erro: str
   const d: DadosCredenciamento = {
     codigo: Number(texto(form, "municipio")),
     responsavel: maiusculaInicial(texto(form, "responsavel")),
-    cpf: soDigitos(texto(form, "cpf")),
+    cpf: soDigitos(texto(form, "cpf")) || null, // opcional por enquanto
     email: texto(form, "email").toLowerCase(),
     telefone: soDigitos(texto(form, "telefone")),
     funcao: maiusculaInicial(texto(form, "funcao")),
@@ -38,7 +38,7 @@ export function lerDadosCredenciamento(form: FormData, ano: number): { erro: str
 
   if (!Number.isInteger(d.codigo) || d.codigo <= 0) return { erro: "Escolha o município." };
   if (d.responsavel.length < 3) return { erro: "Preencha o nome do responsável." };
-  if (!cpfValido(d.cpf)) return { erro: "Este CPF não é válido. Confira os números." };
+  if (d.cpf && !cpfValido(d.cpf)) return { erro: "Este CPF não é válido. Confira os números." };
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) return { erro: "Este e-mail não é válido. Confira." };
   if (d.telefone.length < 10 || d.telefone.length > 11) return { erro: "Digite o telefone com DDD, só os números. Ex.: (85) 99999-9999." };
   if (d.funcao.length < 2) return { erro: "Preencha a função do responsável." };

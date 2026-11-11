@@ -17,9 +17,11 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
   const d = lido.dados;
 
   // Cada pessoa (CPF) só pode credenciar um município.
-  const [jaFeito] = await sql()<{ municipio: string }[]>`
-    select m.nome municipio from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
-    where c.ano = ${ano} and c.cpf = ${d.cpf}`;
+  const [jaFeito] = d.cpf
+    ? await sql()<{ municipio: string }[]>`
+        select m.nome municipio from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
+        where c.ano = ${ano} and c.cpf = ${d.cpf}`
+    : [];
   if (jaFeito) {
     return { erro: `Este CPF já credenciou o município de ${jaFeito.municipio}. Cada pessoa só pode credenciar um município.` };
   }

@@ -125,7 +125,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                     </td>
                     <td>
                       <div className="nome">{l.responsavel}</div>
-                      <div className="doc">{l.funcao} · CPF {l.cpf}</div>
+                      <div className="doc">{l.funcao}{l.cpf ? ` · CPF ${l.cpf}` : ""}</div>
                       <div className="doc">
                         {l.telefoneDigitos && <><a href={`tel:${l.telefoneDigitos}`}>{l.telefone}</a> · </>}
                         <a href={`mailto:${l.email}`}>{l.email}</a>
