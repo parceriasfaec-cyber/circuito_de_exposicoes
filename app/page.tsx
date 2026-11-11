@@ -4,7 +4,7 @@ import Icone from "@/components/Icone";
 import { Aviso } from "@/components/Marca";
 import MolduraVoto from "@/components/MolduraVoto";
 import { anoCredenciamento } from "@/lib/credenciamento";
-import { avaliouAlgumaExposicao, lerVotacao, sql } from "@/lib/db";
+import { lerVotacao, motivoSemVotoCidades, sql } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 import { sair } from "./votar/actions";
 import Identificacao from "./votar/Identificacao";
@@ -36,7 +36,7 @@ export default async function Inicio() {
     }
     if (votacao.cidades_aberta) {
       const [{ n }] = await db<{ n: number }[]>`select count(*)::int n from votos_cidades where produtor_id = ${s.produtorId} and ano = ${ano}`;
-      faltaVotar = n === 0 && (votacao.cidades_quem === "todos" || (await avaliouAlgumaExposicao(s.produtorId)));
+      faltaVotar = n === 0 && !(await motivoSemVotoCidades(s.produtorId, votacao));
     }
     if (faltaAvaliar && !faltaVotar) redirect("/avaliar");
     if (faltaVotar && !faltaAvaliar) redirect("/votar");

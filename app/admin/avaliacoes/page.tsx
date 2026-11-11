@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 type Item = { exposicao: string; avaliada: boolean; nota: number | null };
 type Linha = {
   id: string;
+  codigo: string;
   nome: string;
   municipio: string;
   tipo_documento: string | null;
@@ -45,7 +46,7 @@ export default async function Avaliacoes({
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const linhas = await sql()<Linha[]>`
-    select p.id, p.nome, p.municipio, p.tipo_documento, p.documento,
+    select p.id, p.codigo, p.nome, p.municipio, p.tipo_documento, p.documento,
            count(*)::int total,
            count(a.produtor_id)::int avaliadas,
            json_agg(json_build_object('exposicao', e.nome, 'avaliada', a.produtor_id is not null, 'nota', round(a.media * 10)::int)
@@ -69,7 +70,7 @@ export default async function Avaliacoes({
   const filtradas = linhas.filter((l) => {
     if (filtro === "concluidos" && !concluido(l)) return false;
     if (filtro === "pendentes" && concluido(l)) return false;
-    if (q && !normalizar(`${l.nome} ${l.municipio} ${l.documento ?? ""}`).includes(q)) return false;
+    if (q && !normalizar(`${l.codigo} ${l.nome} ${l.municipio} ${l.documento ?? ""}`).includes(q)) return false;
     return true;
   });
 
@@ -109,7 +110,7 @@ export default async function Avaliacoes({
         {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
         <div className="busca-campo">
           <Icone nome="busca" tamanho={20} />
-          <input type="text" name="q" defaultValue={busca} placeholder="Buscar por nome, município ou documento..." />
+          <input type="text" name="q" defaultValue={busca} placeholder="Buscar por ID, nome, município ou documento..." />
         </div>
         <button className="botao com-icone"><Icone nome="busca" tamanho={18} /> Buscar</button>
         {busca && <Link href={`/admin/avaliacoes?filtro=${filtro}`} className="link">Limpar</Link>}
@@ -121,6 +122,7 @@ export default async function Avaliacoes({
         <table className="tabela-org">
           <thead>
             <tr>
+              <th className="centro">ID</th>
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
               <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
               <th><span><Icone nome="grafico" tamanho={18} /> Situação</span></th>
@@ -133,6 +135,7 @@ export default async function Avaliacoes({
               const ok = concluido(l);
               return (
                 <tr key={l.id}>
+                  <td className="c-id centro"><span className="prod-id">{l.codigo}</span></td>
                   <td className="c-produtor">
                     <div className="nome">{l.nome}</div>
                     <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>

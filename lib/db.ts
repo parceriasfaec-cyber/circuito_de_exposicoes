@@ -42,6 +42,8 @@ export type Votacao = {
   cidades_quem: "todos" | "avaliaram";
   /** Avaliação das exposições só para quem teve a presença marcada no evento (ciclo ativo). */
   exposicoes_so_presentes: boolean;
+  /** Votação das cidades só para quem teve a presença marcada (soma com cidades_quem). */
+  cidades_so_presentes: boolean;
 };
 
 export async function lerVotacao(): Promise<Votacao> {
@@ -49,12 +51,12 @@ export async function lerVotacao(): Promise<Votacao> {
   await sql()`select exposicao_cearense.aplicar_horarios()`;
   const [v] = await sql()<Votacao[]>`
     select (exposicoes_aberta or cidades_aberta) aberta, exposicoes_aberta, cidades_aberta, codigo_do_dia, aberta_em,
-           exposicoes_aberta_em, cidades_aberta_em, exposicoes_abrir_em, exposicoes_fechar_em, exposicoes_fechada_em, cidades_fechada_em, cidades_quem, exposicoes_so_presentes
+           exposicoes_aberta_em, cidades_aberta_em, exposicoes_abrir_em, exposicoes_fechar_em, exposicoes_fechada_em, cidades_fechada_em, cidades_quem, exposicoes_so_presentes, cidades_so_presentes
     from exposicao_cearense.votacao where id = 1`;
   return (
     v ?? {
       aberta: false, exposicoes_aberta: false, cidades_aberta: false, codigo_do_dia: null, aberta_em: null,
-      exposicoes_aberta_em: null, cidades_aberta_em: null, exposicoes_abrir_em: null, exposicoes_fechar_em: null, exposicoes_fechada_em: null, cidades_fechada_em: null, cidades_quem: "todos", exposicoes_so_presentes: false,
+      exposicoes_aberta_em: null, cidades_aberta_em: null, exposicoes_abrir_em: null, exposicoes_fechar_em: null, exposicoes_fechada_em: null, cidades_fechada_em: null, cidades_quem: "todos", exposicoes_so_presentes: false, cidades_so_presentes: false,
     }
   );
 }
@@ -71,6 +73,20 @@ export async function estaPresente(produtorId: string): Promise<boolean> {
 /** Pode avaliar as exposições? Sempre, a não ser que o painel exija presença e ela não esteja marcada. */
 export async function podeAvaliarPorPresenca(produtorId: string, votacao: Votacao): Promise<boolean> {
   return !votacao.exposicoes_so_presentes || (await estaPresente(produtorId));
+}
+
+/**
+ * Regras da votação das cidades (podem valer juntas): só quem avaliou e/ou só quem está presente.
+ * Devolve o motivo de não poder votar, ou null se pode.
+ */
+export async function motivoSemVotoCidades(produtorId: string, votacao: Votacao): Promise<string | null> {
+  if (votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(produtorId))) {
+    return "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano.";
+  }
+  if (votacao.cidades_so_presentes && !(await estaPresente(produtorId))) {
+    return "A votação das cidades é só para quem teve a presença marcada no evento. Procure a organização.";
+  }
+  return null;
 }
 
 export const AVISO_SO_PRESENTES = "A avaliação das exposições é só para quem teve a presença marcada no evento. Procure a organização.";

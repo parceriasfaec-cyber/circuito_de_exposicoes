@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
 import { anoCredenciamento } from "@/lib/credenciamento";
-import { AVISO_SO_PRESENTES, avaliouAlgumaExposicao, lerVotacao, podeAvaliarPorPresenca, sql } from "@/lib/db";
+import { AVISO_SO_PRESENTES, lerVotacao, motivoSemVotoCidades, podeAvaliarPorPresenca, sql } from "@/lib/db";
 import { formatarData } from "@/lib/texto";
 import { sair } from "../actions";
 import Questionario, { type ExposicaoQuestionario } from "./Questionario";
@@ -21,7 +21,7 @@ export default async function ConteudoAvaliacao({ s, ok, cidadesAberta }: { s: {
   const ano = await anoCredenciamento();
   const votacao = cidadesAberta ? await lerVotacao() : null;
   const [jaVotou] = cidadesAberta ? await db<{ n: number }[]>`select count(*)::int n from votos_cidades where produtor_id = ${s.produtorId} and ano = ${ano}` : [{ n: 0 }];
-  const podeVotarCidades = !!votacao && (votacao.cidades_quem === "todos" || (await avaliouAlgumaExposicao(s.produtorId)));
+  const podeVotarCidades = !!votacao && !(await motivoSemVotoCidades(s.produtorId, votacao));
 
   // Avaliação só para presentes (opção em Prazo e horário): quem não teve a presença marcada não vê o questionário.
   if (!(await podeAvaliarPorPresenca(s.produtorId, await lerVotacao()))) {

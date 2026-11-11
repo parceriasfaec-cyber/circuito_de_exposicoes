@@ -2114,3 +2114,6 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .hr-quem { border: 0; padding: 0; margin: 0 0 14px; display: grid; gap: 10px; }
 .hr-quem label { display: flex; align-items: center; gap: 10px; font-weight: 700; padding: 12px 14px; border: 1.5px solid var(--borda); border-radius: 12px; cursor: pointer; }
 .hr-quem label:has(input:checked) { border-color: var(--verde); background: var(--verde-claro); }
+.tabela-org th.centro, .tabela-org td.centro { text-align: center; }
+.tabela-org td.c-id { width: 1%; }
+@media (max-width: 760px) { .tabela-org td.c-id { grid-column: 1 / -1; text-align: left; } }

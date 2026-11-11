@@ -24,13 +24,15 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
   const votacao = await lerVotacao();
   const votacaoCidades = votacao.cidades_aberta;
   const resultado = await resultadoCidades(ano);
-  const [p] = await sql()<{ produtores: number; avaliaram: number }[]>`
+  const [p] = await sql()<{ produtores: number; avaliaram: number; presentes: number }[]>`
     select count(distinct pa.produtor_id)::int produtores,
            count(distinct pa.produtor_id) filter (where exists (
              select 1 from avaliacoes a join exposicoes e2 on e2.id = a.exposicao_id
-             where a.produtor_id = pa.produtor_id and e2.ciclo_id = c.id))::int avaliaram
+             where a.produtor_id = pa.produtor_id and e2.ciclo_id = c.id))::int avaliaram,
+           (select count(*)::int from presencas pr join ciclos c2 on c2.id = pr.ciclo_id and c2.ativo) presentes
     from participacoes pa join exposicoes e on e.id = pa.exposicao_id join ciclos c on c.id = e.ciclo_id and c.ativo`;
-  const quemVota = votacao.cidades_quem === "avaliaram" ? `Só quem avaliou (${p.avaliaram})` : `Todos os expositores (${p.produtores})`;
+  const regras = [votacao.cidades_quem === "avaliaram" ? "quem avaliou" : null, votacao.cidades_so_presentes ? "quem está presente" : null].filter(Boolean);
+  const quemVota = regras.length ? `Só ${regras.join(" e ")}` : `Todos os expositores (${p.produtores})`;
 
   return (
     <>
@@ -128,13 +130,14 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           </div>
           <fieldset className="vc-campo vc-quem">
             <legend className="vc-rotulo"><Icone nome="usuarios" tamanho={22} /> Quem pode votar nas cidades</legend>
+            <p className="suave" style={{ margin: "0 0 6px" }}>Sem nada marcado, todos os expositores votam ({p.produtores}). Pode marcar as duas.</p>
             <label>
-              <input type="radio" name="quem" value="todos" form="form-quem" defaultChecked={votacao.cidades_quem !== "avaliaram"} />
-              Todos os expositores <span className="suave">({p.produtores})</span>
+              <input type="checkbox" name="quem" value="avaliaram" form="form-quem" defaultChecked={votacao.cidades_quem === "avaliaram"} />
+              Só quem fez a avaliação das exposições <span className="suave">({p.avaliaram})</span>
             </label>
             <label>
-              <input type="radio" name="quem" value="avaliaram" form="form-quem" defaultChecked={votacao.cidades_quem === "avaliaram"} />
-              Só quem fez a avaliação das exposições <span className="suave">({p.avaliaram})</span>
+              <input type="checkbox" name="presentes" value="1" form="form-quem" defaultChecked={votacao.cidades_so_presentes} />
+              Só quem teve a presença marcada <span className="suave">({p.presentes})</span>
             </label>
           </fieldset>
           <div className="vc-botoes">

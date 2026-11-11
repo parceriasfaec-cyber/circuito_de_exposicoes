@@ -52,6 +52,7 @@ export async function liberarVotacao(form?: FormData) {
   await exigirAdmin();
   const cidades = form?.get("modo") === "cidades";
   const quem = form?.get("quem") === "avaliaram" ? "avaliaram" : "todos";
+  const soPresentes = form?.get("presentes") === "1";
   const novo = String(randomInt(0, 10000)).padStart(4, "0");
   await sql()`
     update exposicao_cearense.votacao
@@ -66,6 +67,7 @@ export async function liberarVotacao(form?: FormData) {
         exposicoes_aberta = exposicoes_aberta or ${!cidades},
         cidades_aberta = cidades_aberta or ${cidades},
         cidades_quem = case when ${cidades} then ${quem} else cidades_quem end,
+        cidades_so_presentes = case when ${cidades} then ${soPresentes} else cidades_so_presentes end,
         aberta = true, fechada_em = null
     where id = 1`;
   revalidatePath("/admin");
@@ -85,7 +87,8 @@ export async function alterarQuemAvalia(form: FormData) {
 export async function alterarQuemVota(form: FormData) {
   await exigirAdmin();
   const quem = form.get("quem") === "avaliaram" ? "avaliaram" : "todos";
-  await sql()`update exposicao_cearense.votacao set cidades_quem = ${quem} where id = 1`;
+  const soPresentes = form.get("presentes") === "1";
+  await sql()`update exposicao_cearense.votacao set cidades_quem = ${quem}, cidades_so_presentes = ${soPresentes} where id = 1`;
   revalidatePath("/admin/proximo");
   redirect("/admin/proximo?quem=1");
 }

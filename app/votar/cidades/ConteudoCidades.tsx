@@ -1,14 +1,15 @@
 import { redirect } from "next/navigation";
 import { Aviso } from "@/components/Marca";
 import { anoCredenciamento } from "@/lib/credenciamento";
-import { avaliouAlgumaExposicao, lerVotacao, sql } from "@/lib/db";
+import { lerVotacao, motivoSemVotoCidades, sql } from "@/lib/db";
 import { sair } from "../actions";
 import EscolherCidades from "./EscolherCidades";
 
 /** Escolha dos 2 municípios do produtor logado (usada em /votar). */
 export default async function ConteudoCidades({ s, ok }: { s: { produtorId: string }; ok?: string }) {
   const votacao = await lerVotacao();
-  const podeVotar = votacao.cidades_quem === "todos" || (await avaliouAlgumaExposicao(s.produtorId));
+  const motivo = await motivoSemVotoCidades(s.produtorId, votacao);
+  const podeVotar = !motivo;
   const params = { ok };
 
   const db = sql();
@@ -44,8 +45,8 @@ export default async function ConteudoCidades({ s, ok }: { s: { produtorId: stri
           <p>O resultado será mostrado no telão ao final da votação.</p>
         </Aviso>
       ) : !podeVotar ? (
-        <Aviso titulo="A votação das cidades é só para quem avaliou.">
-          <p>Só pode escolher as cidades quem fez a avaliação de alguma exposição deste ano. Em caso de dúvida, procure a organização.</p>
+        <Aviso titulo="Você não pode votar nas cidades.">
+          <p>{motivo}</p>
         </Aviso>
       ) : cidades.length < 2 ? (
         <Aviso titulo="Ainda não há cidades para votar.">
