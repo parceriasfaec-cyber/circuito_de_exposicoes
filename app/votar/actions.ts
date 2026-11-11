@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { avaliouAlgumaExposicao, lerVotacao, sql, type Votacao } from "@/lib/db";
 import { encerrarSessaoProdutor, iniciarSessaoProdutor, produtorDaSessao, segredoConfigurado } from "@/lib/sessao";
-import { cnpjValido, cpfValido, soDigitos } from "@/lib/texto";
+import { soDigitos } from "@/lib/texto";
 import { QTD_PERGUNTAS } from "@/lib/escala";
 
 export type EstadoEntrada = { erro?: string };
@@ -23,28 +23,21 @@ const lerDestino = (form: FormData): Destino => {
   return d === "avaliar" || d === "votar" ? d : "inicio";
 };
 
-/** Confere se a votação do destino está liberada e o código do dia (com limite de erros por IP). */
-async function conferirCodigo(form: FormData, destino: Destino): Promise<{ erro: string } | { votacao: Votacao & { codigo_do_dia: string } }> {
+/** Confere se a votação do destino está liberada e o limite de IDs errados por IP (evita ficar chutando números). */
+async function conferirLiberada(destino: Destino): Promise<{ erro: string } | { votacao: Votacao & { codigo_do_dia: string }; ip: string }> {
   const votacao = await lerVotacao();
   if (destino === "avaliar" && !votacao.exposicoes_aberta) return { erro: "A avaliação das exposições não está liberada agora." };
   if (destino === "votar" && !votacao.cidades_aberta) return { erro: "A votação das cidades não está liberada agora." };
   if (!votacao.aberta || !votacao.codigo_do_dia) return { erro: "A votação não está liberada agora." };
   if (!segredoConfigurado()) return { erro: "O sistema ainda está sendo configurado. Procure a organização." };
 
-  const db = sql();
   const ip = await ipDoCliente();
-  const [{ erros }] = await db<{ erros: number }[]>`
+  const [{ erros }] = await sql()<{ erros: number }[]>`
     select count(*)::int erros from tentativas_codigo
     where ip = ${ip} and quando > now() - make_interval(mins => ${JANELA_MIN})`;
-  if (erros >= MAX_ERROS) return { erro: `Muitas tentativas com código errado. Espere ${JANELA_MIN} minutos e tente de novo.` };
-
-  const codigo = soDigitos(String(form.get("codigo") ?? ""));
-  if (codigo.length !== 4) return { erro: "Digite o código do dia, com 4 números, que aparece no telão." };
-  if (codigo !== votacao.codigo_do_dia) {
-    await db`insert into tentativas_codigo (ip) values (${ip})`;
-    return { erro: "Código do dia incorreto. Confira o número que aparece no telão." };
-  }
-  return { votacao: { ...votacao, codigo_do_dia: votacao.codigo_do_dia } };
+  if (erros >= MAX_ERROS) return { erro: `Muitas tentativas com ID errado. Espere ${JANELA_MIN} minutos e tente de novo.` };
+  // O código do dia continua valendo por dentro: a sessão acaba quando a votação fecha ou o código muda.
+  return { votacao: { ...votacao, codigo_do_dia: votacao.codigo_do_dia }, ip };
 }
 
 /** Só entra quem está na lista de alguma exposição do ciclo ativo; depois vai para o destino escolhido. */
@@ -63,45 +56,20 @@ async function concluirEntrada(produtorId: string, votacao: Votacao & { codigo_d
   redirect(destino === "avaliar" ? "/avaliar" : destino === "votar" ? "/votar" : "/");
 }
 
+/** Entrada só com o ID de 5 números do expositor (entregue pela organização). */
 export async function entrar(_: EstadoEntrada, form: FormData): Promise<EstadoEntrada> {
   const destino = lerDestino(form);
-  const r = await conferirCodigo(form, destino);
+  const r = await conferirLiberada(destino);
   if ("erro" in r) return r;
-  const votacao = r.votacao;
-  const db = sql();
 
-  const modo = String(form.get("modo") ?? "");
-  let produtorId: string | null = null;
-
-  if (modo === "documento") {
-    const bruto = String(form.get("documento") ?? "").trim();
-    if (!bruto) return { erro: "Digite o seu documento." };
-    const dig = soDigitos(bruto);
-    let linhas: { id: string }[];
-    if (dig.length === 11 && /^[\d.\-\s]+$/.test(bruto)) {
-      if (!cpfValido(dig)) return { erro: "Este CPF não é válido. Confira os números." };
-      linhas = await db`select id from produtores where tipo_documento = 'CPF' and documento = ${dig}`;
-    } else if (dig.length === 14 && /^[\d.\-/\s]+$/.test(bruto)) {
-      if (!cnpjValido(dig)) return { erro: "Este CNPJ não é válido. Confira os números." };
-      linhas = await db`select id from produtores where tipo_documento = 'CNPJ' and documento = ${dig}`;
-    } else {
-      linhas = await db`
-        select id from produtores
-        where tipo_documento = 'OUTRO' and upper(regexp_replace(documento, '\\s', '', 'g')) = upper(regexp_replace(${bruto}, '\\s', '', 'g'))`;
-    }
-    if (linhas.length !== 1) return { erro: "Não encontramos este documento na lista de participantes. Procure a organização." };
-    produtorId = linhas[0].id;
-  } else if (modo === "nome") {
-    const id = String(form.get("produtor_id") ?? "");
-    if (!/^[0-9a-f-]{36}$/i.test(id)) return { erro: "Escolha o seu nome na lista." };
-    const linhas = await db<{ id: string }[]>`select id from produtores where id = ${id}`;
-    if (linhas.length !== 1) return { erro: "Escolha o seu nome na lista." };
-    produtorId = linhas[0].id;
-  } else {
-    return { erro: "Escolha como quer se identificar." };
+  const codigo = soDigitos(String(form.get("id_expositor") ?? ""));
+  if (codigo.length !== 5) return { erro: "Digite o seu ID, com 5 números." };
+  const [p] = await sql()<{ id: string }[]>`select id from produtores where codigo = ${codigo}`;
+  if (!p) {
+    await sql()`insert into tentativas_codigo (ip) values (${r.ip})`;
+    return { erro: "ID não encontrado. Confira os 5 números ou procure a organização." };
   }
-
-  return concluirEntrada(produtorId, votacao, destino);
+  return concluirEntrada(p.id, r.votacao, destino);
 }
 
 export async function sair() {

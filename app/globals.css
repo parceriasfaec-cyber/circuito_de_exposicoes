@@ -2109,3 +2109,5 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 }
 .filtro.desmarcar-todos { margin-left: auto; border-color: #f0b48f; color: var(--alerta); background: #fff; }
 .filtro.desmarcar-todos:hover { background: var(--alerta-claro); }
+.form-voto .campo-id { font-size: 1.6rem; font-weight: 800; letter-spacing: 0.3em; font-variant-numeric: tabular-nums; }
+.form-voto .campo-id::placeholder { font-size: 1.05rem; font-weight: 400; letter-spacing: normal; }

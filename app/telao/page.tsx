@@ -39,9 +39,8 @@ export default async function Telao() {
           <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
           <div>
             <div className="suave" style={{ fontSize: "1.3rem" }}>
-              Leia o QR Code com a câmera do celular e digite o código do dia{ambas ? "" : cidades ? " para escolher 2 cidades" : " para avaliar"}
+              Leia o QR Code com a câmera do celular e digite o seu ID de 5 números{ambas ? "" : cidades ? " para escolher 2 cidades" : " para avaliar"}
             </div>
-            <div className="codigo">{votacao.codigo_do_dia}</div>
             <div className="suave">{url.replace(/\/$/, "")}</div>
           </div>
         </>
