@@ -16,6 +16,7 @@ export type Expositor = {
   hora: string | null;
   marcado_em: Date | null;
   total_exposicoes: number;
+  avaliadas: number;
   exposicoes: string | null;
 };
 
@@ -129,13 +130,14 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
               <th className="centro">ID</th>
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
               <th className="centro"><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
+              <th className="centro"><span><Icone nome="prancheta" tamanho={18} /> Avaliação</span></th>
               <th className="centro"><span><Icone nome="escudo" tamanho={18} /> Status de Presença</span></th>
               <th className="centro">Ações</th>
             </tr>
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
+              <tr><td colSpan={6} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
             )}
             {daPagina.map((e) => (
               <tr key={e.id} className={e.presente ? "presente" : undefined}>
@@ -148,6 +150,13 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor }: { c
                   <span className={`prod-total${e.total_exposicoes === 0 ? " zero" : ""}`} title={e.exposicoes ?? "Nenhuma exposição neste ciclo"}>
                     {e.total_exposicoes}
                   </span>
+                </td>
+                <td className="centro">
+                  {e.total_exposicoes > 0 && e.avaliadas >= e.total_exposicoes ? (
+                    <span className="pres-aval avaliou"><Icone nome="check" tamanho={16} /> Avaliou</span>
+                  ) : (
+                    <span className="pres-aval nao">Não avaliou</span>
+                  )}
                 </td>
                 <td className="centro">
                   {e.presente ? (

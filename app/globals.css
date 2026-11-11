@@ -2102,7 +2102,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .pres-tabela td:last-child { white-space: nowrap; }
 .pres-acao:disabled { opacity: 0.5; cursor: wait; }
 @media (max-width: 760px) {
-  .pres-tabela { min-width: 640px; }
+  .pres-tabela { min-width: 760px; }
   .pres-tabela thead { display: table-header-group; }
   .pres-tabela tbody tr { display: table-row; border: 0; padding: 0; margin: 0; }
   .pres-tabela td { display: table-cell; padding: 10px 8px; border-bottom: 1px solid var(--borda); }
@@ -2117,3 +2117,6 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .tabela-org th.centro, .tabela-org td.centro { text-align: center; }
 .tabela-org td.c-id { width: 1%; }
 @media (max-width: 760px) { .tabela-org td.c-id { grid-column: 1 / -1; text-align: left; } }
+.pres-aval { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-weight: 800; font-size: 0.88rem; white-space: nowrap; }
+.pres-aval.avaliou { background: #dff0d4; color: var(--verde-escuro); }
+.pres-aval.nao { background: #fdecdf; color: var(--alerta); }
