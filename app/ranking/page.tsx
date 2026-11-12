@@ -3,7 +3,7 @@ import PaginaPublica from "@/components/PaginaPublica";
 import { anoCredenciamento, resultadoCidades, votantesPorCidade } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import RankingAoVivo from "./RankingAoVivo";
+import RankingPodio from "./RankingPodio";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,7 @@ export default async function RankingTempoReal() {
 
   return (
     <PaginaPublica>
-      <RankingAoVivo
+      <RankingPodio
         ano={ano}
         aberta={votacao.cidades_aberta}
         ranking={ranking.filter((r) => r.posicao <= 10 || (vagas !== null && r.posicao <= vagas)).slice(0, Math.max(10, vagas ?? 0))}
