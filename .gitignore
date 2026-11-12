@@ -12,3 +12,7 @@ bloco.txt
 .vercel
 .env*
 segredo-vercel.txt
+
+# cartaz: HTML intermediario e foto original do WhatsApp
+cartaz/cartaz.html
+cartaz/WhatsApp*

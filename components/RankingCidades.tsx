@@ -27,7 +27,6 @@ export default function RankingCidades({
   const [pagina, setPagina] = useState(0);
   const [aberta, setAberta] = useState<string | null>(null);
   if (ranking.length === 0) return <p className="suave">Nenhuma cidade credenciada.</p>;
-  const max = Math.max(1, ...ranking.map((r) => r.votos));
   const { atual, itens: visiveis } = porPagina ? paginar(ranking, pagina, porPagina) : { atual: 0, itens: ranking };
   // Votos iguais em mais de uma cidade: mostra a pontuação para explicar o desempate.
   const votosRepetidos = new Set(ranking.filter((r, _, l) => r.votos > 0 && l.filter((o) => o.votos === r.votos).length > 1).map((r) => r.votos));
@@ -44,8 +43,6 @@ export default function RankingCidades({
             <div>
               <span className="nome">{r.municipio}</span>
               {classificada && <span className="selo-classificada">Classificada</span>}
-              <div className="suave" style={{ fontSize: "0.85rem" }}>{r.instituicao}</div>
-              <div className="barra-votos"><span style={{ width: `${(r.votos / max) * 100}%` }} /></div>
               {votantes && r.votos > 0 && (
                 <button type="button" className="link-votantes" onClick={() => setAberta(mostrando ? null : r.credenciamento_id)} aria-expanded={mostrando}>
                   {mostrando ? "Esconder votantes" : `Ver votantes (${deles.length})`}

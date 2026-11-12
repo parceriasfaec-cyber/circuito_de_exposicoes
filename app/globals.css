@@ -1300,7 +1300,7 @@ img.progresso-foto { object-fit: cover; background: #eef4ea; border: 2px solid #
 .ranking-cidade .barra-votos span { display: block; height: 100%; background: var(--laranja); border-radius: 6px; }
 .ranking-cidade .votos { font-weight: 900; font-size: 1.15rem; color: var(--verde-escuro); white-space: nowrap; }
 .ranking-cidade .votos .pontos-cidade { display: block; font-size: 0.8rem; font-weight: 700; color: #4d5a4d; text-align: right; }
-.link-votantes { margin-top: 8px; padding: 0; border: 0; background: none; font: inherit; font-size: 0.88rem; font-weight: 800; color: var(--verde-escuro); text-decoration: underline; cursor: pointer; }
+.link-votantes { display: block; margin-top: 4px; padding: 0; border: 0; background: none; font: inherit; font-size: 0.88rem; font-weight: 800; color: var(--verde-escuro); text-decoration: underline; cursor: pointer; }
 .votantes-cidade { display: block; overflow-x: auto; margin-top: 8px; border-collapse: collapse; font-size: 0.85rem; }
 .votantes-cidade th, .votantes-cidade td { padding: 5px 8px; border-bottom: 1px solid var(--borda); text-align: left; white-space: nowrap; }
 .votantes-cidade .centro { text-align: center; }
