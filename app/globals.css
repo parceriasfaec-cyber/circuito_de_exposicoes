@@ -2291,3 +2291,35 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .telao .logo-faixa { display: none; } /* as logos já estão no topo da página */
 .telao .qr svg { width: min(30vh, 400px); padding: 12px; }
 .telao { gap: 1.2vh; }
+.frase-setor { font-style: italic; }
+/* ovelha também no celular: no canto de baixo, atrás do cartão (como no cartaz) */
+@media (max-width: 899px) {
+  .pagina:has(.moldura-voto.tipo-inicio) { position: relative; padding-bottom: 150px; }
+  .pagina:has(.moldura-voto.tipo-inicio) > * { position: relative; z-index: 1; }
+  .pagina:has(.moldura-voto.tipo-inicio)::after {
+    content: ""; position: absolute; left: 0; bottom: 0; z-index: 0; pointer-events: none;
+    width: min(46vw, 260px); aspect-ratio: 1021 / 1280;
+    background: url("/marcas/ovelha-preta.jpg") center 30% / cover no-repeat;
+    -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
+  }
+}
+/* telão no visual do cartaz: título em faixa clara e ovelha à esquerda */
+.telao .faixa-titulo {
+  background: #e4f2d6; color: #155a2c; border: 3px solid #fff; border-radius: 999px; padding: 10px 46px;
+  text-transform: uppercase; letter-spacing: 0.03em; font-weight: 900; font-size: clamp(1.5rem, 4vh, 2.6rem);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+.telao .faixa-titulo svg { display: none; }
+@media (min-width: 900px) {
+  .pagina:has(.telao) { position: relative; }
+  .pagina:has(.telao) > * { position: relative; z-index: 1; }
+  .pagina:has(.telao .qr)::after {
+    content: ""; position: absolute; left: 0; bottom: 0; z-index: 0; pointer-events: none;
+    width: min(26vw, 480px); aspect-ratio: 1021 / 1280;
+    background: url("/marcas/ovelha-preta.jpg") center 30% / cover no-repeat;
+    -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
+  }
+}
+.telao .faixa-titulo { white-space: nowrap; width: auto; max-width: none; }

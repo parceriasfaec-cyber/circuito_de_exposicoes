@@ -8,7 +8,7 @@ export type TipoVoto = "inicio" | "avaliacao" | "cidades";
 export default async function MolduraVoto({ tipo, children }: { tipo: TipoVoto; children: React.ReactNode }) {
   const ano = await anoCredenciamento();
   const topo = {
-    inicio: { icone: "prancheta" as const, titulo: "Circuito Cearense de Exposição", lema: <>Ajude a definir as <strong className="lema-destaque">2 novas cidades</strong> que farão parte do Circuito em {ano}.</> },
+    inicio: { icone: "prancheta" as const, titulo: "Circuito Cearense de Exposição", lema: <>Participe e ajude a <strong>transformar nossa região!</strong></> },
     avaliacao: { icone: "prancheta" as const, titulo: "Avaliação das Exposições", lema: "Sua opinião é importante para fortalecer as exposições agropecuárias do Ceará." },
     cidades: { icone: "trofeu" as const, titulo: `Votação das Cidades ${ano}`, lema: `Escolha os 2 municípios que vão sediar exposições no Circuito ${ano}.` },
   }[tipo];

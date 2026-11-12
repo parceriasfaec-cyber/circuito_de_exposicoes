@@ -51,7 +51,7 @@ export default function Identificacao({ destino, ano }: { destino: "inicio" | "a
         <Icone nome="entrar" tamanho={26} /> {enviando ? "Conferindo..." : "Entrar"}
       </button>
 
-      {destino === "inicio" && <p className="frase-setor">Sua opinião é muito importante para o fortalecimento do nosso setor!</p>}
+      {destino === "inicio" && <p className="frase-setor">Sua opinião é fundamental para construirmos o futuro juntos!</p>}
 
       <p className="nota-info">
         <i className="i">i</i>
