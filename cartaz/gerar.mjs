@@ -42,14 +42,16 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
   .sub { position: absolute; top: 290px; left: 0; right: 0; text-align: center; font-size: 34px; font-weight: 600; color: #123d22;
          text-shadow: 0 0 14px #fff, 0 0 6px #fff; }
   .sub b { color: #155a2c; font-weight: 900; }
-  .centro { position: absolute; top: 352px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .centro { position: absolute; top: 345px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 18px; }
   .qr { background: #fff; padding: 22px; border-radius: 26px; border: 5px solid #2e8b3e; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
-  .qr svg { display: block; width: 300px; height: 300px; }
+  .qr svg { display: block; width: 260px; height: 260px; }
   .passo { display: flex; align-items: center; gap: 18px; background: rgba(255,255,255,.93); border-radius: 18px; padding: 14px 28px;
            font-size: 25px; font-weight: 600; line-height: 1.3; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
   .passo .cel { flex: none; width: 44px; height: 64px; border: 4px solid #2e8b3e; border-radius: 9px; position: relative; background: #e4f2d6; }
   .passo .cel::after { content: ""; position: absolute; left: 50%; bottom: 4px; width: 10px; height: 4px; margin-left: -5px; background: #2e8b3e; border-radius: 2px; }
   .passo .sep { width: 3px; align-self: stretch; background: #2e8b3e; border-radius: 2px; }
+  .passo b { color: #155a2c; font-weight: 800; }
+  .frase { margin-top: -6px; font-size: 26px; font-weight: 800; font-style: italic; color: #155a2c; text-shadow: 0 0 12px #fff, 0 0 6px #fff, 0 0 3px #fff; }
   .link { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px;
           background: #0f4a24; color: #fff; border: 3px solid #7cc24a; border-radius: 999px; padding: 12px 40px; font-size: 30px; font-weight: 800; white-space: nowrap; }
   .link svg { width: 32px; height: 32px; }
@@ -64,12 +66,13 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
     <img class="circ" src="${circuito}" alt="Circuito Cearense de Exposição">
   </div>
   <div class="titulo">CIRCUITO CEARENSE DE EXPOSIÇÃO</div>
-  <p class="sub">Avalie as exposições e escolha as <b>2 novas cidades</b> para ${ANO}.</p>
+  <p class="sub">Participe e ajude a <b>transformar nossa região!</b></p>
   ${animal ? `<img class="animal${animalSemFundo ? "" : " foto"}" src="${animal}" alt="">` : ""}
   <div class="centro">
     <div class="qr">${qr}</div>
     <div class="passo"><span class="cel"></span><span class="sep"></span>
-      <span>Aponte a câmera do celular para o QR Code,<br>avalie as exposições e escolha as 2 novas cidades.</span></div>
+      <span><b>Escaneie o QR Code</b>, faça sua avaliação dos Circuitos<br>e vote nos <b>dois municípios</b> que serão contemplados em ${ANO}.</span></div>
+    <p class="frase">Sua opinião é fundamental para construirmos o futuro juntos!</p>
   </div>
   <div class="link">
     <svg viewBox="0 0 24 24" fill="none" stroke="#7cc24a" stroke-width="2.6" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
