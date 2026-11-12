@@ -3,7 +3,14 @@
 import Icone from "@/components/Icone";
 import { excluirCredenciamento } from "./actions";
 
-export default function BotaoExcluir({ id, municipio }: { id: string; municipio: string }) {
+export default function BotaoExcluir({ id, municipio, votos = 0 }: { id: string; municipio: string; votos?: number }) {
+  if (votos > 0) {
+    return (
+      <button type="button" className="botao-icone perigo" disabled title={`${municipio} já recebeu ${votos} voto${votos > 1 ? "s" : ""}: não pode ser excluído`} aria-label={`${municipio} já recebeu votos e não pode ser excluído`}>
+        <Icone nome="lixeira" tamanho={20} />
+      </button>
+    );
+  }
   return (
     <form
       action={excluirCredenciamento}

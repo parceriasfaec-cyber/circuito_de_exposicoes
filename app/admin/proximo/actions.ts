@@ -35,12 +35,16 @@ export async function salvarVagas(form: FormData) {
   redirect("/admin/proximo?vagas=1");
 }
 
-/** Remove um credenciamento: o município volta para a lista do formulário público. */
+/** Município que já recebeu voto na votação das cidades: não pode ser excluído nem ter a apresentação desmarcada. */
+const SEM_VOTOS = () => sql()`not exists (select 1 from votos_cidades v where v.credenciamento_id = credenciamentos.id)`;
+
+/** Remove um credenciamento: o município volta para a lista do formulário público. Quem já tem voto não sai. */
 export async function excluirCredenciamento(form: FormData) {
   if (!(await ehAdmin())) redirect("/admin");
   const id = String(form.get("id") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/admin/proximo/credenciados");
-  await sql()`delete from credenciamentos where id = ${id}`;
+  const apagados = await sql()`delete from credenciamentos where id = ${id} and ${SEM_VOTOS()}`;
+  if (apagados.count === 0) redirect("/admin/proximo/credenciados?bloqueado=1");
   revalidatePath("/credenciamento");
   redirect("/admin/proximo/credenciados?excluido=1");
 }
@@ -51,16 +55,18 @@ export async function marcarApresentacao(form: FormData) {
   const id = String(form.get("id") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/admin/proximo/credenciados");
   const apresentou = form.get("apresentou") === "sim";
-  await sql()`update credenciamentos set apresentou = ${apresentou} where id = ${id}`;
+  const r = await sql()`update credenciamentos set apresentou = ${apresentou} where id = ${id} and (${apresentou} or ${SEM_VOTOS()})`;
+  if (r.count === 0) redirect("/admin/proximo/credenciados?bloqueado=1");
   revalidatePath("/telao");
   redirect("/admin/proximo/credenciados?marcado=1");
 }
 
 /** Marca ou desmarca a apresentação sem recarregar a página (usado pela lista de credenciados). */
-export async function definirApresentacao(id: string, apresentou: boolean): Promise<{ ok: boolean }> {
+export async function definirApresentacao(id: string, apresentou: boolean): Promise<{ ok: boolean; erro?: string }> {
   if (!(await ehAdmin())) return { ok: false };
   if (!/^[0-9a-f-]{36}$/i.test(id)) return { ok: false };
-  await sql()`update credenciamentos set apresentou = ${apresentou} where id = ${id}`;
+  const r = await sql()`update credenciamentos set apresentou = ${apresentou} where id = ${id} and (${apresentou} or ${SEM_VOTOS()})`;
+  if (r.count === 0) return { ok: false, erro: "Este município já recebeu votos: a apresentação não pode ser desmarcada." };
   revalidatePath("/telao");
   revalidatePath("/admin/proximo");
   return { ok: true };
@@ -70,7 +76,7 @@ export async function definirApresentacao(id: string, apresentou: boolean): Prom
 export async function desmarcarTodasApresentacoes(): Promise<{ ok: boolean }> {
   if (!(await ehAdmin())) return { ok: false };
   const ano = await anoCredenciamento();
-  await sql()`update credenciamentos set apresentou = false where ano = ${ano} and apresentou`;
+  await sql()`update credenciamentos set apresentou = false where ano = ${ano} and apresentou and ${SEM_VOTOS()}`;
   revalidatePath("/telao");
   revalidatePath("/admin/proximo");
   return { ok: true };

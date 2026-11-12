@@ -25,16 +25,18 @@ type Linha = {
   periodo2_fim: Date;
   criado_em: Date;
   apresentou: boolean;
+  votos: number;
 };
 
-export default async function Credenciados({ searchParams }: { searchParams: Promise<{ excluido?: string; editado?: string }> }) {
+export default async function Credenciados({ searchParams }: { searchParams: Promise<{ excluido?: string; editado?: string; bloqueado?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const ano = await anoCredenciamento();
   const params = await searchParams;
 
   const linhas = await sql()<Linha[]>`
     select c.id, m.nome municipio, c.instituicao, c.responsavel, c.funcao, c.cpf, c.email, c.telefone,
-           c.periodo1_inicio, c.periodo1_fim, c.periodo2_inicio, c.periodo2_fim, c.criado_em, c.apresentou
+           c.periodo1_inicio, c.periodo1_fim, c.periodo2_inicio, c.periodo2_fim, c.criado_em, c.apresentou,
+           (select count(*)::int from votos_cidades v where v.credenciamento_id = c.id) votos
     from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
     where c.ano = ${ano}
     order by m.nome`;
@@ -50,6 +52,7 @@ export default async function Credenciados({ searchParams }: { searchParams: Pro
 
       {params.excluido && <div className="ok">Credenciamento excluído. O município voltou para a lista do formulário.</div>}
       {params.editado && <div className="ok">Alterações salvas.</div>}
+      {params.bloqueado && <div className="erro">Este município já recebeu votos na votação das cidades: não pode ser excluído nem ter a apresentação desmarcada.</div>}
 
       <div className="barra">
         <span className="suave">
@@ -78,6 +81,7 @@ export default async function Credenciados({ searchParams }: { searchParams: Pro
             periodo2: periodo(l.periodo2_inicio, l.periodo2_fim),
             enviado: l.criado_em.toLocaleString("pt-BR", { timeZone: "America/Fortaleza", dateStyle: "short", timeStyle: "short" }),
             apresentou: l.apresentou,
+            votos: l.votos,
           }))}
         />
       )}

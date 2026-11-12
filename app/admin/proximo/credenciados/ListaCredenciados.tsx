@@ -22,6 +22,8 @@ export type LinhaCredenciado = {
   periodo2: string;
   enviado: string;
   apresentou: boolean;
+  /** Votos recebidos na votação das cidades: com voto, não pode excluir nem desmarcar a apresentação. */
+  votos: number;
 };
 
 type Filtro = "todos" | "faltam" | "apresentaram";
@@ -61,10 +63,10 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
     iniciar(async () => {
       try {
         const r = await definirApresentacao(l.id, novo);
-        if (!r.ok) throw new Error();
-      } catch {
+        if (!r.ok) throw new Error(r.erro);
+      } catch (e) {
         setMarcados((m) => ({ ...m, [l.id]: !novo }));
-        setErro(`Não foi possível salvar ${l.municipio}. Tente de novo.`);
+        setErro(e instanceof Error && e.message ? `${l.municipio}: ${e.message}` : `Não foi possível salvar ${l.municipio}. Tente de novo.`);
       } finally {
         setSalvando((s) => ({ ...s, [l.id]: false }));
       }
@@ -72,10 +74,13 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
   }
 
   function desmarcarTodos() {
-    if (!confirm(`Desmarcar a apresentação dos ${apresentaram} municípios? Eles saem da votação das cidades até serem marcados de novo.`)) return;
+    const comVoto = linhas.filter((l) => marcados[l.id] && l.votos > 0).length;
+    const tirar = apresentaram - comVoto;
+    if (tirar === 0) { setErro("Todos os marcados já receberam votos: a apresentação deles não pode ser desmarcada."); return; }
+    if (!confirm(`Desmarcar a apresentação de ${tirar} município${tirar > 1 ? "s" : ""}? Eles saem da votação das cidades até serem marcados de novo.${comVoto ? ` ${comVoto} já ${comVoto > 1 ? "receberam" : "recebeu"} votos e continua${comVoto > 1 ? "m" : ""} marcado${comVoto > 1 ? "s" : ""}.` : ""}`)) return;
     const antes = marcados;
     setErro("");
-    setMarcados(Object.fromEntries(linhas.map((l) => [l.id, false])));
+    setMarcados(Object.fromEntries(linhas.map((l) => [l.id, l.votos > 0 ? marcados[l.id] : false])));
     iniciar(async () => {
       try {
         const r = await desmarcarTodasApresentacoes();
@@ -136,6 +141,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
             <tbody>
               {daPagina.map((l) => {
                 const sim = marcados[l.id];
+                const travado = l.votos > 0;
                 return (
                   <tr key={l.id} className={sim ? "linha-apresentou" : undefined}>
                     <td>
@@ -166,11 +172,11 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                       <div className="cred-linha cred-enviado"><span className="cred-ponto" aria-hidden="true" /> Enviado em {l.enviado}</div>
                     </td>
                     <td style={{ textAlign: "center" }}>
-                      <label className={`marcar-apresentou${sim ? " sim" : ""}`} title={sim ? "Apresentou (clique para desmarcar)" : "Marque quando o município fizer a apresentação"}>
+                      <label className={`marcar-apresentou${sim ? " sim" : ""}`} title={sim ? (travado ? `Já recebeu ${l.votos} voto${l.votos > 1 ? "s" : ""}: não pode desmarcar` : "Apresentou (clique para desmarcar)") : "Marque quando o município fizer a apresentação"}>
                         <input
                           type="checkbox"
                           checked={sim}
-                          disabled={salvando[l.id]}
+                          disabled={salvando[l.id] || (sim && travado)}
                           onChange={() => alternar(l)}
                           aria-label={`${l.municipio} fez a apresentação`}
                         />
@@ -182,7 +188,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                         <Link href={`/admin/proximo/credenciados/${l.id}`} className="botao-icone editar" title={`Editar ${l.municipio}`} aria-label={`Editar ${l.municipio}`}>
                           <Icone nome="lapis" tamanho={20} />
                         </Link>
-                        <BotaoExcluir id={l.id} municipio={l.municipio} />
+                        <BotaoExcluir id={l.id} municipio={l.municipio} votos={l.votos} />
                       </div>
                     </td>
                   </tr>
