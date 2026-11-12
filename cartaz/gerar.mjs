@@ -54,7 +54,7 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
           background: #0f4a24; color: #fff; border: 3px solid #7cc24a; border-radius: 999px; padding: 12px 40px; font-size: 30px; font-weight: 800; white-space: nowrap; }
   .link svg { width: 32px; height: 32px; }
   .animal { position: absolute; left: 40px; bottom: 0; height: 640px; filter: drop-shadow(0 12px 20px rgba(0,0,0,.25)); }
-  .animal.foto { left: 0; top: 340px; bottom: 0; width: 540px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
+  .animal.foto { left: 0; top: 470px; bottom: 0; width: 420px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
                  -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
                  mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%); }
 </style></head><body>
