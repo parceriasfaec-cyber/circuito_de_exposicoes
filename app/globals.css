@@ -2408,3 +2408,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .moldura-voto.tipo-inicio .form-voto { margin-top: 6px; }
 }
 .passos-entrada { grid-template-columns: 1fr; }
+.telao-itens { margin: 0; padding-left: 1.4em; display: grid; gap: 0.25em; text-align: left; }
+.telao-itens li::marker { color: #155a2c; font-weight: 900; }
+.telao-anuncio { border-radius: 40px; font-size: clamp(1.2rem, 3vh, 2rem); }
+.telao .qr svg { width: min(35vh, 440px); }

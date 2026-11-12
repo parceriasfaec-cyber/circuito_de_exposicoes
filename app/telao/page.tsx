@@ -33,10 +33,13 @@ export default async function Telao() {
       {votacao.aberta ? (
         <>
           {/* Mesmo visual e frases do cartaz do QR Code */}
-          <p className="faixa-anuncio telao-anuncio">
+          <div className="faixa-anuncio telao-anuncio">
             <span className="faixa-anuncio-ic"><Icone nome="megafone" tamanho={34} /></span>
-            <span>Avalie as exposições e escolha as <strong>duas cidades</strong> para fazerem parte do <strong>circuito de {ano}.</strong></span>
-          </p>
+            <ol className="telao-itens">
+              <li><strong>Avalie</strong> as etapas do Circuito Cearense de Exposição que participou.</li>
+              <li><strong>Selecione</strong> as 02 exposições para fazerem parte do Circuito Cearense de Exposição de {ano}.</li>
+            </ol>
+          </div>
           <div className="qr-area">
             <span className="qr-raios esq" aria-hidden="true" />
             <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
