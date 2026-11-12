@@ -2550,3 +2550,8 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 /* ranking ao vivo: título maior, sem o texto da atualização */
 .aovivo-ranking .aovivo-cab { padding: 14px 22px; }
 .aovivo-ranking .aovivo-cab h1 { font-size: clamp(1.35rem, 1.9vw, 1.9rem); line-height: 1.25; }
+/* ranking ao vivo: logos do topo menores */
+.pagina:has(.aovivo) .topo-claro { padding-top: 6px; padding-bottom: 0; min-height: 0; }
+.pagina:has(.aovivo) .topo-claro-marcas .sistema { height: 3rem; }
+.pagina:has(.aovivo) .topo-claro-marcas .circuito { height: 3.6rem; }
+.pagina:has(.aovivo) .topo-claro-sep { height: 3rem; }
