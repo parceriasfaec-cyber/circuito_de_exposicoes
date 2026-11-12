@@ -42,7 +42,7 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
   .sub { position: absolute; top: 290px; left: 0; right: 0; text-align: center; font-size: 34px; font-weight: 600; color: #123d22;
          text-shadow: 0 0 14px #fff, 0 0 6px #fff; }
   .sub b { color: #155a2c; font-weight: 900; }
-  .centro { position: absolute; top: 352px; left: ${animal ? 560 : 0}px; right: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .centro { position: absolute; top: 352px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; }
   .qr { background: #fff; padding: 22px; border-radius: 26px; border: 5px solid #2e8b3e; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
   .qr svg { display: block; width: 300px; height: 300px; }
   .passo { display: flex; align-items: center; gap: 18px; background: rgba(255,255,255,.93); border-radius: 18px; padding: 14px 28px;
@@ -54,7 +54,7 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
           background: #0f4a24; color: #fff; border: 3px solid #7cc24a; border-radius: 999px; padding: 12px 40px; font-size: 30px; font-weight: 800; white-space: nowrap; }
   .link svg { width: 32px; height: 32px; }
   .animal { position: absolute; left: 40px; bottom: 0; height: 640px; filter: drop-shadow(0 12px 20px rgba(0,0,0,.25)); }
-  .animal.foto { left: 0; top: 340px; bottom: 0; width: 600px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
+  .animal.foto { left: 0; top: 340px; bottom: 0; width: 540px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
                  -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
                  mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%); }
 </style></head><body>
