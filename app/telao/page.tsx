@@ -36,13 +36,22 @@ export default async function Telao() {
       </FaixaTitulo>
       {votacao.aberta ? (
         <>
+          {/* Mesmas frases do cartaz do QR Code */}
+          <p className="telao-chamada">Participe e ajude a <strong>transformar nossa região!</strong></p>
           <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
-          <div>
-            <div className="suave" style={{ fontSize: "1.3rem" }}>
-              Leia o QR Code com a câmera do celular e digite o seu ID de 5 números{ambas ? "" : cidades ? " para escolher 2 cidades" : " para avaliar"}
-            </div>
-            <div className="suave">{url.replace(/\/$/, "")}</div>
+          <div className="telao-passo">
+            <strong>Escaneie o QR Code</strong>
+            {ambas ? (
+              <>, faça sua avaliação dos Circuitos e vote nos <strong>dois municípios</strong> que serão contemplados em {ano}.</>
+            ) : cidades ? (
+              <> e vote nos <strong>dois municípios</strong> que serão contemplados em {ano}.</>
+            ) : (
+              <> e faça sua avaliação dos Circuitos.</>
+            )}
+            <small>Tenha em mãos o seu ID de 5 números.</small>
           </div>
+          <p className="telao-frase">Sua opinião é fundamental para construirmos o futuro juntos!</p>
+          <div className="telao-link">{url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</div>
         </>
       ) : resultado && resultado.votantes > 0 ? (
         <div className="telao-resultado">

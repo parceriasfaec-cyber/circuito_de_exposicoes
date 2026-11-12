@@ -2278,3 +2278,16 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
   .passo-icone { width: 38px; height: 38px; }
   .frase-setor { font-size: 0.9rem; }
 }
+
+/* ---------- Telão com as frases do cartaz ---------- */
+.telao-chamada { margin: 0; font-size: clamp(1.3rem, 3.2vh, 2.1rem); font-weight: 600; color: #123d22; text-shadow: 0 0 12px #fff, 0 0 5px #fff; }
+.telao-chamada strong { color: #155a2c; font-weight: 900; }
+.telao .qr svg { border-color: #2e8b3e; border-width: 5px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); }
+.telao-passo { max-width: 760px; background: rgba(255, 255, 255, 0.94); border-radius: 18px; padding: 12px 26px; font-size: clamp(1.05rem, 2.4vh, 1.45rem); line-height: 1.35; color: #123d22; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); }
+.telao-passo strong { color: #155a2c; font-weight: 800; }
+.telao-passo small { display: block; margin-top: 4px; font-size: 0.75em; color: var(--suave); }
+.telao-frase { margin: 0; font-size: clamp(1.1rem, 2.6vh, 1.6rem); font-weight: 800; font-style: italic; color: #155a2c; text-shadow: 0 0 12px #fff, 0 0 6px #fff, 0 0 3px #fff; }
+.telao-link { background: #0f4a24; color: #fff; border: 3px solid #7cc24a; border-radius: 999px; padding: 8px 30px; font-size: clamp(1.05rem, 2.4vh, 1.5rem); font-weight: 800; }
+.telao .logo-faixa { display: none; } /* as logos já estão no topo da página */
+.telao .qr svg { width: min(30vh, 400px); padding: 12px; }
+.telao { gap: 1.2vh; }
