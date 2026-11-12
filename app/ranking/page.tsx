@@ -7,9 +7,9 @@ import RankingAoVivo from "./RankingAoVivo";
 
 export const dynamic = "force-dynamic";
 
-/** Esconde o nome: cada palavra mostra só a primeira e a última letra (ex.: "Adriel Mourao" -> "A****l M****o"). */
+/** Esconde o nome: cada palavra mostra só a primeira letra (ex.: "Adriel Mourao" -> "A***** M*****"). */
 const esconderNome = (nome: string) =>
-  nome.split(" ").filter(Boolean).map((p) => (p.length <= 2 ? p[0] + "*" : p[0] + "*".repeat(p.length - 2) + p[p.length - 1])).join(" ");
+  nome.split(" ").filter(Boolean).map((p) => p[0] + "*".repeat(Math.max(1, p.length - 1))).join(" ");
 
 /** Tela separada do ranking das cidades em tempo real (para projetar): top 10, linha de corte e participação. */
 export default async function RankingTempoReal() {
