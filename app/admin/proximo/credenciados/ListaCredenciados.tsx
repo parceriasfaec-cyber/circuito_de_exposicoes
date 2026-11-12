@@ -128,7 +128,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
               <tr>
                 <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
                 <th><span><Icone nome="usuario" tamanho={18} /> Responsável</span></th>
-                <th><span><Icone nome="calendario" tamanho={18} /> Períodos</span></th>
+                <th><span><Icone nome="calendario" tamanho={18} /> Períodos Sugeridos</span></th>
                 <th style={{ textAlign: "center" }}><span style={{ justifyContent: "center" }}><Icone nome="apresentacao" tamanho={18} /> Apresentação</span></th>
                 <th style={{ textAlign: "center" }}><span style={{ justifyContent: "center" }}><Icone nome="engrenagem" tamanho={18} /> Ações</span></th>
               </tr>

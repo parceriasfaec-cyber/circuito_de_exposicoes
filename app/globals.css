@@ -2174,3 +2174,55 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 /* Legenda das notas da avaliação */
 .legenda-notas { list-style: none; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; margin: 6px 0 0; padding: 0 2px; color: var(--suave); font-size: 0.8rem; }
 .legenda-notas strong { color: var(--verde); font-weight: 800; }
+
+/* ---------- Tela de entrada no visual do cartaz: campo, ovelha à esquerda, título em faixa clara e cartão com borda verde ---------- */
+.pagina:has(.moldura-voto.tipo-inicio) {
+  position: relative;
+  background: url("/marcas/fundo-foto.jpg") center bottom / cover no-repeat, #eef6e6;
+}
+.moldura-voto.tipo-inicio { background: none; box-shadow: none; overflow: visible; border-radius: 0; }
+.moldura-voto.tipo-inicio .moldura-voto-topo {
+  width: fit-content; max-width: 100%; margin: 0 auto; padding: 12px 42px; gap: 14px;
+  background: #e4f2d6; color: #155a2c; border: 3px solid #fff; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: 0.03em; font-weight: 900; line-height: 1.2;
+  justify-content: center; text-align: center; white-space: nowrap;
+  font-size: clamp(1.2rem, 2vw, 2.1rem); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+.moldura-voto.tipo-inicio .moldura-voto-topo svg { display: none; }
+.moldura-voto.tipo-inicio .moldura-voto-corpo { padding: 0; background: none; }
+.moldura-voto.tipo-inicio .lema {
+  max-width: none; margin: 14px auto 18px; font-weight: 600; color: #123d22;
+  font-size: clamp(1.02rem, 1.9vw, 1.6rem); text-shadow: 0 0 12px #fff, 0 0 5px #fff;
+}
+.moldura-voto.tipo-inicio .lema strong { color: #155a2c; font-weight: 900; }
+.moldura-voto.tipo-inicio .lema::after { display: none; }
+.moldura-voto.tipo-inicio .intro { text-align: center; font-weight: 700; text-shadow: 0 0 12px #fff, 0 0 5px #fff; }
+.moldura-voto.tipo-inicio .link { background: rgba(255, 255, 255, 0.9); border-radius: 999px; padding: 6px 18px; }
+.moldura-voto.tipo-inicio .form-voto,
+.moldura-voto.tipo-inicio .aviso,
+.moldura-voto.tipo-inicio .saudacao,
+.moldura-voto.tipo-inicio .escolha-voto {
+  max-width: 620px; margin-left: auto; margin-right: auto;
+  background: #fff; border: 5px solid #2e8b3e; border-radius: 26px; padding: 22px 30px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+@media (max-width: 560px) {
+  .moldura-voto.tipo-inicio .moldura-voto-topo { padding: 8px 18px; font-size: 1.02rem; letter-spacing: 0; white-space: normal; }
+  .moldura-voto.tipo-inicio .form-voto,
+  .moldura-voto.tipo-inicio .aviso,
+  .moldura-voto.tipo-inicio .saudacao,
+  .moldura-voto.tipo-inicio .escolha-voto { padding: 16px 16px 14px; border-width: 4px; border-radius: 20px; }
+}
+/* ovelha só no computador, à esquerda, com as bordas esfumadas no campo */
+@media (min-width: 900px) {
+  .pagina:has(.moldura-voto.tipo-inicio) { background: url("/marcas/fundo-foto.jpg") center bottom / cover no-repeat, #eef6e6; }
+  .pagina:has(.moldura-voto.tipo-inicio)::after {
+    content: ""; position: absolute; left: 0; bottom: 0; z-index: 0; pointer-events: none;
+    width: min(24vw, 460px); aspect-ratio: 1021 / 1280;
+    background: url("/marcas/ovelha-preta.jpg") center 30% / cover no-repeat;
+    -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
+  }
+  .pagina:has(.moldura-voto.tipo-inicio) > * { position: relative; z-index: 1; }
+  .pagina:has(.moldura-voto.tipo-inicio) .moldura-voto { max-width: min(900px, 50vw); }
+}
