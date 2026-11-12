@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
 import RankingCidades from "@/components/RankingCidades";
-import { anoCredenciamento, diaMes, empateNaVaga, lerPrazo, resultadoCidades } from "@/lib/credenciamento";
+import { anoCredenciamento, diaMes, empateNaVaga, lerPrazo, resultadoCidades, votantesPorCidade } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { alterarQuemVota, encerrarVotacao, liberarVotacao } from "../actions";
@@ -23,7 +23,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
   const { prazo, aberto, apresentacao } = await lerPrazo(ano);
   const votacao = await lerVotacao();
   const votacaoCidades = votacao.cidades_aberta;
-  const resultado = await resultadoCidades(ano);
+  const [resultado, votantes] = await Promise.all([resultadoCidades(ano), votantesPorCidade(ano)]);
   const [p] = await sql()<{ produtores: number; avaliaram: number; presentes: number }[]>`
     select count(distinct pa.produtor_id)::int produtores,
            count(distinct pa.produtor_id) filter (where exists (
@@ -173,12 +173,15 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           {resultado.vagas ? `As ${resultado.vagas} mais votadas aparecem como classificadas.` : "Defina as vagas para marcar as classificadas."}
         </p>
         {empateNaVaga(resultado.ranking, resultado.vagas) && (
-          <div className="aviso-mini" style={{ marginBottom: 12 }}>Há empate na última vaga. A organização precisa decidir o desempate.</div>
+          <div className="aviso-mini" style={{ marginBottom: 12 }}>Há empate na última vaga mesmo depois do desempate pela pontuação. A organização precisa decidir.</div>
         )}
+        <p className="suave" style={{ margin: "0 0 12px", fontSize: "0.9rem" }}>
+          Desempate: com os mesmos votos, fica na frente a cidade com mais pontos. Cada voto vale conforme as exposições de quem votou: 9 = 1,9 · 8 = 1,8 … 2 = 1,2 · 1 = 1,0.
+        </p>
         {resultado.ranking.length === 0 ? (
           <p className="suave">Nenhum município marcado como Apresentou ainda.</p>
         ) : (
-          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} />
+          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} votantes={votantes} />
         )}
       </section>
     </>

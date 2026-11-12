@@ -53,7 +53,17 @@ export const diaMes = (iso: string, comAno = false) => {
   return comAno ? `${d}/${m}/${a}` : `${d}/${m}`;
 };
 
-export type CidadeRanking = { posicao: number; municipio: string; instituicao: string; votos: number };
+/**
+ * Posição pelos votos; empate nos votos é desfeito pela pontuação de quem votou
+ * (cada voto vale 1.0 a 1.9 conforme as exposições do produtor no Circuito: 9 = 1.9 ... 2 = 1.2, 1 = 1.0).
+ */
+export type CidadeRanking = { credenciamento_id: string; posicao: number; municipio: string; instituicao: string; votos: number; pontos: number };
+
+/** Quem votou em cada município (só no painel). */
+export type VotanteCidade = { credenciamento_id: string; codigo: string; nome: string; municipio: string; exposicoes: number; peso: number };
+
+/** Peso do voto de um produtor conforme o número de exposições (mesma regra do banco). */
+export const pesoVoto = (exposicoes: number) => (exposicoes <= 1 ? 1 : 1 + exposicoes / 10);
 
 /** Há empate na última vaga? (duas ou mais cidades na mesma posição ocupando a fronteira das vagas) */
 export function empateNaVaga(ranking: CidadeRanking[], vagas: number | null) {
@@ -66,12 +76,26 @@ export function empateNaVaga(ranking: CidadeRanking[], vagas: number | null) {
 export async function resultadoCidades(ano: number) {
   const db = sql();
   const ranking = await db<CidadeRanking[]>`
-    select posicao::int, municipio, instituicao, votos::int from v_ranking_cidades
+    select credenciamento_id, posicao::int, municipio, instituicao, votos::int, pontos::float8 pontos from v_ranking_cidades
     where ano = ${ano} order by posicao, municipio`;
   const [c] = await db<{ vagas: number | null; votantes: number }[]>`
     select (select vagas from credenciamento_config where ano = ${ano}) vagas,
            (select count(distinct produtor_id)::int from votos_cidades where ano = ${ano}) votantes`;
   return { ranking, vagas: c?.vagas ?? null, votantes: c?.votantes ?? 0 };
+}
+
+/** Lista de quem votou em cada município, com as exposições do produtor no Circuito do ano anterior. */
+export async function votantesPorCidade(ano: number): Promise<VotanteCidade[]> {
+  const lista = await sql()<Omit<VotanteCidade, "peso">[]>`
+    select v.credenciamento_id, p.codigo, p.nome, p.municipio,
+           (select count(*)::int from participacoes pa
+              join exposicoes e on e.id = pa.exposicao_id
+              join ciclos ci on ci.id = e.ciclo_id and ci.ano = ${ano - 1}
+            where pa.produtor_id = p.id) exposicoes
+    from votos_cidades v join produtores p on p.id = v.produtor_id
+    where v.ano = ${ano}
+    order by exposicoes desc, p.nome`;
+  return lista.map((x) => ({ ...x, peso: pesoVoto(x.exposicoes) }));
 }
 
 /** 12345678901 -> 123.456.789-01 */
