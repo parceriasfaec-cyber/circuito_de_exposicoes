@@ -123,13 +123,13 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
         <div className="cartao"><p style={{ margin: 0 }}>Nenhum município encontrado.</p></div>
       ) : (
         <div className="tabela">
-          <table className="tabela-org">
+          <table className="tabela-org tabela-cred">
             <thead>
               <tr>
                 <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
                 <th><span><Icone nome="usuario" tamanho={18} /> Responsável</span></th>
                 <th><span><Icone nome="calendario" tamanho={18} /> Períodos Sugeridos</span></th>
-                <th style={{ textAlign: "center" }}><span style={{ justifyContent: "center" }}><Icone nome="apresentacao" tamanho={18} /> Apresentação</span></th>
+                <th style={{ textAlign: "center" }}><span style={{ justifyContent: "center" }}><Icone nome="apresentacao" tamanho={18} /> Se apresentou?</span></th>
                 <th style={{ textAlign: "center" }}><span style={{ justifyContent: "center" }}><Icone nome="engrenagem" tamanho={18} /> Ações</span></th>
               </tr>
             </thead>
@@ -139,21 +139,31 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                 return (
                   <tr key={l.id} className={sim ? "linha-apresentou" : undefined}>
                     <td>
-                      <div className="nome">{l.municipio}</div>
-                      <div className="doc">{l.instituicao}</div>
+                      <div className="cred-municipio">
+                        <Icone nome="local" tamanho={22} className="cred-pino" />
+                        <div>
+                          <div className="nome cred-nome-municipio">{l.municipio}</div>
+                          <div className="doc">{l.instituicao}</div>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <div className="nome">{l.responsavel}</div>
-                      <div className="doc">{l.funcao}{l.cpf ? ` · CPF ${l.cpf}` : ""}</div>
-                      <div className="doc">
-                        {l.telefoneDigitos && <><a href={`tel:${l.telefoneDigitos}`}>{l.telefone}</a> · </>}
+                      <div className="nome" title={`${l.funcao}${l.cpf ? ` · CPF ${l.cpf}` : ""}`}>{l.responsavel}</div>
+                      {l.telefone && (
+                        <div className="cred-linha">
+                          <Icone nome="telefone" tamanho={16} />
+                          {l.telefoneDigitos ? <a href={`tel:${l.telefoneDigitos}`}>{l.telefone}</a> : <span>{l.telefone}</span>}
+                        </div>
+                      )}
+                      <div className="cred-linha">
+                        <Icone nome="email" tamanho={16} />
                         <a href={`mailto:${l.email}`}>{l.email}</a>
                       </div>
                     </td>
                     <td>
-                      <div className="periodo-linha">01: {l.periodo1}</div>
-                      <div className="periodo-linha">02: {l.periodo2}</div>
-                      <div className="doc">Enviado em {l.enviado}</div>
+                      <div className="cred-linha periodo-linha"><Icone nome="calendario" tamanho={16} /> 01: {l.periodo1}</div>
+                      <div className="cred-linha periodo-linha"><Icone nome="calendario" tamanho={16} /> 02: {l.periodo2}</div>
+                      <div className="cred-linha cred-enviado"><span className="cred-ponto" aria-hidden="true" /> Enviado em {l.enviado}</div>
                     </td>
                     <td style={{ textAlign: "center" }}>
                       <label className={`marcar-apresentou${sim ? " sim" : ""}`} title={sim ? "Apresentou (clique para desmarcar)" : "Marque quando o município fizer a apresentação"}>
@@ -169,7 +179,7 @@ export default function ListaCredenciados({ linhas }: { linhas: LinhaCredenciado
                     </td>
                     <td style={{ textAlign: "center" }}>
                       <div className="acoes-linha">
-                        <Link href={`/admin/proximo/credenciados/${l.id}`} className="botao-icone" title={`Editar ${l.municipio}`} aria-label={`Editar ${l.municipio}`}>
+                        <Link href={`/admin/proximo/credenciados/${l.id}`} className="botao-icone editar" title={`Editar ${l.municipio}`} aria-label={`Editar ${l.municipio}`}>
                           <Icone nome="lapis" tamanho={20} />
                         </Link>
                         <BotaoExcluir id={l.id} municipio={l.municipio} />
