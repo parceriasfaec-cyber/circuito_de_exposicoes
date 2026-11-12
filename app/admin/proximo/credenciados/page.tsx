@@ -47,7 +47,7 @@ export default async function Credenciados({ searchParams }: { searchParams: Pro
     <>
       <CabecalhoAdmin
         titulo={`Credenciados ${ano}`}
-        subtitulo="Municípios que se cadastraram para sediar uma etapa do Circuito. Cada município só pode se credenciar uma vez."
+        subtitulo={`Municípios que se cadastraram para sediar uma etapa do Circuito Cearense de Exposição ${ano}. Cada município só pode se credenciar uma vez.`}
       />
 
       {params.excluido && <div className="ok">Credenciamento excluído. O município voltou para a lista do formulário.</div>}

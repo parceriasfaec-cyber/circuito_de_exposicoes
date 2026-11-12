@@ -2547,3 +2547,6 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .tabela-cred .cred-enviado { font-size: 0.8rem; white-space: nowrap; }
 .tabela-cred .cred-linha:has(a[href^="mailto:"]) { font-size: 0.8rem; white-space: nowrap; }
 .tabela-cred .cred-linha a[href^="mailto:"] { overflow-wrap: normal; }
+/* ranking ao vivo: título maior, sem o texto da atualização */
+.aovivo-ranking .aovivo-cab { padding: 14px 22px; }
+.aovivo-ranking .aovivo-cab h1 { font-size: clamp(1.35rem, 1.9vw, 1.9rem); line-height: 1.25; }

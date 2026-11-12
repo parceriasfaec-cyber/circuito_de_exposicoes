@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
-import Icone from "@/components/Icone";
 import type { CidadeRanking, VotanteCidade } from "@/lib/credenciamento";
 
 
@@ -28,24 +27,17 @@ export default function RankingAoVivo({
   votantes: number; totalVotos: number; elegiveis: number; listaVotantes: VotanteCidade[];
 }) {
   const router = useRouter();
-  const [falta, setFalta] = useState(INTERVALO);
-  const [ativo, setAtivo] = useState(true);
   // Exposição escolhida para ver quem votou nela (a atualização automática pausa enquanto a janela está aberta).
   const [aberto, setAberto] = useState<string | null>(null);
   const escolhida = ranking.find((r) => r.credenciamento_id === aberto) ?? null;
   const deles = listaVotantes.filter((v) => v.credenciamento_id === aberto);
 
-  // Atualiza sozinho: a cada INTERVALO segundos busca os números de novo, sem recarregar a página.
+  // Atualiza sozinho a cada INTERVALO segundos (pausa enquanto a janela de votantes está aberta).
   useEffect(() => {
-    if (!ativo || aberto) return;
-    const t = setInterval(() => {
-      setFalta((s) => {
-        if (s <= 1) { router.refresh(); return INTERVALO; }
-        return s - 1;
-      });
-    }, 1000);
+    if (aberto) return;
+    const t = setInterval(() => router.refresh(), INTERVALO * 1000);
     return () => clearInterval(t);
-  }, [ativo, aberto, router]);
+  }, [aberto, router]);
 
   // Fecha a janela com Esc
   useEffect(() => {
@@ -65,10 +57,6 @@ export default function RankingAoVivo({
       <section className="aovivo-ranking">
         <header className="aovivo-cab">
           <h1>Ranking dos municípios para a etapa do Circuito Cearense de Exposição {ano}</h1>
-          <button type="button" className="aovivo-status" onClick={() => setAtivo((a) => !a)} title={ativo ? "Pausar a atualização" : "Retomar a atualização"}>
-            <Icone nome="atualizar" tamanho={18} />
-            {aberto ? "Pausado enquanto vê os votantes" : ativo ? <>Ativado · próxima atualização: {falta}s</> : "Pausado (clique para retomar)"}
-          </button>
         </header>
         {!aberta && <p className="aovivo-aviso">A votação das exposições está fechada. Os números abaixo são os registrados até agora.</p>}
         {ranking.length === 0 ? (
