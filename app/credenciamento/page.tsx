@@ -43,13 +43,13 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                   <ol>
                     <li>
                       {apresentacao ? (
-                        <>Prepare o vídeo ou a apresentação para o dia <strong>{diaMes(apresentacao, true)}</strong>.</>
+                        <>Prepare o vídeo e/ou a apresentação para o dia <strong>{diaMes(apresentacao, true)}</strong>.</>
                       ) : (
                         <>Prepare o vídeo ou a apresentação. A organização vai informar a data.</>
                       )}
                     </li>
-                    <li>Destaque os motivos pelos quais a sua cidade merece sediar a exposição, em no máximo <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>.</li>
-                    <li>Ao final das apresentações, as cidades serão avaliadas e votadas pelos presentes que participaram de pelo menos 1 etapa do Circuito {ano - 1}. As duas mais votadas receberão as exposições em {ano}.</li>
+                    <li>A apresentação é obrigatória (vídeo e/ou PowerPoint), com no máximo <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>, em ordem alfabética dos municípios. Início às <strong>11h00</strong>: chegue até as <strong>10h30</strong> com o arquivo.</li>
+                    <li>Ao final, votam os expositores presentes que participaram da avaliação das etapas do Circuito {ano - 1}. Os <strong>02 municípios mais votados</strong> serão contemplados em {ano}, após assinarem as contrapartidas do Termo de Adesão.</li>
                   </ol>
                 </div>
                 <p className="suave" style={{ margin: "14px 0 0" }}>Cada pessoa só pode credenciar um município. Em caso de dúvida, procure a organização do Circuito.</p>
@@ -75,32 +75,48 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             <p className="cred-prazo">
               {prazo ? (
                 <>
-                  Os credenciamentos deverão ser realizados até <strong>{diaMes(prazo)}</strong>.
+                  Os credenciamentos deverão ser realizados até <strong>{diaMes(prazo, true)}</strong>.
                 </>
               ) : (
                 <>O prazo dos credenciamentos será divulgado pela organização.</>
               )}
             </p>
+            <p className="cred-regras-titulo">Regras para apresentação e votação</p>
             <div className="cred-item">
               <Icone nome="calendario" tamanho={40} />
               <p>
-                {apresentacao ? <>No dia <strong>{diaMes(apresentacao)}</strong>, o</> : "Na data das apresentações, o"} credenciado
-                deverá apresentar um vídeo ou uma breve apresentação destacando os motivos pelos quais sua cidade merece sediar a
-                exposição.
+                <strong className="sem-destaque">Apresentação obrigatória:</strong>{" "}
+                {apresentacao ? <>no dia <strong>{diaMes(apresentacao, true)}</strong>, o</> : "na data das apresentações, o"} credenciado deverá
+                explicar (por vídeo e/ou PowerPoint) os motivos pelos quais seu município merece sediar uma etapa do Circuito {ano}.
+                Quem não apresentar será <strong className="sem-destaque">eliminado</strong>.
+              </p>
+            </div>
+            <div className="cred-item">
+              <IconePlay />
+              <p>
+                <strong className="sem-destaque">Tempo e ordem:</strong> no máximo <strong>{DURACAO_APRESENTACAO_MIN} min</strong> por credenciado,
+                seguindo a ordem alfabética dos municípios.
+              </p>
+            </div>
+            <div className="cred-item">
+              <Icone nome="relogio" tamanho={40} />
+              <p>
+                <strong className="sem-destaque">Horário:</strong> início às <strong>11h00</strong>. Chegue com, no mínimo, 30 minutos de
+                antecedência (<strong>10h30</strong>), com o arquivo da apresentação.
               </p>
             </div>
             <div className="cred-item">
               <Icone nome="trofeu" tamanho={40} />
               <p>
-                Ao final das apresentações, as cidades serão <strong className="sem-destaque">avaliadas e votadas</strong> pelos presentes que
-                participaram de pelo menos 1 etapa do Circuito {ano - 1}. As{" "}
-                <strong className="sem-destaque">duas mais votadas</strong> receberão as exposições em {ano}.
+                <strong className="sem-destaque">Votação:</strong> ao final, votam os expositores presentes que participaram da avaliação das
+                etapas do Circuito {ano - 1}. Serão contemplados os <strong className="sem-destaque">02 municípios mais votados</strong>.
               </p>
             </div>
-            <div className="cred-item grande">
-              <IconePlay />
+            <div className="cred-item">
+              <Icone nome="documento" tamanho={40} />
               <p>
-                As apresentações deverão ter uma duração de, no máximo, <strong>{DURACAO_APRESENTACAO_MIN} min.</strong>
+                <strong className="sem-destaque">Confirmação:</strong> só após a ciência e assinatura das contrapartidas do Termo de Adesão. Se
+                houver descumprimento, o município é desclassificado e são chamados os seguintes na ordem de votação.
               </p>
             </div>
             <p className={`cred-assinatura ${manuscrita.className}`}>Contamos com a sua participação!</p>

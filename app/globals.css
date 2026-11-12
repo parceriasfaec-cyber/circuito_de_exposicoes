@@ -2458,3 +2458,5 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .aovivo-janela .centro { text-align: center; }
 .aovivo-janela tfoot td { font-weight: 800; color: #155a2c; background: #f3f8ef; }
 .aovivo-janela-vazio { padding: 20px; margin: 0; }
+/* credenciamento: título das regras no quadro "Fique atento!" */
+.cred-regras-titulo { margin: 4px 0 2px; font-weight: 900; color: #155a2c; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.02em; }
