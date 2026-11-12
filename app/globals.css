@@ -2599,3 +2599,16 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .admin .painel-grade .ranking-exposicoes td:nth-child(2) { white-space: normal; }
 .admin .painel-grade .ranking-exposicoes th { white-space: nowrap; }
 .admin .painel-grade .tabela { overflow-x: visible; }
+/* painel: divisão mais equilibrada entre o ranking e os participantes */
+@media (min-width: 981px) {
+  .admin .painel-grade { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+}
+/* ranking das exposições: coluna Exposição mais estreita, espaço dividido entre as colunas */
+.admin .painel-grade .ranking-exposicoes, .telao-expo .ranking-exposicoes { table-layout: fixed; }
+.admin .painel-grade .ranking-exposicoes th:nth-child(1), .telao-expo .ranking-exposicoes th:nth-child(1) { width: 12%; }
+.admin .painel-grade .ranking-exposicoes th:nth-child(2), .telao-expo .ranking-exposicoes th:nth-child(2) { width: 36%; }
+.admin .painel-grade .ranking-exposicoes th:nth-child(3), .telao-expo .ranking-exposicoes th:nth-child(3) { width: 15%; }
+.admin .painel-grade .ranking-exposicoes th:nth-child(4), .telao-expo .ranking-exposicoes th:nth-child(4) { width: 13%; }
+.admin .painel-grade .ranking-exposicoes th:nth-child(5), .telao-expo .ranking-exposicoes th:nth-child(5) { width: 24%; }
+/* painel de avaliação: 3 cartões no topo (sem o código do dia) ocupando a largura toda */
+@media (min-width: 981px) { .admin .kpis:has(> .kpi:nth-child(3):last-child) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

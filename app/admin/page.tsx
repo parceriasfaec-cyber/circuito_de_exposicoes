@@ -139,19 +139,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         </div>
 
         <div className="kpi">
-          <span className="kpi-icone claro"><Icone nome="prancheta" tamanho={30} /></span>
-          <div className="kpi-corpo">
-            <div className="kpi-rotulo">Código do dia</div>
-            <div className="kpi-valor codigo-kpi">{votacao.aberta ? votacao.codigo_do_dia : "----"}</div>
-          </div>
-          <div className="kpi-acao">
-            {votacao.aberta && (
-              <Link className="botao secundario pequeno" href="/telao" target="_blank"><Icone nome="olho" tamanho={16} /> Tela do telão</Link>
-            )}
-          </div>
-        </div>
-
-        <div className="kpi">
           <span className="kpi-icone"><Icone nome="checkCirculo" tamanho={30} /></span>
           <div className="kpi-corpo">
             <div className="kpi-rotulo">Expositores que já avaliaram</div>
@@ -225,7 +212,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="coluna-graficos">
           <section className="bloco">
             <h2 className="bloco-titulo"><Icone nome="usuarios" tamanho={22} /> Participantes por Etapa do Circuito</h2>
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} linha={46} />
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} linha={40} largura={430} />
           </section>
         </div>
       </div>
