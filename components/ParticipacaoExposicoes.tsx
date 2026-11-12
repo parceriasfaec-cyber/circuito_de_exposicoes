@@ -8,7 +8,8 @@ const curto = nomeCurto;
  * Total de produtores do ciclo e, para cada exposição, a barra do total de participantes
  * com a parte de quem já fez a avaliação (o tamanho da barra acompanha o número de participantes).
  */
-export default function Participacao({ progresso, produtores, completos }: { progresso: Progresso[]; produtores: number; completos: number }) {
+/** `linha`: altura de cada exposição no gráfico (maior = barras mais espaçadas, usado no telão). */
+export default function Participacao({ progresso, produtores, completos, linha = 34 }: { progresso: Progresso[]; produtores: number; completos: number; linha?: number }) {
   const lista = [...progresso].sort((a, b) => b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
   const maior = Math.max(1, ...lista.map((p) => p.na_lista));
   return (
@@ -30,7 +31,7 @@ export default function Participacao({ progresso, produtores, completos }: { pro
       {lista.length === 0 ? (
         <p className="suave" style={{ margin: 0 }}>Nenhuma exposição neste ciclo.</p>
       ) : (
-        <GraficoParticipacao lista={lista} />
+        <GraficoParticipacao lista={lista} linha={linha} />
       )}
     </div>
   );
@@ -40,8 +41,8 @@ export default function Participacao({ progresso, produtores, completos }: { pro
  * Barras deitadas por exposição: em cima o total de participantes (verde claro), embaixo quantos avaliaram
  * (verde escuro). O nome fica inteiro à esquerda.
  */
-function GraficoParticipacao({ lista }: { lista: Progresso[] }) {
-  const linha = 34, m = { e: 168, d: 36, t: 6, b: 30 };
+function GraficoParticipacao({ lista, linha }: { lista: Progresso[]; linha: number }) {
+  const m = { e: 168, d: 36, t: 6, b: 30 };
   const L = 560;
   const A = m.t + m.b + linha * lista.length;
   const max = Math.max(1, ...lista.map((p) => p.na_lista));

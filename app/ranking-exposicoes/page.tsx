@@ -78,7 +78,7 @@ export default async function RankingExposicoes() {
                         <strong className={medalha ? `media-pill ${medalha}` : undefined}>{formatarMedia(r.media_produtor)}</strong>
                         {d && (
                           <div className="desempate-linha">
-                            {d === "total" ? "Empate total: a organização decide" : <>Desempate: pergunta {d.pergunta} ({formatarMedia(d.nota)})</>}
+                            {d === "total" ? "Empate total: a organização decide" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
                           </div>
                         )}
                       </td>
@@ -101,7 +101,7 @@ export default async function RankingExposicoes() {
           <h2 className="telao-expo-titulo"><span className="telao-expo-ic"><Icone nome="usuarios" tamanho={30} /></span>
             Participantes por Etapa do Circuito</h2>
           <div className="telao-expo-corpo">
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} />
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} linha={52} />
           </div>
         </section>
       </div>

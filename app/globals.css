@@ -2575,12 +2575,18 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .telao-expo .ranking-exposicoes td:last-child strong.media-pill.ouro { background: var(--verde-escuro); color: #fff; }
 /* ranking das exposições: desempate numa linha só, menor, embaixo da média */
 .ranking-exposicoes .desempate-linha { white-space: nowrap; font-size: 0.72rem; line-height: 1.2; margin-top: 3px; }
+/* painel: desempate curto para a coluna Média caber sem cortar */
+.admin .ranking-exposicoes .desempate-linha { font-size: 0.68rem; }
 .telao-expo { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
 .telao-expo-corpo { overflow-x: auto; }
 /* ranking das exposições: todas as linhas na mesma altura e os dois quadros do mesmo tamanho */
-.ranking-exposicoes tbody td { height: 58px; padding-top: 4px; padding-bottom: 4px; vertical-align: middle; }
+.telao-expo .ranking-exposicoes tbody td { height: 58px; padding-top: 4px; padding-bottom: 4px; vertical-align: middle; }
 .telao-expo { align-items: stretch; }
 .telao-expo-bloco { display: flex; flex-direction: column; }
 .telao-expo-corpo { flex: 1; }
-.admin .painel-grade { align-items: stretch; }
-.admin .painel-grade > .bloco, .admin .painel-grade > .coluna-graficos, .admin .painel-grade > .coluna-graficos > .bloco { height: 100%; }
+/* telão: tabela cabe no quadro (sem rolagem) */
+.telao-expo-corpo { overflow-x: visible; }
+.telao-expo .ranking-exposicoes { table-layout: auto; font-size: 1rem; }
+.telao-expo .ranking-exposicoes th, .telao-expo .ranking-exposicoes td { padding-left: 8px; padding-right: 8px; }
+.telao-expo .ranking-exposicoes td:nth-child(2) { white-space: normal; }
+.telao-expo .ranking-exposicoes th { white-space: nowrap; font-size: 0.9rem; }
