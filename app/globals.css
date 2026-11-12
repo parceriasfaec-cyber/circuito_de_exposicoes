@@ -2693,3 +2693,67 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .telao-expo .part { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .telao-expo .part-grafico { flex: 1; min-height: 0; width: 100%; height: 100%; }
 .telao-expo .ranking-exposicoes tbody td { height: 6.4vh; }
+
+/* ---------- Telão do ranking (novo visual): pódio, lista e barras, centralizado e numa tela só ---------- */
+.pagina:has(.tx) { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+.pagina:has(.tx) .topo-claro { padding: 1vh 16px 0; min-height: 0; justify-content: center; }
+.pagina:has(.tx) .topo-claro-marcas .sistema,
+.pagina:has(.tx) .topo-claro-marcas .circuito { height: 7vh; min-height: 40px; }
+.pagina:has(.tx) .topo-claro-sep { height: 6vh; }
+.pagina:has(.tx) .conteudo { flex: 1; min-height: 0; max-width: none; display: flex; align-items: center; justify-content: center; padding: 1.2vh 2vw 2vh; }
+.tx { width: min(1500px, 100%); height: 100%; max-height: 900px; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 1.6vw; }
+.tx-card { min-height: 0; display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.96); border-radius: 22px; padding: 2.2vh 1.8vw; box-shadow: 0 12px 34px rgba(18, 61, 34, 0.16); }
+.tx-titulo { display: flex; align-items: center; gap: 12px; margin: 0 0 1.4vh; color: #123d22; font-size: clamp(0.95rem, 2vh, 1.35rem); font-weight: 900; line-height: 1.2; }
+.tx-ic { flex: none; display: grid; place-items: center; width: 4.6vh; height: 4.6vh; min-width: 32px; min-height: 32px; border-radius: 50%; background: #1d5e2c; color: #fff; }
+/* pódio */
+.tx-podio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1vw; align-items: end; height: 30vh; margin-bottom: 1.4vh; }
+.tx-degrau { display: flex; flex-direction: column; align-items: center; text-align: center; height: 100%; justify-content: flex-end; }
+.tx-podio-cidade { font-size: clamp(0.62rem, 1.25vh, 0.82rem); text-transform: uppercase; letter-spacing: 0.04em; color: #4d5a4d; }
+.tx-podio-nome { font-size: clamp(0.85rem, 1.9vh, 1.2rem); color: #123d22; font-weight: 800; }
+.tx-podio-media { font-size: clamp(1.4rem, 4vh, 2.6rem); font-weight: 900; color: #155a2c; line-height: 1.05; margin: 0.4vh 0 -1.6vh; position: relative; z-index: 0; }
+.tx-bloco { position: relative; z-index: 1; width: 100%; border-radius: 22px 22px 0 0; background: linear-gradient(160deg, #0f4a24, #2e7d3e); }
+.lugar-1 .tx-bloco { height: 62%; }
+.lugar-2 .tx-bloco { height: 46%; }
+.lugar-3 .tx-bloco { height: 36%; }
+.tx-medalha { position: absolute; top: -2.2vh; left: 50%; transform: translateX(-50%); display: grid; place-items: center; width: 4.4vh; height: 4.4vh; min-width: 30px; min-height: 30px;
+  border-radius: 50%; border: 3px solid #fff; font-weight: 900; font-size: clamp(0.8rem, 1.7vh, 1.1rem); color: #123d22; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); }
+.tx-medalha.m1 { background: #f2b51c; } .tx-medalha.m2 { background: #b8bec4; } .tx-medalha.m3 { background: #d9773f; color: #fff; }
+/* lista do 4º em diante */
+.tx-lista { list-style: none; margin: 0; padding: 0; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-between; }
+.tx-lista li { display: grid; grid-template-columns: 3.2vw minmax(0, 1fr); align-items: center; gap: 0.8vw; padding: 0.7vh 0; border-top: 1px solid #e7ece5; }
+.tx-pos { font-weight: 900; color: #155a2c; font-size: clamp(0.9rem, 2vh, 1.3rem); }
+.tx-linha1 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.tx-nome { font-size: clamp(0.82rem, 1.75vh, 1.1rem); color: #2a3a2c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-nome strong { color: #123d22; }
+.tx-media { font-size: clamp(0.95rem, 2.1vh, 1.35rem); color: #155a2c; }
+.tx-linha2 { display: flex; align-items: center; gap: 10px; margin-top: 0.5vh; }
+.tx-barra { flex: 1; height: 0.9vh; min-height: 6px; border-radius: 99px; background: #e4ece0; overflow: hidden; }
+.tx-barra span { display: block; height: 100%; border-radius: 99px; background: #6db04a; }
+.tx-info { font-size: clamp(0.66rem, 1.3vh, 0.85rem); color: #5f6e60; white-space: nowrap; }
+.tx-chip { font-size: clamp(0.62rem, 1.2vh, 0.8rem); font-weight: 800; color: #8a4b00; background: #fff1d6; border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
+.tx-lista li.sem .tx-pos, .tx-lista li.sem .tx-nome, .tx-lista li.sem .tx-nome strong { color: #9aa59a; }
+.tx-aguardando { font-size: clamp(0.62rem, 1.2vh, 0.8rem); color: #8a948a; border: 1px solid #dfe5dc; border-radius: 99px; padding: 2px 10px; white-space: nowrap; }
+/* participantes */
+.tx-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8vw; margin-bottom: 1.6vh; }
+.tx-kpis div { display: grid; justify-items: center; gap: 0.2vh; padding: 1.4vh 6px; border-radius: 16px; background: #e8f3e1; color: #1d5e2c; text-align: center; }
+.tx-kpis strong { font-size: clamp(1.4rem, 3.8vh, 2.4rem); font-weight: 900; color: #155a2c; line-height: 1.05; }
+.tx-kpis small { font-size: clamp(0.68rem, 1.35vh, 0.88rem); color: #2a3a2c; font-weight: 600; }
+.tx-part { list-style: none; margin: 0; padding: 0; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-between; }
+.tx-part-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: clamp(0.72rem, 1.55vh, 0.98rem); }
+.tx-part-linha strong { color: #123d22; }
+.tx-part-linha span { color: #4d5a4d; white-space: nowrap; }
+.tx-part-linha b { color: #123d22; }
+.tx-part-barra { position: relative; height: 1.1vh; min-height: 7px; margin-top: 0.5vh; border-radius: 99px; background: #e4ece0; overflow: hidden; }
+.tx-part-barra span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; }
+.tx-part-barra .total { background: #2e7d3e; }
+.tx-part-barra .aval { background: #f2b51c; min-width: 6px; }
+.tx-legenda { list-style: none; display: flex; gap: 18px; margin: 1.4vh 0 0; padding: 0; font-size: clamp(0.66rem, 1.3vh, 0.85rem); color: #2a3a2c; }
+.tx-legenda li { display: inline-flex; align-items: center; gap: 6px; }
+.tx-legenda .ponto { width: 11px; height: 11px; border-radius: 50%; }
+.tx-legenda .ponto.total { background: #2e7d3e; } .tx-legenda .ponto.aval { background: #f2b51c; }
+/* pódio: a média fica acima do bloco, a medalha encosta no topo do bloco */
+.tx-podio-media { margin: 0.2vh 0 3vh; }
+.lugar-1 .tx-bloco { height: 52%; }
+.lugar-2 .tx-bloco { height: 38%; }
+.lugar-3 .tx-bloco { height: 28%; }
+.tx-legenda .ponto { display: inline-block; flex: none; width: 11px !important; height: 11px !important; padding: 0 !important; }
