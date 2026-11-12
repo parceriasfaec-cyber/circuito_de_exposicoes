@@ -2590,3 +2590,12 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .telao-expo .ranking-exposicoes th, .telao-expo .ranking-exposicoes td { padding-left: 8px; padding-right: 8px; }
 .telao-expo .ranking-exposicoes td:nth-child(2) { white-space: normal; }
 .telao-expo .ranking-exposicoes th { white-space: nowrap; font-size: 0.9rem; }
+/* painel do organizador: ranking com mais espaço (participantes menor) e tabela sem rolagem */
+@media (min-width: 981px) {
+  .admin .painel-grade { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+}
+.admin .painel-grade .ranking-exposicoes { table-layout: auto; width: 100%; }
+.admin .painel-grade .ranking-exposicoes th, .admin .painel-grade .ranking-exposicoes td { padding-left: 8px; padding-right: 8px; }
+.admin .painel-grade .ranking-exposicoes td:nth-child(2) { white-space: normal; }
+.admin .painel-grade .ranking-exposicoes th { white-space: nowrap; }
+.admin .painel-grade .tabela { overflow-x: visible; }

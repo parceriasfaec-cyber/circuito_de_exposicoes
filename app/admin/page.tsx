@@ -181,7 +181,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           <div className="tabela">
             <table className="tabela-simples ranking-exposicoes">
               <thead>
-                <tr><th>Posição</th><th>Exposição</th><th className="num">Questionários</th><th className="num">Pontos</th><th className="num">Média</th></tr>
+                <tr><th>Posição</th><th>Exposição</th><th className="num">Avaliações</th><th className="num">Pontos</th><th className="num">Média</th></tr>
               </thead>
               <tbody>
                 {ranking.map((r) => {
@@ -225,7 +225,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="coluna-graficos">
           <section className="bloco">
             <h2 className="bloco-titulo"><Icone nome="usuarios" tamanho={22} /> Participantes por Etapa do Circuito</h2>
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} />
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} linha={46} />
           </section>
         </div>
       </div>

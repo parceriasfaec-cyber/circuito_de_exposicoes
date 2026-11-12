@@ -59,7 +59,7 @@ export default async function RankingExposicoes() {
           <div className="telao-expo-corpo">
             <table className="tabela-simples ranking-exposicoes">
               <thead>
-                <tr><th>Posição</th><th>Exposição</th><th className="num">Questionários</th><th className="num">Pontos</th><th className="num">Média</th></tr>
+                <tr><th>Posição</th><th>Exposição</th><th className="num">Avaliações</th><th className="num">Pontos</th><th className="num">Média</th></tr>
               </thead>
               <tbody>
                 {ranking.map((r) => {
