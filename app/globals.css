@@ -2872,3 +2872,7 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .admin .painel-grade .ranking-exposicoes tr.podio.ouro td:nth-child(2) strong { font-size: 1rem; font-weight: 800; }
 .admin .painel-grade .ranking-exposicoes td:nth-child(1) strong { font-size: 1.05rem; }
 .admin .painel-grade .ranking-exposicoes td:nth-child(3) { font-weight: 800; color: var(--verde-escuro); }
+
+/* Ranking das avaliações (telão): município e exposição maiores no pódio */
+.tx-podio-cidade { font-size: clamp(0.8rem, 1.8vh, 1.15rem); font-weight: 700; color: #3d4a3d; }
+.tx-podio-nome { font-size: clamp(1.1rem, 2.8vh, 1.75rem); line-height: 1.15; }
