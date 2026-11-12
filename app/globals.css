@@ -2251,3 +2251,15 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .tabela-cred .botao-icone.perigo { background: #fdeaea; border-color: #f4c2c2; color: #d32f2f; }
 .tabela-cred .botao-icone.perigo:hover { background: #fbd6d6; border-color: #d32f2f; }
 .moldura-voto.tipo-inicio form:has(> .link) { text-align: center; }
+/* telas de aviso (ex.: "Está tudo feito"): ovelha do lado direito, no lugar onde ficava o boi */
+@media (min-width: 900px) {
+  .pagina:has(.moldura-voto:not(.larga) .aviso) { position: relative; }
+  .pagina:has(.moldura-voto:not(.larga) .aviso) > * { position: relative; z-index: 1; }
+  .pagina:has(.moldura-voto:not(.larga) .aviso)::after {
+    content: ""; position: absolute; left: auto; right: 0; bottom: 0; z-index: 0; pointer-events: none;
+    width: min(24vw, 460px); aspect-ratio: 1021 / 1280;
+    background: url("/marcas/ovelha-preta.jpg") center 30% / cover no-repeat;
+    -webkit-mask-image: radial-gradient(ellipse 50% 54% at 54% 56%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 54% at 54% 56%, #000 62%, transparent 100%);
+  }
+}
