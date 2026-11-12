@@ -2865,3 +2865,9 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .ranking-cidades.clicavel .votos { font-size: 1rem; text-align: right; }
 .ranking-cidades.clicavel .votos .pontos-cidade { font-size: 0.75rem; }
 @media (max-width: 700px) { .ranking-cidades.clicavel { grid-template-columns: 1fr; } }
+
+/* Painel do Organizador: nomes das exposições e números maiores no ranking */
+.admin .painel-grade .ranking-exposicoes td { font-size: 1rem; }
+.admin .painel-grade .ranking-exposicoes td:nth-child(2) strong,
+.admin .painel-grade .ranking-exposicoes tr.podio.ouro td:nth-child(2) strong { font-size: 1rem; font-weight: 800; }
+.admin .painel-grade .ranking-exposicoes td:nth-child(1) strong { font-size: 1.05rem; }
