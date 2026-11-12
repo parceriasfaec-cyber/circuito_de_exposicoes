@@ -2436,3 +2436,25 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 /* sem as graminhas */
 .aovivo-ranking::after, .aovivo-lado::after { content: none; display: none; }
 .aovivo-ranking, .aovivo-lado { padding-bottom: 0; }
+/* ranking ao vivo: quadro explicando o desempate */
+.aovivo-desempate { margin: 0 20px 18px; padding: 12px 16px; border-radius: 14px; background: #f3f8ef; border: 1.5px solid #dcebd3; }
+.aovivo-desempate strong { display: block; color: #155a2c; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.02em; }
+.aovivo-desempate p { margin: 4px 0 10px; font-size: 0.9rem; color: #2a3a2c; }
+.aovivo-pesos { display: flex; flex-wrap: wrap; gap: 6px; }
+.aovivo-pesos span { background: #fff; border: 1px solid #cfe3c4; border-radius: 999px; padding: 3px 10px; font-size: 0.82rem; color: #2a3a2c; white-space: nowrap; }
+.aovivo-pesos b { color: #155a2c; }
+/* ranking ao vivo: clicar na exposição abre a janela com os votantes */
+button.aovivo-cidade { width: 100%; font: inherit; text-align: left; cursor: pointer; transition: transform 0.12s, box-shadow 0.12s; }
+button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(29, 94, 44, 0.15); }
+.aovivo-janela-fundo { position: fixed; inset: 0; z-index: 50; background: rgba(10, 30, 15, 0.45); display: grid; place-items: center; padding: 16px; }
+.aovivo-janela { width: min(720px, 100%); max-height: 85vh; overflow: auto; background: #fff; border-radius: 18px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+.aovivo-janela header { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #1d5e2c; color: #fff; padding: 14px 20px; border-bottom: 4px solid #e07b1a; }
+.aovivo-janela h2 { margin: 0; color: #fff; font-size: 1.35rem; }
+.aovivo-janela header span { font-size: 0.92rem; opacity: 0.9; }
+.aovivo-janela header button { background: none; border: 0; color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; }
+.aovivo-janela table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.aovivo-janela th, .aovivo-janela td { padding: 10px 16px; border-bottom: 1px solid #e4e8e2; text-align: left; }
+.aovivo-janela th { background: #f3f8ef; color: #155a2c; font-size: 0.82rem; text-transform: uppercase; }
+.aovivo-janela .centro { text-align: center; }
+.aovivo-janela tfoot td { font-weight: 800; color: #155a2c; background: #f3f8ef; }
+.aovivo-janela-vazio { padding: 20px; margin: 0; }

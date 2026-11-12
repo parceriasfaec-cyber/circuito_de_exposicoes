@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import Icone from "@/components/Icone";
-import type { CidadeRanking } from "@/lib/credenciamento";
+import type { CidadeRanking, VotanteCidade } from "@/lib/credenciamento";
 
 
 const INTERVALO = 10; // segundos entre as atualizações
@@ -22,18 +22,22 @@ function Medidor({ pct }: { pct: number }) {
 }
 
 export default function RankingAoVivo({
-  ano, aberta, ranking, vagas, votantes, totalVotos, elegiveis,
+  ano, aberta, ranking, vagas, votantes, totalVotos, elegiveis, listaVotantes,
 }: {
   ano: number; aberta: boolean; ranking: CidadeRanking[]; vagas: number | null;
-  votantes: number; totalVotos: number; elegiveis: number;
+  votantes: number; totalVotos: number; elegiveis: number; listaVotantes: VotanteCidade[];
 }) {
   const router = useRouter();
   const [falta, setFalta] = useState(INTERVALO);
   const [ativo, setAtivo] = useState(true);
+  // Exposição escolhida para ver quem votou nela (a atualização automática pausa enquanto a janela está aberta).
+  const [aberto, setAberto] = useState<string | null>(null);
+  const escolhida = ranking.find((r) => r.credenciamento_id === aberto) ?? null;
+  const deles = listaVotantes.filter((v) => v.credenciamento_id === aberto);
 
   // Atualiza sozinho: a cada INTERVALO segundos busca os números de novo, sem recarregar a página.
   useEffect(() => {
-    if (!ativo) return;
+    if (!ativo || aberto) return;
     const t = setInterval(() => {
       setFalta((s) => {
         if (s <= 1) { router.refresh(); return INTERVALO; }
@@ -41,7 +45,15 @@ export default function RankingAoVivo({
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [ativo, router]);
+  }, [ativo, aberto, router]);
+
+  // Fecha a janela com Esc
+  useEffect(() => {
+    if (!aberto) return;
+    const f = (e: KeyboardEvent) => e.key === "Escape" && setAberto(null);
+    window.addEventListener("keydown", f);
+    return () => window.removeEventListener("keydown", f);
+  }, [aberto]);
 
   const max = Math.max(1, ...ranking.map((r) => r.votos));
   const pct = elegiveis > 0 ? (votantes / elegiveis) * 100 : 0;
@@ -55,7 +67,7 @@ export default function RankingAoVivo({
           <h1>Ranking das exposições <span>(Top 10 · tempo real)</span></h1>
           <button type="button" className="aovivo-status" onClick={() => setAtivo((a) => !a)} title={ativo ? "Pausar a atualização" : "Retomar a atualização"}>
             <Icone nome="atualizar" tamanho={18} />
-            {ativo ? <>Ativado · próxima atualização: {falta}s</> : "Pausado (clique para retomar)"}
+            {aberto ? "Pausado enquanto vê os votantes" : ativo ? <>Ativado · próxima atualização: {falta}s</> : "Pausado (clique para retomar)"}
           </button>
         </header>
         {!aberta && <p className="aovivo-aviso">A votação das exposições está fechada. Os números abaixo são os registrados até agora.</p>}
@@ -67,7 +79,7 @@ export default function RankingAoVivo({
               const classificada = vagas !== null && r.votos > 0 && r.posicao <= vagas;
               return (
                 <Fragment key={r.credenciamento_id}>
-                  <div className={`aovivo-cidade${classificada ? " classificada" : ""}`}>
+                  <button type="button" className={`aovivo-cidade${classificada ? " classificada" : ""}`} onClick={() => setAberto(r.credenciamento_id)} title={`Ver quem votou em ${r.municipio}`}>
                     <span className="aovivo-pos">{r.posicao}º</span>
                     <div className="aovivo-info">
                       <div className="aovivo-linha">
@@ -77,7 +89,7 @@ export default function RankingAoVivo({
                       </div>
                       <div className="aovivo-barra"><span style={{ width: `${(r.votos / max) * 100}%` }} /></div>
                     </div>
-                  </div>
+                  </button>
                   {i === ultimaClassificada && i < ranking.length - 1 && (
                     <div className="aovivo-corte"><span>Linha de corte · Circuito {ano}</span></div>
                   )}
@@ -86,7 +98,43 @@ export default function RankingAoVivo({
             })}
           </div>
         )}
+        <div className="aovivo-desempate">
+          <strong>Como é feito o desempate</strong>
+          <p>Com o mesmo número de votos, fica na frente quem soma mais pontos. Cada voto vale conforme quantas exposições o expositor participou no Circuito de {ano - 1}:</p>
+          <div className="aovivo-pesos">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+              <span key={n}><b>{n}</b> {n === 1 ? "exposição" : "exposições"} = {(n <= 1 ? 1 : 1 + n / 10).toLocaleString("pt-BR", { minimumFractionDigits: 1 })}</span>
+            ))}
+          </div>
+        </div>
       </section>
+
+      {escolhida && (
+        <div className="aovivo-janela-fundo" onClick={() => setAberto(null)}>
+          <div className="aovivo-janela" role="dialog" aria-modal="true" aria-label={`Votantes de ${escolhida.municipio}`} onClick={(e) => e.stopPropagation()}>
+            <header>
+              <div>
+                <h2>{escolhida.municipio}</h2>
+                <span>{escolhida.posicao}º lugar · {escolhida.votos} {escolhida.votos === 1 ? "voto" : "votos"} · {pts(escolhida.pontos)} pontos</span>
+              </div>
+              <button type="button" onClick={() => setAberto(null)} aria-label="Fechar">×</button>
+            </header>
+            {deles.length === 0 ? (
+              <p className="aovivo-janela-vazio">Ninguém votou nesta exposição ainda.</p>
+            ) : (
+              <table>
+                <thead><tr><th>ID</th><th>Expositor</th><th className="centro">Exposições em {ano - 1}</th><th className="centro">Pontos</th></tr></thead>
+                <tbody>
+                  {deles.map((v) => (
+                    <tr key={v.codigo}><td>{v.codigo}</td><td>{v.nome}</td><td className="centro">{v.exposicoes}</td><td className="centro"><b>{pts(v.peso)}</b></td></tr>
+                  ))}
+                </tbody>
+                <tfoot><tr><td colSpan={3}>Total</td><td className="centro"><b>{pts(deles.reduce((s, v) => s + v.peso, 0))}</b></td></tr></tfoot>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
 
       <aside className="aovivo-lado">
         <header className="aovivo-cab"><h2>Monitoramento de participação</h2></header>

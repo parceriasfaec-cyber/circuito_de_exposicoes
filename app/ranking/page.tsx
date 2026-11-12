@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import PaginaPublica from "@/components/PaginaPublica";
-import { anoCredenciamento, resultadoCidades } from "@/lib/credenciamento";
+import { anoCredenciamento, resultadoCidades, votantesPorCidade } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import RankingAoVivo from "./RankingAoVivo";
@@ -14,8 +14,9 @@ export default async function RankingTempoReal() {
   const votacao = await lerVotacao();
   const db = sql();
 
-  const [{ ranking, vagas, votantes }, [{ total_votos }], [{ elegiveis }]] = await Promise.all([
+  const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }]] = await Promise.all([
     resultadoCidades(ano),
+    votantesPorCidade(ano),
     db<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
     // Quem pode votar, pela regra definida no painel (todos, só quem avaliou e/ou só quem está presente)
     db<{ elegiveis: number }[]>`
@@ -38,6 +39,7 @@ export default async function RankingTempoReal() {
         votantes={votantes}
         totalVotos={total_votos}
         elegiveis={elegiveis}
+        listaVotantes={listaVotantes}
       />
     </PaginaPublica>
   );
