@@ -60,7 +60,7 @@ function GraficoParticipacao({ lista, linha, largura }: { lista: Progresso[]; li
   const marcas = Array.from({ length: teto / passo + 1 }, (_, k) => k * passo);
   const base = A - m.b;
   return (
-    <svg viewBox={`0 0 ${L} ${A}`} className="part-grafico" role="img" aria-label="Participantes e avaliações por exposição">
+    <svg viewBox={`0 0 ${L} ${A}`} preserveAspectRatio="xMidYMid meet" className="part-grafico" role="img" aria-label="Participantes e avaliações por exposição">
       {marcas.map((v) => (
         <g key={v}>
           <line x1={x(v)} x2={x(v)} y1={m.t} y2={base} stroke="#eef2ec" />
