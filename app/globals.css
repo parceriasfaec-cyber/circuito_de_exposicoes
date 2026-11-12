@@ -2871,3 +2871,4 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .admin .painel-grade .ranking-exposicoes td:nth-child(2) strong,
 .admin .painel-grade .ranking-exposicoes tr.podio.ouro td:nth-child(2) strong { font-size: 1rem; font-weight: 800; }
 .admin .painel-grade .ranking-exposicoes td:nth-child(1) strong { font-size: 1.05rem; }
+.admin .painel-grade .ranking-exposicoes td:nth-child(3) { font-weight: 800; color: var(--verde-escuro); }
