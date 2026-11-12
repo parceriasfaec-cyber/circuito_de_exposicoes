@@ -2555,3 +2555,5 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .pagina:has(.aovivo) .topo-claro-marcas .sistema { height: 3rem; }
 .pagina:has(.aovivo) .topo-claro-marcas .circuito { height: 3.6rem; }
 .pagina:has(.aovivo) .topo-claro-sep { height: 3rem; }
+/* credenciados: telefone no mesmo tamanho do e-mail */
+.tabela-cred .cred-linha:has(a[href^="tel:"]), .tabela-cred .cred-linha:has(svg + span) { font-size: 0.8rem; white-space: nowrap; }
