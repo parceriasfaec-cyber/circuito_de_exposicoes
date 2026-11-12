@@ -5,12 +5,25 @@ import Icone from "@/components/Icone";
 import { entrar, type EstadoEntrada } from "./actions";
 
 /** Entrada do expositor: só o ID de 5 números que a organização entrega. */
-export default function Identificacao({ destino }: { destino: "inicio" | "avaliar" | "votar" }) {
+export default function Identificacao({ destino, ano }: { destino: "inicio" | "avaliar" | "votar"; ano?: number }) {
   const [estado, acao, enviando] = useActionState<EstadoEntrada, FormData>(entrar, {});
 
   return (
     <form action={acao} className="form-voto">
       <input type="hidden" name="destino" value={destino} />
+
+      {destino === "inicio" && (
+        <ol className="passos-entrada">
+          <li>
+            <span className="passo-icone"><Icone nome="prancheta" tamanho={26} /></span>
+            <span><strong>Avalie</strong> as exposições</span>
+          </li>
+          <li>
+            <span className="passo-icone"><Icone nome="urna" tamanho={26} /></span>
+            <span><strong>Vote</strong> nos 2 municípios que serão contemplados{ano ? ` em ${ano}` : ""}</span>
+          </li>
+        </ol>
+      )}
 
       <div className="campo-icone">
         <span className="bolha"><Icone nome="usuarioCheio" tamanho={30} /></span>
@@ -37,6 +50,8 @@ export default function Identificacao({ destino }: { destino: "inicio" | "avalia
       <button className="botao cheio entrar" disabled={enviando}>
         <Icone nome="entrar" tamanho={26} /> {enviando ? "Conferindo..." : "Entrar"}
       </button>
+
+      {destino === "inicio" && <p className="frase-setor">Sua opinião é muito importante para o fortalecimento do nosso setor!</p>}
 
       <p className="nota-info">
         <i className="i">i</i>

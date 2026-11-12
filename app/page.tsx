@@ -91,7 +91,7 @@ export default async function Inicio() {
           </form>
         </>
       ) : (
-        <Identificacao destino="inicio" />
+        <Identificacao destino="inicio" ano={ano} />
       )}
     </MolduraVoto>
   );
