@@ -143,6 +143,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <div className="vc-botoes">
             <button className="botao" form="form-vagas">Salvar vagas</button>
             <Link className="botao secundario" href="/telao" target="_blank"><Icone nome="olho" tamanho={18} /> Tela do telão</Link>
+            <Link className="botao secundario" href="/ranking" target="_blank"><Icone nome="trofeu" tamanho={18} /> Ranking ao vivo</Link>
           </div>
         </div>
 

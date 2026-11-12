@@ -39,7 +39,10 @@ const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
   },
   {
     titulo: "",
-    itens: [{ href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true }],
+    itens: [
+      { href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true },
+      { href: "/ranking", rotulo: "Ranking ao vivo", icone: "trofeu", novaAba: true },
+    ],
   },
 ];
 
