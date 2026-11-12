@@ -92,20 +92,6 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
 
       <section className="bloco">
         <h2 className="bloco-titulo"><Icone nome="trofeu" tamanho={22} /> Votação das cidades</h2>
-        <div className="vc-info">
-          <span className="vc-info-icone" aria-hidden="true">i</span>
-          <p>
-            No dia das apresentações, cada expositor do Circuito escolhe <strong>2 cidades</strong> pelo celular. Ele lê o QR Code do telão e
-            entra do mesmo jeito da avaliação das exposições: com o ID de 5 números do expositor.
-          </p>
-          <div className="vc-info-lado">
-            <Icone nome="calendario" tamanho={22} />
-            <span>
-              Só entram na votação os municípios marcados como Apresentou em{" "}
-              <Link href="/admin/proximo/credenciados"><strong>Credenciados: {t.apresentaram} de {t.credenciados}</strong></Link>.
-            </span>
-          </div>
-        </div>
 
         {params.vagas && <div className="ok">Número de vagas salvo.</div>}
         {params.quem && <div className="ok">Quem pode votar foi alterado.</div>}
@@ -123,67 +109,78 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
           <input type="hidden" name="modo" value="cidades" />
         </form>
 
-        <div className="vc-cartao">
-          <div className="vc-campo">
-            <label htmlFor="vagas" className="vc-rotulo"><Icone nome="usuarios" tamanho={22} /> Cidades que entram no Circuito {ano}</label>
-            <input id="vagas" name="vagas" form="form-vagas" type="number" min={1} max={50} defaultValue={resultado.vagas ?? ""} placeholder="Ex.: 3" className="vc-numero" />
-          </div>
-          <fieldset className="vc-campo vc-quem">
-            <legend className="vc-rotulo"><Icone nome="usuarios" tamanho={22} /> Quem pode votar nas cidades</legend>
-            <p className="suave" style={{ margin: "0 0 6px" }}>Sem nada marcado, todos os expositores votam ({p.produtores}). Pode marcar as duas.</p>
-            <label>
-              <input type="checkbox" name="quem" value="avaliaram" form="form-quem" defaultChecked={votacao.cidades_quem === "avaliaram"} />
-              Só quem fez a avaliação das exposições <span className="suave">({p.avaliaram})</span>
-            </label>
-            <label>
-              <input type="checkbox" name="presentes" value="1" form="form-quem" defaultChecked={votacao.cidades_so_presentes} />
-              Só quem teve a presença marcada <span className="suave">({p.presentes})</span>
-            </label>
-          </fieldset>
-          <div className="vc-botoes">
-            <button className="botao" form="form-vagas">Salvar vagas</button>
-            <Link className="botao secundario" href="/telao" target="_blank"><Icone nome="olho" tamanho={18} /> Tela do telão</Link>
-            <Link className="botao secundario" href="/ranking" target="_blank"><Icone nome="trofeu" tamanho={18} /> Ranking ao vivo</Link>
-          </div>
-        </div>
+        <div className="vc2">
+          {/* ---------- Controles ---------- */}
+          <div className="vc2-controle">
+            <div className={`vc2-status${votacaoCidades ? " aberta" : ""}`}>
+              <span className="vc2-status-ponto" aria-hidden="true" />
+              <div>
+                <strong>{votacaoCidades ? "Votação liberada" : "Votação fechada"}</strong>
+                <small>
+                  {votacaoCidades
+                    ? `Podem votar: ${quemVota.toLowerCase()}`
+                    : t.apresentaram < 2
+                      ? "Marque pelo menos 2 municípios como Apresentou"
+                      : "Escolha quem pode votar e libere"}
+                </small>
+              </div>
+            </div>
+            {votacaoCidades ? (
+              <button className="botao vc2-principal" form="form-encerrar"><span className="vc-quadrado" aria-hidden="true" /> Encerrar votação</button>
+            ) : (
+              <button className="botao vc2-principal" form="form-quem" disabled={t.apresentaram < 2}>▶ Liberar votação</button>
+            )}
 
-        <div className="vc-acoes">
-          {votacaoCidades ? (
-            <>
-              <button className="botao vc-principal" form="form-encerrar"><span className="vc-quadrado" aria-hidden="true" /> Encerrar votação das cidades</button>
-              <button className="botao secundario" form="form-quem"><Icone nome="usuarios" tamanho={18} /> Salvar quem pode votar</button>
-            </>
-          ) : (
-            <button className="botao vc-principal" form="form-quem" disabled={t.apresentaram < 2}>▶ Liberar votação das cidades</button>
-          )}
-        </div>
+            <div className="vc2-grupo">
+              <label htmlFor="vagas" className="vc2-rotulo">Cidades que entram no Circuito {ano}</label>
+              <div className="vc2-linha">
+                <input id="vagas" name="vagas" form="form-vagas" type="number" min={1} max={50} defaultValue={resultado.vagas ?? ""} placeholder="Ex.: 2" className="vc2-numero" />
+                <button className="botao secundario pequeno" form="form-vagas">Salvar</button>
+              </div>
+            </div>
 
-        <div className={`vc-status${votacaoCidades ? " aberta" : ""}`}>
-          <span className="vc-status-icone" aria-hidden="true">{votacaoCidades ? "✓" : "■"}</span>
-          <span>
-            {votacaoCidades
-              ? `Votação das cidades liberada. Podem votar: ${quemVota.toLowerCase()}.`
-              : t.apresentaram < 2
-                ? "Para liberar a votação, marque em Credenciados pelo menos 2 municípios que fizeram a apresentação."
-                : votacao.exposicoes_aberta
-                  ? "Votação das cidades fechada. A avaliação das exposições está aberta e continua aberta quando você liberar as cidades (mesmo código)."
-                  : "Votação das cidades fechada. Escolha quem pode votar e clique em Liberar."}
-          </span>
+            <fieldset className="vc2-grupo">
+              <legend className="vc2-rotulo">Quem pode votar</legend>
+              <label className="vc2-check">
+                <input type="checkbox" name="quem" value="avaliaram" form="form-quem" defaultChecked={votacao.cidades_quem === "avaliaram"} />
+                Só quem avaliou as exposições <span className="suave">({p.avaliaram})</span>
+              </label>
+              <label className="vc2-check">
+                <input type="checkbox" name="presentes" value="1" form="form-quem" defaultChecked={votacao.cidades_so_presentes} />
+                Só quem está presente <span className="suave">({p.presentes})</span>
+              </label>
+              <small className="suave">Sem marcar nada, todos votam ({p.produtores}).</small>
+              {votacaoCidades && <button className="botao secundario pequeno" form="form-quem">Salvar quem pode votar</button>}
+            </fieldset>
+
+            <p className="vc2-nota">
+              Entram na votação só os municípios marcados como Apresentou:{" "}
+              <Link href="/admin/proximo/credenciados"><strong>{t.apresentaram} de {t.credenciados}</strong></Link>
+            </p>
+
+            <div className="vc2-atalhos">
+              <Link className="botao secundario pequeno" href="/telao" target="_blank"><Icone nome="olho" tamanho={16} /> Tela do telão</Link>
+              <Link className="botao secundario pequeno" href="/ranking" target="_blank"><Icone nome="trofeu" tamanho={16} /> Ranking ao vivo</Link>
+            </div>
+          </div>
+
+          {/* ---------- Resultado ---------- */}
+          <div className="vc2-resultado">
+            <div className="vc2-res-topo">
+              <strong>Resultado</strong>
+              <span className="suave">{resultado.vagas ? `As ${resultado.vagas} mais votadas ficam classificadas` : "Defina as vagas para marcar as classificadas"}</span>
+            </div>
+            {empateNaVaga(resultado.ranking, resultado.vagas) && (
+              <div className="aviso-mini" style={{ marginBottom: 10 }}>Empate na última vaga mesmo depois do desempate. A organização decide.</div>
+            )}
+            {resultado.ranking.length === 0 ? (
+              <p className="suave">Nenhum município marcado como Apresentou ainda.</p>
+            ) : (
+              <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} votantes={votantes} />
+            )}
+            <p className="vc2-nota">Desempate: mais pontos na frente. Cada voto vale de 1,0 a 1,9 conforme as exposições de quem votou.</p>
+          </div>
         </div>
-        <p className="suave" style={{ margin: "0 0 14px" }}>
-          {resultado.vagas ? `As ${resultado.vagas} mais votadas aparecem como classificadas.` : "Defina as vagas para marcar as classificadas."}
-        </p>
-        {empateNaVaga(resultado.ranking, resultado.vagas) && (
-          <div className="aviso-mini" style={{ marginBottom: 12 }}>Há empate na última vaga mesmo depois do desempate pela pontuação. A organização precisa decidir.</div>
-        )}
-        <p className="suave" style={{ margin: "0 0 12px", fontSize: "0.9rem" }}>
-          Desempate: com os mesmos votos, fica na frente a cidade com mais pontos. Cada voto vale conforme as exposições de quem votou: 9 = 1,9 · 8 = 1,8 … 2 = 1,2 · 1 = 1,0.
-        </p>
-        {resultado.ranking.length === 0 ? (
-          <p className="suave">Nenhum município marcado como Apresentou ainda.</p>
-        ) : (
-          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} votantes={votantes} />
-        )}
       </section>
     </>
   );

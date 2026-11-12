@@ -2815,3 +2815,33 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .tp-podio-votos { font-size: clamp(1rem, 2.8vh, 1.8rem); margin-top: 0.6vh; }
 .tp-linha1 { font-size: clamp(0.9rem, 2.1vh, 1.3rem); }
 .tp-linha1 strong { font-weight: 900; }
+/* pódios: coluna do 1º lugar com detalhe dourado (borda no topo e brilho) */
+.tx-degrau.lugar-1 .tx-bloco, .tp-degrau.lugar-1 .tp-bloco {
+  border-top: 5px solid #f2b51c;
+  box-shadow: 0 0 0 2px rgba(242, 181, 28, 0.35), 0 -6px 26px rgba(242, 181, 28, 0.55), 0 10px 24px rgba(18, 61, 34, 0.25);
+  background: linear-gradient(160deg, #0f4a24 0%, #23703a 70%, #3d8a3a 100%);
+}
+.tx-degrau.lugar-1 .tx-podio-media, .tp-degrau.lugar-1 .tp-podio-votos { color: #b07d00; text-shadow: 0 1px 0 #fff6d6; }
+
+/* ---------- Painel de Votação: controles à esquerda, resultado à direita ---------- */
+.vc2 { display: grid; grid-template-columns: minmax(260px, 0.9fr) minmax(0, 2fr); gap: 18px; align-items: start; }
+.vc2-controle { display: grid; gap: 14px; padding: 16px; border-radius: 16px; background: #f4f8f1; border: 1px solid #e1ebdc; }
+.vc2-status { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: #fff; border: 1px solid #e1ebdc; }
+.vc2-status strong { display: block; color: #6b3d00; }
+.vc2-status small { color: var(--suave); }
+.vc2-status-ponto { flex: none; width: 14px; height: 14px; border-radius: 50%; background: #d9a441; box-shadow: 0 0 0 4px #fbefd7; }
+.vc2-status.aberta strong { color: #155a2c; }
+.vc2-status.aberta .vc2-status-ponto { background: #2e8b3e; box-shadow: 0 0 0 4px #dcefd2; }
+.vc2-principal { width: 100%; justify-content: center; }
+.vc2-grupo { display: grid; gap: 6px; margin: 0; padding: 0; border: 0; }
+.vc2-rotulo { font-weight: 800; color: var(--verde-escuro); font-size: 0.92rem; padding: 0; }
+.vc2-linha { display: flex; gap: 8px; align-items: center; }
+.vc2-numero { width: 90px; padding: 8px 10px; font-size: 1.1rem; font-weight: 800; border-radius: 10px; }
+.vc2-check { display: flex; align-items: center; gap: 8px; font-size: 0.92rem; margin: 0; }
+.vc2-grupo .botao.pequeno { justify-self: start; }
+.vc2-nota { margin: 0; font-size: 0.82rem; color: var(--suave); }
+.vc2-atalhos { display: flex; gap: 8px; flex-wrap: wrap; }
+.vc2-res-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.vc2-res-topo strong { color: var(--verde-escuro); font-size: 1.05rem; }
+.vc2-resultado .vc2-nota { margin-top: 8px; }
+@media (max-width: 980px) { .vc2 { grid-template-columns: 1fr; } }
