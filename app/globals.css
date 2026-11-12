@@ -944,7 +944,7 @@ body { font-size: 1rem; }
 @media (min-width: 900px) {
   .pagina:has(.form-voto),
   .pagina:has(.moldura-voto:not(.larga) .aviso) {
-    background: url("/marcas/fundo-tela.jpg") center top / 100% auto no-repeat, #1d5e2c;
+    background: url("/marcas/fundo-foto.jpg") center bottom / cover no-repeat, #eef6e6;
     min-height: max(100vh, 69.9vw);
   }
   /* as logos e o título já estão na imagem */
@@ -965,7 +965,7 @@ body { font-size: 1rem; }
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: url("/marcas/fundo-tela.jpg") center top / cover no-repeat, #1d5e2c;
+    background: url("/marcas/fundo-foto.jpg") center bottom / cover no-repeat, #eef6e6;
   }
   .pagina:has(.form-voto) .conteudo,
   .pagina:has(.moldura-voto:not(.larga) .aviso) .conteudo {
@@ -990,7 +990,7 @@ body { font-size: 1rem; }
 @media (min-width: 900px) {
   .pagina:has(.form-voto),
   .pagina:has(.moldura-voto:not(.larga) .aviso) {
-    background: url("/marcas/fundo-tela-limpo.jpg") center top / cover no-repeat, #1d5e2c;
+    background: url("/marcas/fundo-foto.jpg") center bottom / cover no-repeat, #eef6e6;
   }
   .pagina:has(.form-voto) .topo-claro,
   .pagina:has(.moldura-voto:not(.larga) .aviso) .topo-claro {
@@ -2250,3 +2250,4 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .tabela-cred .botao-icone.editar:hover { background: #d3ecca; border-color: #1d7a36; }
 .tabela-cred .botao-icone.perigo { background: #fdeaea; border-color: #f4c2c2; color: #d32f2f; }
 .tabela-cred .botao-icone.perigo:hover { background: #fbd6d6; border-color: #d32f2f; }
+.moldura-voto.tipo-inicio form:has(> .link) { text-align: center; }
