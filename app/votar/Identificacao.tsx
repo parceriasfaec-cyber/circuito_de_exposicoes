@@ -12,7 +12,7 @@ export default function Identificacao({ destino, ano }: { destino: "inicio" | "a
     <form action={acao} className="form-voto">
       <input type="hidden" name="destino" value={destino} />
 
-      {destino === "inicio" && (
+      {(
         <ol className="passos-entrada">
           <li>
             <span className="passo-icone"><Icone nome="prancheta" tamanho={26} /></span>
@@ -51,7 +51,7 @@ export default function Identificacao({ destino, ano }: { destino: "inicio" | "a
         <Icone nome="entrar" tamanho={26} /> {enviando ? "Conferindo..." : "Entrar"}
       </button>
 
-      {destino === "inicio" && <p className="frase-setor">Sua opinião é muito importante!</p>}
+      {<p className="frase-setor">Sua opinião é muito importante!</p>}
 
       <p className="nota-info">
         <i className="i">i</i>

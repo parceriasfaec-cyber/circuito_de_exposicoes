@@ -1,5 +1,6 @@
 import { Aviso } from "@/components/Marca";
 import MolduraVoto from "@/components/MolduraVoto";
+import { anoCredenciamento } from "@/lib/credenciamento";
 import { lerVotacao } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 import ConteudoCidades from "./cidades/ConteudoCidades";
@@ -12,6 +13,7 @@ export const metadata = { title: "Votação das Cidades · Circuito Cearense de 
 export default async function Votar({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { ok } = await searchParams;
   const votacao = await lerVotacao();
+  const ano = await anoCredenciamento();
   const s = votacao.cidades_aberta ? await produtorDaSessao() : null;
   return (
     <MolduraVoto tipo="cidades">
@@ -23,7 +25,7 @@ export default async function Votar({ searchParams }: { searchParams: Promise<{ 
       ) : s ? (
         <ConteudoCidades s={s} ok={ok} />
       ) : (
-        <Identificacao destino="votar" />
+        <Identificacao destino="votar" ano={ano} />
       )}
     </MolduraVoto>
   );

@@ -1,5 +1,6 @@
 import { Aviso } from "@/components/Marca";
 import MolduraVoto from "@/components/MolduraVoto";
+import { anoCredenciamento } from "@/lib/credenciamento";
 import { lerVotacao } from "@/lib/db";
 import { produtorDaSessao } from "@/lib/sessao";
 import Identificacao from "../votar/Identificacao";
@@ -12,6 +13,7 @@ export const metadata = { title: "Avaliação das Exposições · Circuito Ceare
 export default async function Avaliar({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { ok } = await searchParams;
   const votacao = await lerVotacao();
+  const ano = await anoCredenciamento();
   const s = votacao.exposicoes_aberta ? await produtorDaSessao() : null;
   return (
     <MolduraVoto tipo="avaliacao">
@@ -23,7 +25,7 @@ export default async function Avaliar({ searchParams }: { searchParams: Promise<
       ) : s ? (
         <ConteudoAvaliacao s={s} ok={ok} cidadesAberta={votacao.cidades_aberta} />
       ) : (
-        <Identificacao destino="avaliar" />
+        <Identificacao destino="avaliar" ano={ano} />
       )}
     </MolduraVoto>
   );
