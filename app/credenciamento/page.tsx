@@ -82,7 +82,8 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
               )}
             </p>
             <p className="cred-regras-titulo">Regras para apresentação e votação</p>
-            <div className="cred-item">
+            <div className="cred-regras">
+            <div className="cred-item largo">
               <Icone nome="calendario" tamanho={40} />
               <p>
                 <strong className="sem-destaque">Apresentação obrigatória:</strong>{" "}
@@ -118,6 +119,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                 <strong className="sem-destaque">Confirmação:</strong> só após a ciência e assinatura das contrapartidas do Termo de Adesão. Se
                 houver descumprimento, o município é desclassificado e são chamados os seguintes na ordem de votação.
               </p>
+            </div>
             </div>
             <p className={`cred-assinatura ${manuscrita.className}`}>Contamos com a sua participação!</p>
           </aside>

@@ -12,7 +12,7 @@ export async function credenciar(_: EstadoCredenciamento, form: FormData): Promi
   const { prazo, aberto } = await lerPrazo(ano);
   if (!aberto) return { erro: `O prazo do credenciamento terminou em ${diaMes(prazo!, true)}.` };
 
-  const lido = lerDadosCredenciamento(form, ano);
+  const lido = lerDadosCredenciamento(form, ano, true);
   if ("erro" in lido) return lido;
   const d = lido.dados;
 

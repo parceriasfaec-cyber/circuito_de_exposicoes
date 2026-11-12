@@ -21,11 +21,12 @@ const DATA = /^\d{4}-\d{2}-\d{2}$/;
  * Lê e confere os campos do credenciamento (formulário público e edição no painel usam as mesmas regras).
  * Nomes com a primeira letra de cada palavra em maiúscula; e-mail em minúscula; CPF e telefone só com números.
  */
-export function lerDadosCredenciamento(form: FormData, ano: number): { erro: string } | { dados: DadosCredenciamento } {
+/** exigirCpf: no formulário público o CPF é obrigatório; na edição pelo painel, cadastros antigos sem CPF continuam aceitos. */
+export function lerDadosCredenciamento(form: FormData, ano: number, exigirCpf = false): { erro: string } | { dados: DadosCredenciamento } {
   const d: DadosCredenciamento = {
     codigo: Number(texto(form, "municipio")),
     responsavel: maiusculaInicial(texto(form, "responsavel")),
-    cpf: soDigitos(texto(form, "cpf")) || null, // opcional por enquanto
+    cpf: soDigitos(texto(form, "cpf")) || null,
     email: texto(form, "email").toLowerCase(),
     telefone: soDigitos(texto(form, "telefone")),
     funcao: maiusculaInicial(texto(form, "funcao")),
@@ -38,6 +39,7 @@ export function lerDadosCredenciamento(form: FormData, ano: number): { erro: str
 
   if (!Number.isInteger(d.codigo) || d.codigo <= 0) return { erro: "Escolha o município." };
   if (d.responsavel.length < 3) return { erro: "Preencha o nome do responsável." };
+  if (exigirCpf && !d.cpf) return { erro: "Preencha o CPF do responsável." };
   if (d.cpf && !cpfValido(d.cpf)) return { erro: "Este CPF não é válido. Confira os números." };
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) return { erro: "Este e-mail não é válido. Confira." };
   if (d.telefone.length < 10 || d.telefone.length > 11) return { erro: "Digite o telefone com DDD, só os números. Ex.: (85) 99999-9999." };

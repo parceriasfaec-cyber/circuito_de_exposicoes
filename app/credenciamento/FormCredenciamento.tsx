@@ -83,8 +83,8 @@ export default function FormCredenciamento({
           <input id="funcao" name="funcao" type="text" maxLength={100} required placeholder="Ex.: Secretário de Agricultura" defaultValue={v?.funcao} onBlur={ajustar} autoCapitalize="words" />
         </div>
         <div>
-          <label htmlFor="cpf">CPF <small>(opcional)</small></label>
-          <input id="cpf" name="cpf" type="text" inputMode="numeric" maxLength={14} autoComplete="off" placeholder="Só os números" defaultValue={v?.cpf ?? ""} />
+          <label htmlFor="cpf">CPF</label>
+          <input id="cpf" name="cpf" type="text" inputMode="numeric" maxLength={14} autoComplete="off" required={!id} placeholder="Só os números" defaultValue={v?.cpf ?? ""} />
         </div>
         <div>
           <label htmlFor="telefone">Telefone / WhatsApp</label>
