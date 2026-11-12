@@ -2412,3 +2412,13 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .telao-itens li::marker { color: #155a2c; font-weight: 900; }
 .telao-anuncio { border-radius: 40px; font-size: clamp(1.2rem, 3vh, 2rem); }
 .telao .qr svg { width: min(35vh, 440px); }
+/* telão: segunda ovelha na ponta direita, espelhada (como no cartaz) */
+@media (min-width: 900px) {
+  .pagina:has(.telao .qr)::before {
+    content: ""; position: absolute; right: 0; bottom: 0; z-index: 0; pointer-events: none;
+    width: min(26vw, 480px); aspect-ratio: 1021 / 1280; transform: scaleX(-1);
+    background: url("/marcas/ovelha-2.jpg") 70% 30% / cover no-repeat;
+    -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 55%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 55%, transparent 100%);
+  }
+}

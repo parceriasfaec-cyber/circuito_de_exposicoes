@@ -24,6 +24,9 @@ const animalArq = ["animal.png", "animal.jpg", "animal.jpeg"].map((n) => join(aq
 const animal = animalArq ? img(animalArq) : null;
 // PNG sem fundo entra recortado; foto com fundo (jpg) entra com as bordas esfumadas no campo.
 const animalSemFundo = animalArq?.endsWith(".png");
+// Segunda foto (opcional): entra embaixo da primeira, no lado esquerdo.
+const animal2Arq = ["animal2.png", "animal2.jpg", "animal2.jpeg"].map((n) => join(aqui, n)).find(existsSync);
+const animal2 = animal2Arq ? img(animal2Arq) : null;
 const qr = await QRCode.toString(SITE, { type: "svg", margin: 0, errorCorrectionLevel: "M", color: { dark: "#123d22", light: "#ffffff" } });
 
 const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
@@ -62,6 +65,9 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
   .animal.foto { left: 0; top: 330px; bottom: 0; width: 520px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
                  -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
                  mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%); }
+  /* segunda foto: na ponta direita, espelhada para olhar para o centro */
+  .animal.foto.de-baixo { left: auto; right: 0; top: 330px; bottom: 0; width: 520px; height: auto; object-position: 70% 30%; transform: scaleX(-1);
+    -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 55%, transparent 100%); mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 55%, transparent 100%); }
 </style></head><body>
   <div class="topo">
     <img class="sis" src="${sistema}" alt="Sistema FAEC SENAR Ceará Sindicato Rural">
@@ -74,6 +80,7 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
     <ol><li><b>Avalie</b> as etapas do Circuito Cearense de Exposição que participou.</li><li><b>Selecione</b> as 02 exposições para fazerem parte do Circuito Cearense de Exposição de ${ANO}.</li></ol>
   </div>
   ${animal ? `<img class="animal${animalSemFundo ? "" : " foto"}" src="${animal}" alt="">` : ""}
+  ${animal2 ? `<img class="animal foto de-baixo" src="${animal2}" alt="">` : ""}
   <div class="centro">
     <div class="qr-area">
       <svg class="raios esq" viewBox="0 0 70 150" fill="none" stroke="#3fa34d" stroke-width="10" stroke-linecap="round"><path d="M60 20L18 2"/><path d="M60 75H8"/><path d="M60 130L18 148"/></svg>
