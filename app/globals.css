@@ -2624,3 +2624,11 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .part-topo.tres div { padding: 8px 10px; gap: 8px; }
 .part-topo.tres strong { font-size: 1.45rem; }
 .part-topo.tres small { font-size: 0.76rem; line-height: 1.2; }
+/* participantes: três cartões iguais, ícone em cima, número e texto centralizados */
+.part-topo.tres div { display: flex !important; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; padding: 10px 6px; min-width: 0; }
+.part-topo.tres div > span:last-child { display: grid; justify-items: center; min-width: 0; }
+.part-topo.tres .part-topo-icone { width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--verde-escuro); }
+.part-topo.tres .part-topo-icone.redondo { background: var(--verde-escuro); color: #fff; }
+.part-topo.tres .part-topo-icone svg { width: 20px; height: 20px; }
+.part-topo.tres strong { font-size: 1.5rem; line-height: 1.05; }
+.part-topo.tres small { font-size: 0.74rem; line-height: 1.2; overflow-wrap: anywhere; }

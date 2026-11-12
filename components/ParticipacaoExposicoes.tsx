@@ -19,7 +19,7 @@ export default function Participacao({ progresso, produtores, completos, present
       <div className={`part-topo${presentes !== undefined ? " tres" : ""}`}>
         <div>
           <span className="part-topo-icone"><Icone nome="usuarios" tamanho={30} /></span>
-          <span><strong>{produtores}</strong><small>Total de Participantes</small></span>
+          <span><strong>{produtores}</strong><small>{presentes !== undefined ? "Participantes" : "Total de Participantes"}</small></span>
         </div>
         {presentes !== undefined && (
           <div>
@@ -29,7 +29,7 @@ export default function Participacao({ progresso, produtores, completos, present
         )}
         <div>
           <span className="part-topo-icone redondo"><Icone nome="check" tamanho={22} /></span>
-          <span><strong>{completos}</strong><small>já avaliaram tudo</small></span>
+          <span><strong>{completos}</strong><small>{presentes !== undefined ? "Avaliaram tudo" : "já avaliaram tudo"}</small></span>
         </div>
       </div>
       <ul className="part-legenda">
