@@ -213,7 +213,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="coluna-graficos">
           <section className="bloco">
             <h2 className="bloco-titulo"><Icone nome="usuarios" tamanho={22} /> Participantes por Etapa do Circuito</h2>
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} presentes={presentes} linha={40} largura={430} />
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} presentes={presentes} linha={44} largura={520} />
           </section>
         </div>
       </div>

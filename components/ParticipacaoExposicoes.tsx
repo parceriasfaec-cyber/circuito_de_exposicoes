@@ -76,10 +76,10 @@ function GraficoParticipacao({ lista, linha, largura }: { lista: Progresso[]; li
           <g key={p.nome}>
             <title>{`${p.nome}: ${p.na_lista} participantes, ${p.responderam} avaliaram (${pct}%)`}</title>
             <text x={m.e - 12} y={y0 + 14} textAnchor="end" className="eixo nome">{nome.length > 24 ? `${nome.slice(0, 23)}…` : nome}</text>
-            <rect x={m.e} y={y0} width={Math.max(3, x(p.na_lista) - m.e)} height="10" rx="5" fill="#a9cf94" />
-            <text x={x(p.na_lista) + 6} y={y0 + 9} className="valor">{p.na_lista}</text>
-            <rect x={m.e} y={y0 + 12} width={Math.max(3, x(p.responderam) - m.e)} height="10" rx="5" fill="#1d5e2c" />
-            <text x={x(p.responderam) + 6} y={y0 + 21} className="valor escuro">{p.responderam}</text>
+            <rect x={m.e} y={y0} width={Math.max(3, x(p.na_lista) - m.e)} height="10" rx="5" fill="#1d5e2c" />
+            <text x={x(p.na_lista) + 6} y={y0 + 9} className="valor escuro">{p.na_lista}</text>
+            <rect x={m.e} y={y0 + 12} width={Math.max(3, x(p.responderam) - m.e)} height="10" rx="5" fill="#8fc46f" />
+            <text x={x(p.responderam) + 6} y={y0 + 21} className="valor claro">{p.responderam}</text>
           </g>
         );
       })}
