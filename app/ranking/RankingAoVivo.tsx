@@ -5,7 +5,6 @@ import { Fragment, useEffect, useState } from "react";
 import Icone from "@/components/Icone";
 import type { CidadeRanking } from "@/lib/credenciamento";
 
-export type UltimoVoto = { nome: string; municipio: string; hora: string };
 
 const INTERVALO = 10; // segundos entre as atualizações
 const pts = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -23,10 +22,10 @@ function Medidor({ pct }: { pct: number }) {
 }
 
 export default function RankingAoVivo({
-  ano, aberta, ranking, vagas, votantes, totalVotos, elegiveis, ultimos,
+  ano, aberta, ranking, vagas, votantes, totalVotos, elegiveis,
 }: {
   ano: number; aberta: boolean; ranking: CidadeRanking[]; vagas: number | null;
-  votantes: number; totalVotos: number; elegiveis: number; ultimos: UltimoVoto[];
+  votantes: number; totalVotos: number; elegiveis: number;
 }) {
   const router = useRouter();
   const [falta, setFalta] = useState(INTERVALO);
@@ -100,18 +99,6 @@ export default function RankingAoVivo({
         <div className="aovivo-quorum">
           <Medidor pct={pct} />
           <span>Quórum de votação</span>
-        </div>
-        <div className="aovivo-ultimos">
-          <h3><Icone nome="relogio" tamanho={18} /> Últimos expositores a votar</h3>
-          {ultimos.length === 0 ? (
-            <p className="suave">Ninguém votou ainda.</p>
-          ) : (
-            <ul>
-              {ultimos.map((u, i) => (
-                <li key={`${u.nome}-${i}`}><span className="hora">{u.hora}</span><span className="nome">{u.nome}</span><span className="mun">{u.municipio}</span></li>
-              ))}
-            </ul>
-          )}
         </div>
       </aside>
     </div>

@@ -21,8 +21,8 @@ select c.ano, c.id as credenciamento_id, m.nome as municipio, c.instituicao,
        count(v.produtor_id) as votos,
        rank() over (partition by c.ano
                     order by count(v.produtor_id) desc,
-                             coalesce(sum(peso_voto_cidade(v.produtor_id, v.ano)), 0) desc) as posicao,
-       coalesce(sum(peso_voto_cidade(v.produtor_id, v.ano)), 0)::numeric(10,1) as pontos
+                             coalesce(sum(peso_voto_cidade(v.produtor_id, v.ano)) filter (where v.produtor_id is not null), 0) desc) as posicao,
+       coalesce(sum(peso_voto_cidade(v.produtor_id, v.ano)) filter (where v.produtor_id is not null), 0)::numeric(10,1) as pontos
 from credenciamentos c
 join municipios m on m.codigo = c.municipio_codigo
 left join votos_cidades v on v.credenciamento_id = c.id

@@ -3,7 +3,7 @@ import PaginaPublica from "@/components/PaginaPublica";
 import { anoCredenciamento, resultadoCidades } from "@/lib/credenciamento";
 import { lerVotacao, sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import RankingAoVivo, { type UltimoVoto } from "./RankingAoVivo";
+import RankingAoVivo from "./RankingAoVivo";
 
 export const dynamic = "force-dynamic";
 
@@ -14,16 +14,8 @@ export default async function RankingTempoReal() {
   const votacao = await lerVotacao();
   const db = sql();
 
-  const [{ ranking, vagas, votantes }, ultimos, [{ total_votos }], [{ elegiveis }]] = await Promise.all([
+  const [{ ranking, vagas, votantes }, [{ total_votos }], [{ elegiveis }]] = await Promise.all([
     resultadoCidades(ano),
-    // Últimos expositores que votaram (um por expositor, do mais recente para o mais antigo)
-    db<UltimoVoto[]>`
-      select p.nome, p.municipio, to_char(max(v.votado_em) at time zone 'America/Fortaleza', 'HH24:MI') hora
-      from votos_cidades v join produtores p on p.id = v.produtor_id
-      where v.ano = ${ano}
-      group by p.id, p.nome, p.municipio
-      order by max(v.votado_em) desc
-      limit 8`,
     db<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
     // Quem pode votar, pela regra definida no painel (todos, só quem avaliou e/ou só quem está presente)
     db<{ elegiveis: number }[]>`
@@ -46,7 +38,6 @@ export default async function RankingTempoReal() {
         votantes={votantes}
         totalVotos={total_votos}
         elegiveis={elegiveis}
-        ultimos={ultimos}
       />
     </PaginaPublica>
   );

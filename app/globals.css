@@ -2426,3 +2426,10 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 /* ---------- Sem as ovelhas em nenhuma tela (fica só o fundo de campo) ---------- */
 .pagina::before, .pagina::after { content: none !important; display: none !important; }
 @media (max-width: 899px) { .pagina:has(.moldura-voto.tipo-inicio) { padding-bottom: 0; } }
+
+/* ranking ao vivo: graminhas discretas na parte de baixo dos quadros */
+.aovivo-ranking, .aovivo-lado { position: relative; padding-bottom: 30px; }
+.aovivo-ranking::after, .aovivo-lado::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30px; pointer-events: none; opacity: 0.55;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 30'%3E%3Cg fill='%237cc24a'%3E%3Cpath d='M4 30 Q6 16 3 6 Q9 17 8 30z'/%3E%3Cpath d='M14 30 Q15 20 19 12 Q18 22 18 30z'/%3E%3Cpath d='M28 30 Q27 18 24 10 Q31 19 32 30z'/%3E%3Cpath d='M40 30 Q42 22 47 16 Q45 24 44 30z'/%3E%3Cpath d='M55 30 Q54 14 57 4 Q60 16 59 30z'/%3E%3Cpath d='M68 30 Q66 21 62 15 Q70 21 72 30z'/%3E%3Cpath d='M80 30 Q82 19 87 13 Q85 23 84 30z'/%3E%3Cpath d='M94 30 Q93 17 96 8 Q99 18 98 30z'/%3E%3Cpath d='M106 30 Q104 22 100 17 Q108 22 110 30z'/%3E%3Cpath d='M116 30 Q117 20 120 14 Q120 24 120 30z'/%3E%3C/g%3E%3Cg fill='%232e8b3e' opacity='.6'%3E%3Cpath d='M10 30 Q11 22 13 18 Q14 24 13 30z'/%3E%3Cpath d='M36 30 Q35 23 33 19 Q38 24 39 30z'/%3E%3Cpath d='M63 30 Q64 22 67 19 Q66 25 66 30z'/%3E%3Cpath d='M89 30 Q88 23 86 20 Q91 25 92 30z'/%3E%3Cpath d='M112 30 Q113 23 115 20 Q115 25 115 30z'/%3E%3C/g%3E%3C/svg%3E") left bottom / 120px 30px repeat-x;
+}
