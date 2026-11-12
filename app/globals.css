@@ -2526,3 +2526,20 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
   .form-credenciamento .periodo-datas { gap: 6px; }
   .form-credenciamento .periodo input[type="date"] { width: 100%; min-width: 0; padding: 7px 4px 7px 8px; font-size: 0.95rem; }
 }
+/* ranking ao vivo: todas as caixas no mesmo formato (nome à esquerda, votos sempre à direita) e monitoramento menor */
+.aovivo-linha { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; flex-wrap: nowrap; }
+.aovivo-nome { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.aovivo-nome strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.aovivo-nome .selo-classificada { flex: none; margin-left: 0; }
+.aovivo-votos { margin-left: 0; }
+.aovivo-cab h1 { font-size: 1.15rem; text-transform: none; letter-spacing: 0; }
+.aovivo { grid-template-columns: minmax(0, 1fr) 260px; }
+.aovivo-lado .aovivo-cab { padding: 10px 14px; }
+.aovivo-lado .aovivo-cab h2 { font-size: 0.95rem; }
+.aovivo-numeros { padding: 12px 12px 4px; gap: 6px; }
+.aovivo-numeros div { padding: 6px 10px; }
+.aovivo-numeros span { font-size: 0.72rem; }
+.aovivo-numeros strong { font-size: 1.2rem; }
+.aovivo-medidor { width: 170px; }
+.aovivo-quorum > span { font-size: 0.82rem; }
+.aovivo-quorum { padding-bottom: 12px; }

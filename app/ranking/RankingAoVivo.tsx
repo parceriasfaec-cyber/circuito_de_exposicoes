@@ -64,7 +64,7 @@ export default function RankingAoVivo({
     <div className="aovivo">
       <section className="aovivo-ranking">
         <header className="aovivo-cab">
-          <h1>Ranking das exposições <span>(Top 10 · tempo real)</span></h1>
+          <h1>Ranking dos municípios para a etapa do Circuito Cearense de Exposição {ano}</h1>
           <button type="button" className="aovivo-status" onClick={() => setAtivo((a) => !a)} title={ativo ? "Pausar a atualização" : "Retomar a atualização"}>
             <Icone nome="atualizar" tamanho={18} />
             {aberto ? "Pausado enquanto vê os votantes" : ativo ? <>Ativado · próxima atualização: {falta}s</> : "Pausado (clique para retomar)"}
@@ -83,8 +83,10 @@ export default function RankingAoVivo({
                     <span className="aovivo-pos">{r.posicao}º</span>
                     <div className="aovivo-info">
                       <div className="aovivo-linha">
-                        <strong>{r.municipio}</strong>
-                        {classificada && <span className="selo-classificada">Classificada</span>}
+                        <span className="aovivo-nome">
+                          <strong title={r.municipio}>{r.municipio}</strong>
+                          {classificada && <span className="selo-classificada">Classificada</span>}
+                        </span>
                         <span className="aovivo-votos">{r.votos} {r.votos === 1 ? "voto" : "votos"} <small>({pts(r.pontos)} pts)</small></span>
                       </div>
                       <div className="aovivo-barra"><span style={{ width: `${(r.votos / max) * 100}%` }} /></div>
