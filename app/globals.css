@@ -2612,3 +2612,10 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .admin .painel-grade .ranking-exposicoes th:nth-child(5), .telao-expo .ranking-exposicoes th:nth-child(5) { width: 24%; }
 /* painel de avaliação: 3 cartões no topo (sem o código do dia) ocupando a largura toda */
 @media (min-width: 981px) { .admin .kpis:has(> .kpi:nth-child(3):last-child) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* painel: tabela do ranking com texto um pouco menor e legenda do gráfico escura */
+.admin .painel-grade .ranking-exposicoes { font-size: 0.9rem; }
+.admin .painel-grade .ranking-exposicoes th { font-size: 0.86rem; }
+.admin .painel-grade .ranking-exposicoes td strong { font-size: 1em; }
+.admin .painel-grade .ranking-exposicoes tr.podio.ouro td:nth-child(2) strong { font-size: 1em; }
+.admin .painel-grade .ranking-exposicoes td { padding-top: 7px; padding-bottom: 7px; }
+.part-legenda li { color: #123d22; font-weight: 700; }
