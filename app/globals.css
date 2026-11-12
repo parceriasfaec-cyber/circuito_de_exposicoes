@@ -2845,3 +2845,23 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .vc2-res-topo strong { color: var(--verde-escuro); font-size: 1.05rem; }
 .vc2-resultado .vc2-nota { margin-top: 8px; }
 @media (max-width: 980px) { .vc2 { grid-template-columns: 1fr; } }
+
+/* Painel do Organizador: o ranking estica as linhas até a altura do cartão de participantes */
+@media (min-width: 981px) {
+  .admin .painel-grade { align-items: stretch; }
+  .admin .painel-grade > .bloco { display: flex; flex-direction: column; }
+  .admin .painel-grade > .bloco > .tabela { flex: 1; display: flex; }
+  .admin .painel-grade > .bloco > .tabela > .ranking-exposicoes { height: 100%; }
+}
+
+/* Painel de Votação: cada município é um cartão clicável que abre quem votou */
+.ranking-cidades.clicavel { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; }
+.ranking-cidades.clicavel .ranking-cidade { width: 100%; font: inherit; text-align: left; cursor: pointer; padding: 8px 12px; gap: 10px; grid-template-columns: auto minmax(0, 1fr) auto; transition: border-color .15s, box-shadow .15s, transform .15s; }
+.ranking-cidades.clicavel .ranking-cidade:hover, .ranking-cidades.clicavel .ranking-cidade:focus-visible { border-color: #e07b1a; box-shadow: 0 6px 16px rgba(18, 61, 34, 0.14); transform: translateY(-1px); outline: none; }
+.ranking-cidades.clicavel .ranking-cidade .pos { width: 38px; height: 34px; font-size: 0.95rem; }
+.ranking-cidades.clicavel .nome-linha { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
+.ranking-cidades.clicavel .nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.ranking-cidades.clicavel .selo-classificada { margin-left: 0; font-size: 0.68rem; padding: 1px 7px; }
+.ranking-cidades.clicavel .votos { font-size: 1rem; text-align: right; }
+.ranking-cidades.clicavel .votos .pontos-cidade { font-size: 0.75rem; }
+@media (max-width: 700px) { .ranking-cidades.clicavel { grid-template-columns: 1fr; } }
