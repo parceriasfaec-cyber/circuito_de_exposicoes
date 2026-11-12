@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import Icone from "@/components/Icone";
 import { FaixaTitulo, LogoCircuito } from "@/components/Marca";
 import PaginaPublica from "@/components/PaginaPublica";
 import RankingCidades from "@/components/RankingCidades";
@@ -14,8 +15,6 @@ export default async function Telao() {
   if (!(await ehAdmin())) redirect("/admin");
   const votacao = await lerVotacao();
   const ano = await anoCredenciamento();
-  const cidades = votacao.cidades_aberta;
-  const ambas = votacao.cidades_aberta && votacao.exposicoes_aberta;
 
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
@@ -31,37 +30,38 @@ export default async function Telao() {
     <PaginaPublica>
     <div className="telao">
       <LogoCircuito />
-      <FaixaTitulo>
-        {votacao.aberta ? "Circuito Cearense de Exposição" : `Votação das cidades do Circuito ${ano}`}
-      </FaixaTitulo>
       {votacao.aberta ? (
         <>
-          {/* Mesmas frases do cartaz do QR Code */}
-          <p className="telao-chamada">Participe e ajude a <strong>transformar nossa região!</strong></p>
-          <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
-          <div className="telao-passo">
-            <strong>Escaneie o QR Code</strong>
-            {ambas ? (
-              <>, faça sua avaliação dos Circuitos e vote nos <strong>dois municípios</strong> que serão contemplados em {ano}.</>
-            ) : cidades ? (
-              <> e vote nos <strong>dois municípios</strong> que serão contemplados em {ano}.</>
-            ) : (
-              <> e faça sua avaliação dos Circuitos.</>
-            )}
-            <small>Tenha em mãos o seu ID de 5 números.</small>
-          </div>
-          <p className="telao-frase">Sua opinião é fundamental para construirmos o futuro juntos!</p>
-          <div className="telao-link">{url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</div>
-        </>
-      ) : resultado && resultado.votantes > 0 ? (
-        <div className="telao-resultado">
-          <p style={{ fontSize: "1.3rem", margin: "0 0 12px" }}>
-            Resultado: {resultado.votantes} {resultado.votantes === 1 ? "expositor votou" : "expositores votaram"}
+          {/* Mesmo visual e frases do cartaz do QR Code */}
+          <p className="faixa-anuncio telao-anuncio">
+            <span className="faixa-anuncio-ic"><Icone nome="megafone" tamanho={34} /></span>
+            <span>Avalie as exposições e escolha as <strong>duas cidades</strong> para fazerem parte do <strong>circuito de {ano}.</strong></span>
           </p>
-          <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} />
-        </div>
+          <div className="qr-area">
+            <span className="qr-raios esq" aria-hidden="true" />
+            <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
+            <span className="qr-raios dir" aria-hidden="true" />
+          </div>
+          <div className="telao-passo">
+            <span className="faixa-anuncio-ic"><Icone nome="celular" tamanho={30} /></span>
+            <span><strong>Escaneie o QR Code</strong>, acesse o sistema e informe seu <span className="chip-id">ID de 5 números</span> para registrar sua avaliação.</span>
+          </div>
+          <p className="telao-frase">Sua opinião é muito importante!</p>
+        </>
       ) : (
-        <p style={{ fontSize: "1.5rem" }}>A votação está fechada.</p>
+        <>
+          <FaixaTitulo>{`Votação das cidades do Circuito ${ano}`}</FaixaTitulo>
+          {resultado && resultado.votantes > 0 ? (
+            <div className="telao-resultado">
+              <p style={{ fontSize: "1.3rem", margin: "0 0 12px" }}>
+                Resultado: {resultado.votantes} {resultado.votantes === 1 ? "expositor votou" : "expositores votaram"}
+              </p>
+              <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} />
+            </div>
+          ) : (
+            <p style={{ fontSize: "1.5rem" }}>A votação está fechada.</p>
+          )}
+        </>
       )}
     </div>
     </PaginaPublica>

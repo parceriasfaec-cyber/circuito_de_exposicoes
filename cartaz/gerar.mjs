@@ -36,27 +36,28 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
   .topo img.sis { height: 108px; }
   .topo .div { width: 3px; height: 104px; background: #1f6b3a; border-radius: 2px; }
   .topo img.circ { height: 116px; }
-  .titulo { position: absolute; top: 190px; left: 50%; transform: translateX(-50%); white-space: nowrap;
-            background: #e4f2d6; border: 3px solid #fff; border-radius: 999px; padding: 14px 54px;
-            font-size: 50px; font-weight: 900; letter-spacing: 1px; color: #155a2c; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
-  .sub { position: absolute; top: 290px; left: 0; right: 0; text-align: center; font-size: 34px; font-weight: 600; color: #123d22;
-         text-shadow: 0 0 14px #fff, 0 0 6px #fff; }
-  .sub b { color: #155a2c; font-weight: 900; }
-  .centro { position: absolute; top: 345px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 18px; }
-  .qr { background: #fff; padding: 22px; border-radius: 26px; border: 5px solid #2e8b3e; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
-  .qr svg { display: block; width: 260px; height: 260px; }
-  .passo { display: flex; align-items: center; gap: 18px; background: rgba(255,255,255,.93); border-radius: 18px; padding: 14px 28px;
-           font-size: 25px; font-weight: 600; line-height: 1.3; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
-  .passo .cel { flex: none; width: 44px; height: 64px; border: 4px solid #2e8b3e; border-radius: 9px; position: relative; background: #e4f2d6; }
-  .passo .cel::after { content: ""; position: absolute; left: 50%; bottom: 4px; width: 10px; height: 4px; margin-left: -5px; background: #2e8b3e; border-radius: 2px; }
+  .faixa { position: absolute; top: 188px; left: 50%; transform: translateX(-50%); width: 1180px; display: flex; align-items: center; gap: 22px;
+           background: linear-gradient(#f3faec, #dcefcc); border: 3px solid #fff; border-radius: 999px; padding: 14px 40px 14px 18px; box-shadow: 0 6px 18px rgba(0,0,0,.14); }
+  .faixa .ic { flex: none; width: 84px; height: 84px; border-radius: 50%; background: #1d5e2c; display: grid; place-items: center; }
+  .faixa .ic svg { width: 50px; height: 50px; }
+  .faixa .sep { flex: none; width: 3px; height: 70px; background: #2e8b3e; border-radius: 2px; }
+  .faixa p { flex: 1; text-align: center; font-size: 34px; line-height: 1.25; font-weight: 600; color: #123d22; }
+  .faixa b { color: #155a2c; font-weight: 900; }
+  .centro { position: absolute; top: 340px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .qr-area { position: relative; }
+  .raios { position: absolute; top: 50%; width: 70px; height: 150px; transform: translateY(-50%); }
+  .raios.esq { left: -100px; } .raios.dir { right: -100px; transform: translateY(-50%) scaleX(-1); }
+  .qr { background: #fff; padding: 22px; border-radius: 26px; border: 6px solid #2e8b3e; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  .qr svg { display: block; width: 330px; height: 330px; }
+  .passo { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,.95); border: 3px solid #cfe6c2; border-radius: 22px; padding: 14px 30px 14px 16px;
+           font-size: 29px; font-weight: 600; line-height: 1.35; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+  .passo .ic { flex: none; width: 74px; height: 74px; border-radius: 50%; background: #1d5e2c; display: grid; place-items: center; }
+  .passo .ic svg { width: 40px; height: 40px; }
   .passo .sep { width: 3px; align-self: stretch; background: #2e8b3e; border-radius: 2px; }
   .passo b { color: #155a2c; font-weight: 800; }
-  .frase { margin-top: -6px; font-size: 26px; font-weight: 800; font-style: italic; color: #155a2c; text-shadow: 0 0 12px #fff, 0 0 6px #fff, 0 0 3px #fff; }
-  .link { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px;
-          background: #0f4a24; color: #fff; border: 3px solid #7cc24a; border-radius: 999px; padding: 12px 40px; font-size: 30px; font-weight: 800; white-space: nowrap; }
-  .link svg { width: 32px; height: 32px; }
+  .passo .id { display: inline-block; background: #1d5e2c; color: #fff; font-weight: 800; border-radius: 999px; padding: 0 16px; }
   .animal { position: absolute; left: 40px; bottom: 0; height: 640px; filter: drop-shadow(0 12px 20px rgba(0,0,0,.25)); }
-  .animal.foto { left: 0; top: 470px; bottom: 0; width: 420px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
+  .animal.foto { left: 0; top: 330px; bottom: 0; width: 520px; height: auto; object-fit: cover; object-position: center 30%; filter: none;
                  -webkit-mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%);
                  mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 62%, transparent 100%); }
 </style></head><body>
@@ -65,18 +66,23 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
     <span class="div"></span>
     <img class="circ" src="${circuito}" alt="Circuito Cearense de Exposição">
   </div>
-  <div class="titulo">CIRCUITO CEARENSE DE EXPOSIÇÃO</div>
-  <p class="sub">Participe e ajude a <b>transformar nossa região!</b></p>
+  <div class="faixa">
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 10v4h3l7 4V6L6 10z" fill="#fff"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/><path d="M6 14l1.5 5h2.5l-1-4.5"/></svg></span>
+    <span class="sep"></span>
+    <p>Avalie as exposições e escolha as <b>duas cidades</b><br>para fazerem parte do <b>circuito de ${ANO}.</b></p>
+  </div>
   ${animal ? `<img class="animal${animalSemFundo ? "" : " foto"}" src="${animal}" alt="">` : ""}
   <div class="centro">
-    <div class="qr">${qr}</div>
-    <div class="passo"><span class="cel"></span><span class="sep"></span>
-      <span><b>Escaneie o QR Code</b>, faça sua avaliação dos Circuitos<br>e vote nos <b>dois municípios</b> que serão contemplados em ${ANO}.</span></div>
-    <p class="frase">Sua opinião é fundamental para construirmos o futuro juntos!</p>
-  </div>
-  <div class="link">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#7cc24a" stroke-width="2.6" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
-    circuitodeexposicoes.vercel.app
+    <div class="qr-area">
+      <svg class="raios esq" viewBox="0 0 70 150" fill="none" stroke="#3fa34d" stroke-width="10" stroke-linecap="round"><path d="M60 20L18 2"/><path d="M60 75H8"/><path d="M60 130L18 148"/></svg>
+      <div class="qr">${qr}</div>
+      <svg class="raios dir" viewBox="0 0 70 150" fill="none" stroke="#3fa34d" stroke-width="10" stroke-linecap="round"><path d="M60 20L18 2"/><path d="M60 75H8"/><path d="M60 130L18 148"/></svg>
+    </div>
+    <div class="passo">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3" stroke-linecap="round"/></svg></span>
+      <span class="sep"></span>
+      <span><b>Escaneie o QR Code</b>, acesse o sistema e<br>informe seu <span class="id">ID de 5 números</span> para registrar sua avaliação.</span>
+    </div>
   </div>
 </body></html>`;
 
