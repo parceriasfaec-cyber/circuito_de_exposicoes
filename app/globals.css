@@ -2515,3 +2515,14 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
   .cred-atencao .cred-item { padding: 6px 10px; }
   .cred-atencao .cred-item p { font-size: 0.82rem; line-height: 1.35; }
 }
+/* credenciamento: "Fique atento!" à esquerda e o cadastro à direita */
+@media (min-width: 1000px) {
+  .cred-grade .cred-atencao { order: -1; border-left: 0; border-right: 2px solid var(--verde-vivo); padding: 0 24px 0 0; }
+}
+/* credenciamento: mais espaço para a data aparecer inteira */
+@media (min-width: 1000px) {
+  .form-credenciamento .periodo { padding: 0 8px 8px; }
+  .form-credenciamento .periodo legend { font-size: 0.9rem; white-space: nowrap; padding: 0 4px; }
+  .form-credenciamento .periodo-datas { gap: 6px; }
+  .form-credenciamento .periodo input[type="date"] { width: 100%; min-width: 0; padding: 7px 4px 7px 8px; font-size: 0.95rem; }
+}
