@@ -2422,3 +2422,7 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
     mask-image: radial-gradient(ellipse 50% 54% at 46% 56%, #000 55%, transparent 100%);
   }
 }
+
+/* ---------- Sem as ovelhas em nenhuma tela (fica só o fundo de campo) ---------- */
+.pagina::before, .pagina::after { content: none !important; display: none !important; }
+@media (max-width: 899px) { .pagina:has(.moldura-voto.tipo-inicio) { padding-bottom: 0; } }

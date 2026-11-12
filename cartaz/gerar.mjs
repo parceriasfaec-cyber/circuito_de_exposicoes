@@ -20,12 +20,14 @@ const img = (p) => {
 const fundo = img(join(raiz, "public/marcas/fundo-foto.jpg"));
 const sistema = img(join(raiz, "public/marcas/sistema-cor.png"));
 const circuito = img(join(raiz, "public/marcas/logo-circuito-largo.png"));
-const animalArq = ["animal.png", "animal.jpg", "animal.jpeg"].map((n) => join(aqui, n)).find(existsSync);
+// Mude para true para voltar a mostrar as ovelhas (cartaz/animal.jpg e cartaz/animal2.jpg).
+const MOSTRAR_ANIMAIS = false;
+const animalArq = !MOSTRAR_ANIMAIS ? undefined : ["animal.png", "animal.jpg", "animal.jpeg"].map((n) => join(aqui, n)).find(existsSync);
 const animal = animalArq ? img(animalArq) : null;
 // PNG sem fundo entra recortado; foto com fundo (jpg) entra com as bordas esfumadas no campo.
 const animalSemFundo = animalArq?.endsWith(".png");
 // Segunda foto (opcional): entra embaixo da primeira, no lado esquerdo.
-const animal2Arq = ["animal2.png", "animal2.jpg", "animal2.jpeg"].map((n) => join(aqui, n)).find(existsSync);
+const animal2Arq = !MOSTRAR_ANIMAIS ? undefined : ["animal2.png", "animal2.jpg", "animal2.jpeg"].map((n) => join(aqui, n)).find(existsSync);
 const animal2 = animal2Arq ? img(animal2Arq) : null;
 const qr = await QRCode.toString(SITE, { type: "svg", margin: 0, errorCorrectionLevel: "M", color: { dark: "#123d22", light: "#ffffff" } });
 
