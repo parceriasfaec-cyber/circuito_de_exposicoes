@@ -2402,3 +2402,9 @@ button.filtro { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: poi
 .aovivo-ultimos .mun { color: var(--suave); font-size: 0.8rem; }
 @media (max-width: 1100px) { .aovivo { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .aovivo-grade { grid-template-columns: 1fr; } }
+/* celular: sem título nem faixa em cima (só as logos); o cartão já explica */
+@media (max-width: 899px) {
+  .moldura-voto.tipo-inicio .lema { display: none; }
+  .moldura-voto.tipo-inicio .form-voto { margin-top: 6px; }
+}
+.passos-entrada { grid-template-columns: 1fr; }

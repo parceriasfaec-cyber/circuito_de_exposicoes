@@ -16,11 +16,11 @@ export default function Identificacao({ destino, ano }: { destino: "inicio" | "a
         <ol className="passos-entrada">
           <li>
             <span className="passo-icone"><Icone nome="prancheta" tamanho={26} /></span>
-            <span><strong>Avalie</strong> as exposições</span>
+            <span><strong>Avalie</strong> as etapas do Circuito Cearense de Exposição que participou.</span>
           </li>
           <li>
             <span className="passo-icone"><Icone nome="urna" tamanho={26} /></span>
-            <span><strong>Vote</strong> nos 2 municípios que serão contemplados{ano ? ` em ${ano}` : ""}</span>
+            <span><strong>Selecione</strong> as 02 exposições para fazerem parte do Circuito Cearense de Exposição{ano ? ` de ${ano}` : ""}.</span>
           </li>
         </ol>
       )}
