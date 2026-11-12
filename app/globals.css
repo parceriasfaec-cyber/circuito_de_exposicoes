@@ -2657,3 +2657,6 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .admin .painel-grade .ranking-exposicoes .desempate-linha { white-space: normal; }
 /* painel: títulos numa linha só (letra menor), mesma altura nos dois quadros */
 .admin .painel-grade .bloco-titulo { height: 3.5rem; white-space: nowrap; text-overflow: ellipsis; font-size: clamp(0.82rem, 0.95vw, 1.02rem); }
+/* painel: nome da exposição menor no ranking */
+.admin .painel-grade .ranking-exposicoes td:nth-child(2) strong,
+.admin .painel-grade .ranking-exposicoes tr.podio.ouro td:nth-child(2) strong { font-size: 0.8rem; font-weight: 700; }
