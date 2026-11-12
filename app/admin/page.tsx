@@ -202,7 +202,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                           if (!d) return null;
                           return (
                             <div className="desempate-linha">
-                              {d === "total" ? "Empate total: a organização decide" : <>Desempate:<br />pergunta {d.pergunta} ({formatarMedia(d.nota)})</>}
+                              {d === "total" ? "Empate total: a organização decide" : <>Desempate: pergunta {d.pergunta} ({formatarMedia(d.nota)})</>}
                             </div>
                           );
                         })()}

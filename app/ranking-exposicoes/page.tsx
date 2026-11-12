@@ -78,7 +78,7 @@ export default async function RankingExposicoes() {
                         <strong className={medalha ? `media-pill ${medalha}` : undefined}>{formatarMedia(r.media_produtor)}</strong>
                         {d && (
                           <div className="desempate-linha">
-                            {d === "total" ? "Empate total: a organização decide" : <>Desempate:<br />pergunta {d.pergunta} ({formatarMedia(d.nota)})</>}
+                            {d === "total" ? "Empate total: a organização decide" : <>Desempate: pergunta {d.pergunta} ({formatarMedia(d.nota)})</>}
                           </div>
                         )}
                       </td>
