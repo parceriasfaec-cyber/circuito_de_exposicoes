@@ -24,7 +24,9 @@ export type Expositor = {
 type Filtro = "todos" | "presentes" | "faltam";
 export type FiltroAval = "todos" | "avaliou" | "nao";
 
-const avaliou = (e: { total_exposicoes: number; avaliadas: number }) => e.total_exposicoes > 0 && e.avaliadas >= e.total_exposicoes;
+/** Já avaliou alguma exposição ou já votou nos municípios: a presença não pode mais ser desmarcada. */
+const presencaFixa = (e: { avaliadas: number; votou_cidades: boolean }) => e.avaliadas > 0 || e.votou_cidades;
+const avaliou = (e:{ total_exposicoes: number; avaliadas: number }) => e.total_exposicoes > 0 && e.avaliadas >= e.total_exposicoes;
 
 const POR_PAGINA = 20;
 
@@ -88,16 +90,16 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   }
 
   async function desmarcarTodos() {
-    const fixos = expositores.filter((x) => x.presente && x.avaliadas > 0).length;
+    const fixos = expositores.filter((x) => x.presente && presencaFixa(x)).length;
     const tirar = presentes - fixos;
     if (tirar === 0) {
-      setErro("Todos os presentes já avaliaram: a presença deles não pode ser desmarcada.");
+      setErro("Todos os presentes já avaliaram ou votaram nos municípios: a presença deles não pode ser desmarcada.");
       return;
     }
-    if (!confirm(`Tirar a presença de ${tirar} expositor${tirar > 1 ? "es" : ""}?${fixos ? ` ${fixos} já avali${fixos > 1 ? "aram" : "ou"} e continua${fixos > 1 ? "m" : ""} presente${fixos > 1 ? "s" : ""}.` : ""}`)) return;
+    if (!confirm(`Tirar a presença de ${tirar} expositor${tirar > 1 ? "es" : ""}?${fixos ? ` ${fixos} já avali${fixos > 1 ? "aram" : "ou"} ou vot${fixos > 1 ? "aram" : "ou"} nos municípios e continua${fixos > 1 ? "m" : ""} presente${fixos > 1 ? "s" : ""}.` : ""}`)) return;
     const antes = expositores;
     setErro(null);
-    setExpositores((lista) => lista.map((x) => (x.avaliadas > 0 ? x : { ...x, presente: false, hora: null, marcado_em: null })));
+    setExpositores((lista) => lista.map((x) => (presencaFixa(x) ? x : { ...x, presente: false, hora: null, marcado_em: null })));
     try {
       const r = await desmarcarTodasPresencas(cicloId);
       if (!r.ok) throw new Error();
@@ -217,8 +219,8 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                     type="button"
                     className={`pres-acao${e.presente ? " desfazer" : ""}`}
                     onClick={() => alternar(e)}
-                    disabled={salvando.has(e.id) || (e.presente && e.avaliadas > 0)}
-                    title={e.presente ? (e.avaliadas > 0 ? "Já avaliou: a presença não pode ser desmarcada" : "Desfazer presença") : "Marcar presença"}
+                    disabled={salvando.has(e.id) || (e.presente && presencaFixa(e))}
+                    title={e.presente ? (presencaFixa(e) ? (e.avaliadas > 0 ? "Já avaliou: a presença não pode ser desmarcada" : "Já votou nos municípios: a presença não pode ser desmarcada") : "Desfazer presença") : "Marcar presença"}
                     aria-label={`${e.presente ? "Desfazer presença de" : "Marcar presença de"} ${e.nome}`}
                   >
                     <Icone nome={e.presente ? "atualizar" : "usuarioMais"} tamanho={22} />
