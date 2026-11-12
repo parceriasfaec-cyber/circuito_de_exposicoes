@@ -87,7 +87,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
               <p>
                 <strong className="sem-destaque">Apresentação obrigatória:</strong>{" "}
                 {apresentacao ? <>no dia <strong>{diaMes(apresentacao, true)}</strong>, o</> : "na data das apresentações, o"} credenciado deverá
-                explicar (por vídeo e/ou PowerPoint) os motivos pelos quais seu município merece sediar uma etapa do Circuito {ano}.
+                explicar (por vídeo e/ou PowerPoint/PDF) os motivos pelos quais seu município merece sediar uma etapa do Circuito {ano}.
                 Quem não apresentar será <strong className="sem-destaque">eliminado</strong>.
               </p>
             </div>
@@ -102,7 +102,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
               <Icone nome="relogio" tamanho={40} />
               <p>
                 <strong className="sem-destaque">Horário:</strong> início às <strong>11h00</strong>. Chegue com, no mínimo, 30 minutos de
-                antecedência (<strong>10h30</strong>), com o arquivo da apresentação.
+                antecedência (<strong>10h30</strong>), com o arquivo da apresentação (vídeo e/ou PowerPoint/PDF).
               </p>
             </div>
             <div className="cred-item">

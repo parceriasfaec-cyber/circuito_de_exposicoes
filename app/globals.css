@@ -2460,3 +2460,8 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .aovivo-janela-vazio { padding: 20px; margin: 0; }
 /* credenciamento: título das regras no quadro "Fique atento!" */
 .cred-regras-titulo { margin: 4px 0 2px; font-weight: 900; color: #155a2c; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.02em; }
+/* credenciamento: quadro "Fique atento!" mais largo */
+@media (min-width: 900px) {
+  .moldura-voto.larga:has(.cred-grade) { max-width: min(1500px, 96vw); }
+  .cred-grade { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+}
