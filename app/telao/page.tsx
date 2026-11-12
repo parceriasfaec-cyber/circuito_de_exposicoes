@@ -53,7 +53,7 @@ export default async function Telao() {
         </>
       ) : (
         <>
-          <FaixaTitulo>{`Votação das cidades do Circuito ${ano}`}</FaixaTitulo>
+          <FaixaTitulo>{`Votação das exposições do Circuito ${ano}`}</FaixaTitulo>
           {resultado && resultado.votantes > 0 ? (
             <div className="telao-resultado">
               <p style={{ fontSize: "1.3rem", margin: "0 0 12px" }}>

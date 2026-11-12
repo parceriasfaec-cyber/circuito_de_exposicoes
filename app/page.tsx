@@ -46,7 +46,7 @@ export default async function Inicio() {
     <MolduraVoto tipo="inicio">
       {!votacao.aberta ? (
         <Aviso titulo="Nenhuma votação está liberada agora.">
-          <p>A organização libera a avaliação das exposições e a votação das cidades nos momentos certos.</p>
+          <p>A organização libera a avaliação e a votação das exposições nos momentos certos.</p>
           <p>Quando for liberada, leia de novo o QR Code ou atualize esta página.</p>
         </Aviso>
       ) : s && !faltaAvaliar && !faltaVotar ? (
@@ -55,15 +55,15 @@ export default async function Inicio() {
             <Aviso titulo="Está tudo feito. Obrigado!" sucesso>
               <p>
                 {votacao.exposicoes_aberta
-                  ? "Você já avaliou as exposições e já votou nas cidades."
-                  : "Você já votou nas cidades (ou a votação das cidades não é para você)."}
+                  ? "Você já avaliou as exposições e já votou nas exposições de " + ano + "."
+                  : "Você já votou nas exposições (ou essa votação não é para você)."}
               </p>
               <p>Pode fechar esta página.</p>
             </Aviso>
           ) : (
             // Avaliou tudo, mas a votação das cidades ainda não foi liberada: avisa que ainda vai poder votar.
             <Aviso titulo="Avaliação concluída. Obrigado!" sucesso>
-              <p>Agora falta escolher as 2 novas cidades para {ano}, mas essa votação ainda não foi liberada.</p>
+              <p>Agora falta selecionar as 02 exposições de {ano}, mas essa votação ainda não foi liberada.</p>
               <p>Assim que for liberada, leia o QR Code de novo ou atualize esta página para votar.</p>
             </Aviso>
           )}
@@ -82,7 +82,7 @@ export default async function Inicio() {
             </Link>
             <Link href="/votar" className="escolha-voto-opcao">
               <Icone nome="trofeu" tamanho={36} />
-              <strong>Votar nas cidades</strong>
+              <strong>Votar nas exposições</strong>
               <small>Escolha os 2 municípios para o Circuito {ano}.</small>
             </Link>
           </div>

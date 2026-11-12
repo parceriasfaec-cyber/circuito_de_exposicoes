@@ -82,8 +82,8 @@ export default async function ConteudoAvaliacao({ s, ok, cidadesAberta }: { s: {
               <div className={`cartao-cidades${jaVotou.n > 0 ? " feito" : ""}`}>
                 <span className="cartao-cidades-icone" aria-hidden="true">🏆</span>
                 <div className="cartao-cidades-texto">
-                  <strong>Votação das Cidades {ano}</strong>
-                  <span>{jaVotou.n > 0 ? "Você já votou nas cidades. Obrigado!" : "Está liberada! Escolha os 2 municípios que você quer ver sediando exposições."}</span>
+                  <strong>Votação das Exposições {ano}</strong>
+                  <span>{jaVotou.n > 0 ? "Você já votou nas exposições. Obrigado!" : "Está liberada! Selecione as 02 exposições para fazerem parte do Circuito."}</span>
                 </div>
                 {jaVotou.n === 0 && (
                   <Link href="/votar" className="botao">Escolher os 2 municípios →</Link>

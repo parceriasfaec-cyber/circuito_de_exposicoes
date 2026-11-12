@@ -14,9 +14,9 @@ export async function votarCidades(_: EstadoVotoCidades, form: FormData): Promis
   if (!s) redirect("/votar");
 
   const ids = [...new Set(form.getAll("cidade").map(String))].filter((x) => UUID.test(x));
-  if (ids.length !== 2) return { erro: "Escolha exatamente 2 cidades." };
+  if (ids.length !== 2) return { erro: "Escolha exatamente 2 exposições." };
   const votacao = await lerVotacao();
-  if (!votacao.cidades_aberta) return { erro: "A votação das cidades foi encerrada." };
+  if (!votacao.cidades_aberta) return { erro: "A votação das exposições foi encerrada." };
   const motivo = await motivoSemVotoCidades(s.produtorId, votacao);
   if (motivo) return { erro: motivo };
   const ano = await anoCredenciamento();
@@ -26,7 +26,7 @@ export async function votarCidades(_: EstadoVotoCidades, form: FormData): Promis
   } catch (e) {
     const err = e as { code?: string; message?: string };
     if (err.code === "23505") redirect("/votar?ja=1");
-    if (err.message?.includes("fechada")) return { erro: "A votação das cidades foi encerrada." };
+    if (err.message?.includes("fechada")) return { erro: "A votação das exposições foi encerrada." };
     console.error(e);
     return { erro: "Não foi possível salvar o voto. Nada foi gravado. Tente de novo." };
   }

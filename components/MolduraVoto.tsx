@@ -11,11 +11,11 @@ export default async function MolduraVoto({ tipo, children }: { tipo: TipoVoto; 
     inicio: { icone: "prancheta" as const, titulo: "Circuito Cearense de Exposição", lema: (
       <span className="faixa-anuncio">
         <span className="faixa-anuncio-ic"><Icone nome="megafone" tamanho={30} /></span>
-        <span>Avalie as exposições e escolha as <strong>duas cidades</strong> para fazerem parte do <strong>circuito de {ano}.</strong></span>
+        <span>Avalie as exposições e selecione as <strong>02 exposições</strong> para fazerem parte do <strong>Circuito de {ano}.</strong></span>
       </span>
     ) },
     avaliacao: { icone: "prancheta" as const, titulo: "Avaliação das Exposições", lema: "Sua opinião é importante para fortalecer as exposições agropecuárias do Ceará." },
-    cidades: { icone: "trofeu" as const, titulo: `Votação das Cidades ${ano}`, lema: `Escolha os 2 municípios que vão sediar exposições no Circuito ${ano}.` },
+    cidades: { icone: "trofeu" as const, titulo: `Votação das Exposições ${ano}`, lema: `Selecione as 02 exposições para fazerem parte do Circuito Cearense de Exposição de ${ano}.` },
   }[tipo];
   return (
     <PaginaPublica>

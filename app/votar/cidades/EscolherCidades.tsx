@@ -37,7 +37,7 @@ export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
           <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" /></svg>
         </span>
         <div className="cidades-contador-corpo">
-          <span>Municípios selecionados</span>
+          <span>Exposições selecionadas</span>
           <div className="cidades-contador-barra"><span style={{ width: `${(marcadas.length / ESCOLHAS) * 100}%` }} /></div>
         </div>
         <div className="cidades-contador-num">
@@ -46,7 +46,7 @@ export default function EscolherCidades({ cidades }: { cidades: Cidade[] }) {
         </div>
         <div className="cidades-escolhidas-linha">
           {marcadas.length === 0 ? (
-            <span className="cidades-escolhidas-vazio">Toque nos municípios da lista para escolher.</span>
+            <span className="cidades-escolhidas-vazio">Toque nas exposições da lista para escolher.</span>
           ) : (
             marcadas.map((id, i) => {
               const c = porId.get(id);

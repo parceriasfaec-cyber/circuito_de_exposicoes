@@ -81,10 +81,10 @@ export async function podeAvaliarPorPresenca(produtorId: string, votacao: Votaca
  */
 export async function motivoSemVotoCidades(produtorId: string, votacao: Votacao): Promise<string | null> {
   if (votacao.cidades_quem === "avaliaram" && !(await avaliouAlgumaExposicao(produtorId))) {
-    return "A votação das cidades é só para quem fez a avaliação de alguma exposição deste ano.";
+    return "A votação das exposições é só para quem fez a avaliação de alguma exposição deste ano.";
   }
   if (votacao.cidades_so_presentes && !(await estaPresente(produtorId))) {
-    return "A votação das cidades é só para quem teve a presença marcada no evento. Procure a organização.";
+    return "A votação das exposições é só para quem teve a presença marcada no evento. Procure a organização.";
   }
   return null;
 }

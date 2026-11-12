@@ -49,13 +49,13 @@ export default async function ConteudoCidades({ s, ok }: { s: { produtorId: stri
           <p>{motivo}</p>
         </Aviso>
       ) : cidades.length < 2 ? (
-        <Aviso titulo="Ainda não há cidades para votar.">
-          <p>A organização vai liberar as cidades credenciadas em breve.</p>
+        <Aviso titulo="Ainda não há exposições para votar.">
+          <p>A organização vai liberar as exposições em breve.</p>
         </Aviso>
       ) : (
         <>
           <p className="intro-mini">
-            Selecione <strong>2 municípios</strong>. O voto só pode ser feito uma vez.
+            Selecione <strong>2 exposições</strong>. O voto só pode ser feito uma vez.
           </p>
           <EscolherCidades cidades={cidades} />
         </>

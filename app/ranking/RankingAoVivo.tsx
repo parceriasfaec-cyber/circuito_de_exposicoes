@@ -52,13 +52,13 @@ export default function RankingAoVivo({
     <div className="aovivo">
       <section className="aovivo-ranking">
         <header className="aovivo-cab">
-          <h1>Ranking das cidades <span>(Top 10 · tempo real)</span></h1>
+          <h1>Ranking das exposições <span>(Top 10 · tempo real)</span></h1>
           <button type="button" className="aovivo-status" onClick={() => setAtivo((a) => !a)} title={ativo ? "Pausar a atualização" : "Retomar a atualização"}>
             <Icone nome="atualizar" tamanho={18} />
             {ativo ? <>Ativado · próxima atualização: {falta}s</> : "Pausado (clique para retomar)"}
           </button>
         </header>
-        {!aberta && <p className="aovivo-aviso">A votação das cidades está fechada. Os números abaixo são os registrados até agora.</p>}
+        {!aberta && <p className="aovivo-aviso">A votação das exposições está fechada. Os números abaixo são os registrados até agora.</p>}
         {ranking.length === 0 ? (
           <p className="aovivo-vazio">Nenhum município marcado como “Se apresentou” ainda.</p>
         ) : (
@@ -86,7 +86,6 @@ export default function RankingAoVivo({
             })}
           </div>
         )}
-        <p className="aovivo-nota">Empate nos votos: fica na frente a cidade com mais pontos (cada voto vale de 1,0 a 1,9 conforme as exposições de quem votou).</p>
       </section>
 
       <aside className="aovivo-lado">

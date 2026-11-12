@@ -7,7 +7,7 @@ import ConteudoCidades from "./cidades/ConteudoCidades";
 import Identificacao from "./Identificacao";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Votação das Cidades · Circuito Cearense de Exposição" };
+export const metadata = { title: "Votação das Exposições · Circuito Cearense de Exposição" };
 
 /** Link direto da votação das cidades. */
 export default async function Votar({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
@@ -18,7 +18,7 @@ export default async function Votar({ searchParams }: { searchParams: Promise<{ 
   return (
     <MolduraVoto tipo="cidades">
       {!votacao.cidades_aberta ? (
-        <Aviso titulo="A votação das cidades ainda não está liberada.">
+        <Aviso titulo="A votação das exposições ainda não está liberada.">
           <p>Ela é aberta pela organização no dia das apresentações dos municípios.</p>
           <p>Quando for liberada, leia de novo o QR Code ou atualize esta página.</p>
         </Aviso>
