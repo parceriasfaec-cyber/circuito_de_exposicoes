@@ -231,7 +231,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
       </div>
 
       <section className="bloco">
-        <h2 className="bloco-titulo"><Icone nome="checkCirculo" tamanho={22} /> Progresso por Exposição</h2>
+        <h2 className="bloco-titulo"><Icone nome="checkCirculo" tamanho={22} /> Progresso das Avaliações por Etapas do Circuito Cearense de Exposição {ciclo?.ano ?? ""}</h2>
         {progresso.length === 0 ? (
           <p className="suave">Nenhuma exposição neste ciclo.</p>
         ) : (
