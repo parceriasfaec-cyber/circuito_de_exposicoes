@@ -2543,3 +2543,7 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .aovivo-medidor { width: 170px; }
 .aovivo-quorum > span { font-size: 0.82rem; }
 .aovivo-quorum { padding-bottom: 12px; }
+/* credenciados: "Enviado em" e e-mail menores, numa linha só */
+.tabela-cred .cred-enviado { font-size: 0.8rem; white-space: nowrap; }
+.tabela-cred .cred-linha:has(a[href^="mailto:"]) { font-size: 0.8rem; white-space: nowrap; }
+.tabela-cred .cred-linha a[href^="mailto:"] { overflow-wrap: normal; }
