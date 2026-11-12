@@ -7,6 +7,10 @@ import RankingAoVivo from "./RankingAoVivo";
 
 export const dynamic = "force-dynamic";
 
+/** Esconde o nome: cada palavra mostra só a primeira e a última letra (ex.: "Adriel Mourao" -> "A****l M****o"). */
+const esconderNome = (nome: string) =>
+  nome.split(" ").filter(Boolean).map((p) => (p.length <= 2 ? p[0] + "*" : p[0] + "*".repeat(p.length - 2) + p[p.length - 1])).join(" ");
+
 /** Tela separada do ranking das cidades em tempo real (para projetar): top 10, linha de corte e participação. */
 export default async function RankingTempoReal() {
   if (!(await ehAdmin())) redirect("/admin");
@@ -39,7 +43,7 @@ export default async function RankingTempoReal() {
         votantes={votantes}
         totalVotos={total_votos}
         elegiveis={elegiveis}
-        listaVotantes={listaVotantes}
+        listaVotantes={listaVotantes.map((v) => ({ ...v, nome: esconderNome(v.nome), municipio: "" }))}
       />
     </PaginaPublica>
   );
