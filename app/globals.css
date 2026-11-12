@@ -2619,3 +2619,8 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .admin .painel-grade .ranking-exposicoes tr.podio.ouro td:nth-child(2) strong { font-size: 1em; }
 .admin .painel-grade .ranking-exposicoes td { padding-top: 7px; padding-bottom: 7px; }
 .part-legenda li { color: #123d22; font-weight: 700; }
+/* participantes: três quadros no topo (total, presentes, avaliaram tudo) */
+.part-topo.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.part-topo.tres div { padding: 8px 10px; gap: 8px; }
+.part-topo.tres strong { font-size: 1.45rem; }
+.part-topo.tres small { font-size: 0.76rem; line-height: 1.2; }

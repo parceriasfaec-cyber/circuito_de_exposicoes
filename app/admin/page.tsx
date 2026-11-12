@@ -78,6 +78,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
               group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`;
 
+  const [{ presentes }] = await db<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`;
   const agora = new Date();
 
   return (
@@ -212,7 +213,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="coluna-graficos">
           <section className="bloco">
             <h2 className="bloco-titulo"><Icone nome="usuarios" tamanho={22} /> Participantes por Etapa do Circuito</h2>
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} linha={40} largura={430} />
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} presentes={presentes} linha={40} largura={430} />
           </section>
         </div>
       </div>

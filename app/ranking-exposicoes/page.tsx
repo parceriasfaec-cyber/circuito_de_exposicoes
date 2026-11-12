@@ -37,6 +37,7 @@ export default async function RankingExposicoes() {
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
               group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`;
 
+  const [{ presentes }] = await db<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`;
   // Mesma regra do painel: no empate de média, mostra a pergunta que decidiu (2, depois 5, depois 9).
   const desempate = (r: Ranking) => {
     if (r.media_produtor === null) return null;
@@ -101,7 +102,7 @@ export default async function RankingExposicoes() {
           <h2 className="telao-expo-titulo"><span className="telao-expo-ic"><Icone nome="usuarios" tamanho={30} /></span>
             Participantes por Etapa do Circuito</h2>
           <div className="telao-expo-corpo">
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} linha={52} />
+            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} presentes={presentes} linha={52} />
           </div>
         </section>
       </div>

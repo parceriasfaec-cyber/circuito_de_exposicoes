@@ -10,16 +10,23 @@ const curto = nomeCurto;
  */
 /** `linha`: altura de cada exposição no gráfico (maior = barras mais espaçadas, usado no telão). */
 /** `largura`: largura do desenho (menor = letras e barras maiores num quadro estreito). */
-export default function Participacao({ progresso, produtores, completos, linha = 34, largura = 560 }: { progresso: Progresso[]; produtores: number; completos: number; linha?: number; largura?: number }) {
+/** `presentes`: expositores com a presença marcada no evento (sem valor, o quadro não aparece). */
+export default function Participacao({ progresso, produtores, completos, presentes, linha = 34, largura = 560 }: { progresso: Progresso[]; produtores: number; completos: number; presentes?: number; linha?: number; largura?: number }) {
   const lista = [...progresso].sort((a, b) => b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
   const maior = Math.max(1, ...lista.map((p) => p.na_lista));
   return (
     <div className="part">
-      <div className="part-topo">
+      <div className={`part-topo${presentes !== undefined ? " tres" : ""}`}>
         <div>
           <span className="part-topo-icone"><Icone nome="usuarios" tamanho={30} /></span>
           <span><strong>{produtores}</strong><small>Total de Participantes</small></span>
         </div>
+        {presentes !== undefined && (
+          <div>
+            <span className="part-topo-icone"><Icone nome="escudo" tamanho={28} /></span>
+            <span><strong>{presentes}</strong><small>Presentes</small></span>
+          </div>
+        )}
         <div>
           <span className="part-topo-icone redondo"><Icone nome="check" tamanho={22} /></span>
           <span><strong>{completos}</strong><small>já avaliaram tudo</small></span>
