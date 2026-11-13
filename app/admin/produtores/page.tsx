@@ -50,6 +50,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
   const url = (n: number, total: number | null = totalEscolhido, exp: string | null = expEscolhida) =>
     `/admin/produtores?${new URLSearchParams({ ...(busca ? { q: busca } : {}), ...(params.ciclo ? { ciclo: params.ciclo } : {}), ...(exp ? { exp } : {}), ...(total !== null ? { total: String(total) } : {}), ...(n > 1 ? { pagina: String(n) } : {}) })}`;
 
+  const maiorTotal = Math.max(1, ...totais.map((t) => porTotal.get(t) ?? 0));
   return (
     <>
       <CabecalhoAdmin titulo="Expositores" subtitulo="Os expositores são os mesmos de um ano para o outro. Em cada ciclo, marque as exposições em que cada um esteve." ciclos={ciclos} ciclo={ciclo} />
@@ -87,12 +88,18 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         ))}
       </nav>
 
-      <nav className="filtros prod-filtro" aria-label="Filtrar pelo total de exposições">
+      <nav className="filtros prod-filtro prod-filtro-colunas" aria-label="Filtrar pelo total de exposições">
         <span className="prod-filtro-rotulo"><Icone nome="trofeu" tamanho={18} /> Participantes por Nº de Exposições:</span>
-        <Link href={url(1, null)} className={`filtro${totalEscolhido === null ? " ativo" : ""}`}>Todos <span className="filtro-num">{naExposicao.length}</span></Link>
+        <Link href={url(1, null)} className={`filtro filtro-col${totalEscolhido === null ? " ativo" : ""}`}>
+          <span className="filtro-col-num">{naExposicao.length}</span>
+          <span className="filtro-col-barra" style={{ height: 44 }} />
+          <span className="filtro-col-rot">Todos</span>
+        </Link>
         {totais.map((t) => (
-          <Link key={t} href={url(1, t)} className={`filtro${totalEscolhido === t ? " ativo" : ""}`} title={`Expositores com ${t} ${t === 1 ? "exposição" : "exposições"}`}>
-            {t === 0 ? "Nenhuma" : t} <span className="filtro-num">{porTotal.get(t)}</span>
+          <Link key={t} href={url(1, t)} className={`filtro filtro-col${totalEscolhido === t ? " ativo" : ""}`} title={`Expositores com ${t} ${t === 1 ? "exposição" : "exposições"}`}>
+            <span className="filtro-col-num">{porTotal.get(t)}</span>
+            <span className="filtro-col-barra" style={{ height: Math.max(3, Math.round(((porTotal.get(t) ?? 0) / maiorTotal) * 44)) }} />
+            <span className="filtro-col-rot">{t === 0 ? "Nenhuma" : t}</span>
           </Link>
         ))}
       </nav>
