@@ -9,7 +9,7 @@ import { ehAdmin } from "@/lib/sessao";
 import { formatarMedia } from "@/lib/escala";
 import { encerrarVotacao, liberarVotacao } from "./actions";
 import FormConfirmar from "./FormConfirmar";
-import Participacao, { type Progresso } from "@/components/ParticipacaoExposicoes";
+import { type Progresso } from "@/components/ParticipacaoExposicoes";
 import Login from "./Login";
 
 export const dynamic = "force-dynamic";
@@ -213,7 +213,33 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="coluna-graficos">
           <section className="bloco">
             <h2 className="bloco-titulo"><Icone nome="usuarios" tamanho={22} /> Participantes por Etapa do Circuito</h2>
-            <Participacao progresso={progresso} produtores={t.produtores} completos={t.completos} presentes={presentes} linha={44} largura={520} />
+            <div className="tx-kpis">
+              <div><Icone nome="usuarios" tamanho={20} /><strong>{t.produtores}</strong><small>Participantes</small></div>
+              <div><Icone nome="escudo" tamanho={20} /><strong>{presentes}</strong><small>Presentes</small></div>
+              <div><Icone nome="checkCirculo" tamanho={20} /><strong>{t.completos}</strong><small>Avaliaram tudo</small></div>
+            </div>
+            <ul className="tx-part">
+              {(() => {
+                const ordem = [...progresso].sort((a, b) => b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
+                const maior = Math.max(1, ...ordem.map((x) => x.na_lista));
+                return ordem.map((p) => (
+                  <li key={p.nome}>
+                    <div className="tx-part-linha">
+                      <strong>{curto(p.nome).replace(/\s*\(.*\)\s*$/, "")}</strong>
+                      <span><b>{p.responderam}</b> de {p.na_lista} avaliaram</span>
+                    </div>
+                    <div className="tx-part-barra">
+                      <span className="total" style={{ width: `${(p.na_lista / maior) * 100}%` }} />
+                      <span className="aval" style={{ width: `${(p.responderam / maior) * 100}%` }} />
+                    </div>
+                  </li>
+                ));
+              })()}
+            </ul>
+            <ul className="tx-legenda">
+              <li><span className="ponto total" /> Participantes</li>
+              <li><span className="ponto aval" /> Avaliaram</li>
+            </ul>
           </section>
         </div>
       </div>

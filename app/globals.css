@@ -2890,3 +2890,13 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
   .form-credenciamento .dica { margin: 10px 0 0; }
   .form-credenciamento .botao.cheio { margin-top: 12px; }
 }
+
+/* ---------- Painel: "Participantes por Etapa do Circuito" no estilo do telão, em medidas fixas ---------- */
+.coluna-graficos .tx-kpis { gap: 10px; margin-bottom: 18px; }
+.coluna-graficos .tx-kpis div { padding: 14px 6px; }
+.coluna-graficos .tx-kpis strong { font-size: 2rem; }
+.coluna-graficos .tx-kpis small { font-size: 0.85rem; }
+.coluna-graficos .tx-part { gap: 14px; }
+.coluna-graficos .tx-part-linha { font-size: 0.95rem; }
+.coluna-graficos .tx-part-barra { height: 10px; margin-top: 6px; }
+.coluna-graficos .tx-legenda { margin-top: 18px; font-size: 0.85rem; }
