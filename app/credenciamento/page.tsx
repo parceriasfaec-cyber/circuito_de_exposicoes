@@ -87,16 +87,16 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
               <Icone nome="calendario" tamanho={40} />
               <p>
                 <strong className="sem-destaque">Apresentação obrigatória:</strong>{" "}
-                {apresentacao ? <>no dia <strong>{diaMes(apresentacao, true)}</strong>, o</> : "na data das apresentações, o"} credenciado deverá
-                explicar (por vídeo e/ou PowerPoint/PDF) os motivos pelos quais seu município merece sediar uma etapa do Circuito {ano}.
-                Quem não apresentar será <strong className="sem-destaque">eliminado</strong>.
+                {apresentacao ? <>no dia <strong>{diaMes(apresentacao, true)}</strong>, o</> : "na data das apresentações, o"} representante credenciado deverá
+                fazer a defesa presencial (por vídeo e/ou PowerPoint/PDF) dos motivos pelos quais seu município merece sediar uma etapa do Circuito {ano}.
+                Caso o representante não compareça ou não faça a defesa presencial, o município será <strong className="sem-destaque">eliminado</strong>.
               </p>
             </div>
             <div className="cred-item">
               <IconePlay />
               <p>
-                <strong className="sem-destaque">Tempo e ordem:</strong> no máximo <strong>{DURACAO_APRESENTACAO_MIN} min</strong> por credenciado,
-                seguindo a ordem alfabética dos municípios.
+                <strong className="sem-destaque">Tempo e ordem:</strong> cada representante credenciado terá, no máximo, <strong>{DURACAO_APRESENTACAO_MIN} min</strong> para a defesa do seu município,
+                seguindo a ordem alfabética dos municípios inscritos.
               </p>
             </div>
             <div className="cred-item">
@@ -109,15 +109,15 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             <div className="cred-item">
               <Icone nome="trofeu" tamanho={40} />
               <p>
-                <strong className="sem-destaque">Votação:</strong> ao final, votam os expositores presentes que participaram da avaliação das
-                etapas do Circuito {ano - 1}. Serão contemplados os <strong className="sem-destaque">02 municípios mais votados</strong>.
+                <strong className="sem-destaque">Votação:</strong> ao final das defesas, votam os expositores presentes que participaram da avaliação das
+                etapas do Circuito {ano - 1}. O expositor votará somente em relação às etapas das quais participou. Serão contemplados os <strong className="sem-destaque">02 municípios mais votados</strong>.
               </p>
             </div>
             <div className="cred-item">
               <Icone nome="documento" tamanho={40} />
               <p>
-                <strong className="sem-destaque">Confirmação:</strong> só após a ciência e assinatura das contrapartidas do Termo de Adesão. Se
-                houver descumprimento, o município é desclassificado e são chamados os seguintes na ordem de votação.
+                <strong className="sem-destaque">Confirmação:</strong> os dois municípios escolhidos somente terão sua participação confirmada após a ciência e assinatura das contrapartidas do Termo de Adesão. Se
+                houver descumprimento, o município é desclassificado e será chamado o seguinte na ordem de votação.
               </p>
             </div>
             </div>

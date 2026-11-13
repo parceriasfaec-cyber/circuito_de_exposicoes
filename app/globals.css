@@ -2876,3 +2876,17 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 /* Ranking das avaliações (telão): município e exposição maiores no pódio */
 .tx-podio-cidade { font-size: clamp(0.8rem, 1.8vh, 1.15rem); font-weight: 700; color: #3d4a3d; }
 .tx-podio-nome { font-size: clamp(1.1rem, 2.8vh, 1.75rem); line-height: 1.15; }
+
+/* Credenciamento (computador): o formulário ocupa a mesma altura do quadro "Fique atento!"; campos mais altos e o espaço que sobra distribuído por igual */
+@media (min-width: 861px) {
+  .cred-grade { align-items: stretch; }
+  .cred-principal { display: flex; flex-direction: column; }
+  .cred-principal > .form-credenciamento { flex: 1; display: flex; flex-direction: column; }
+  .form-credenciamento .cred-campos { flex: 1; align-content: space-between; row-gap: 10px; }
+  .form-credenciamento .cred-campos .periodo { margin-top: 0; }
+  .form-credenciamento input[type="text"], .form-credenciamento input[type="email"],
+  .form-credenciamento input[type="tel"], .form-credenciamento select { padding-top: 15px; padding-bottom: 15px; font-size: 1.05rem; }
+  .form-credenciamento input[type="date"] { padding-top: 15px; padding-bottom: 15px; }
+  .form-credenciamento .dica { margin: 10px 0 0; }
+  .form-credenciamento .botao.cheio { margin-top: 12px; }
+}
