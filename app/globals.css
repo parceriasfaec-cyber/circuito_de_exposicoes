@@ -2929,3 +2929,11 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .prod-tabela tbody tr:nth-child(even) td { background: #fbfdfa; }
 .prod-tabela tbody tr:hover td { background: #f1f8ee; }
 .paginas a, .paginas span { display: inline-grid; place-items: center; }
+
+/* Ajuste de largura: a coluna de ações (ver, editar, excluir) precisa caber sem cortar */
+.prod-tabela th, .prod-tabela td { padding-left: 8px; padding-right: 8px; }
+.prod-tabela td.c-acoes, .prod-tabela th:last-child { width: 1%; white-space: nowrap; }
+.prod-tabela th.centro:nth-child(5) { width: 90px; white-space: normal; line-height: 1.2; }
+.prod-tabela td.c-municipio { white-space: nowrap; }
+.prod-acoes { gap: 6px; }
+.prod-quadro .botao-detalhes.so-icone { width: 36px; height: 36px; border-radius: 10px; }

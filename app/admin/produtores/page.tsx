@@ -137,7 +137,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                       </div>
                     </div>
                   </td>
-                  <td className="c-municipio">{l.municipio}</td>
+                  <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : l.municipio}</td>
                   <td className="c-exposicoes">
                     {exps.length > 0 ? (
                       <div className="prod-chips">{exps.map((e, i) => <span key={i} className="prod-chip">{e}</span>)}</div>
