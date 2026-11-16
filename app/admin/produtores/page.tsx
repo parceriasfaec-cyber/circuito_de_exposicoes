@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
+import ChipsExposicoes from "@/components/ChipsExposicoes";
 import Icone from "@/components/Icone";
 import FormConfirmar from "@/app/admin/FormConfirmar";
 import { excluirProdutor } from "@/app/admin/cadastros-actions";
@@ -136,7 +137,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                   <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : <span className="prod-mun"><Icone nome="local" tamanho={18} /> {l.municipio}</span>}</td>
                   <td className="c-exposicoes">
                     {exps.length > 0 ? (
-                      <div className="prod-chips">{exps.slice(0, 3).map((e, i) => <span key={i} className="prod-chip">{e}</span>)}{exps.length > 3 && <span className="prod-mais-chip" title={exps.slice(3).join(", ")}>+{exps.length - 3}</span>}</div>
+                      <ChipsExposicoes exposicoes={exps} />
                     ) : <span className="suave">nenhuma neste ciclo</span>}
                   </td>
                   <td className="c-acoes">
