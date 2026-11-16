@@ -3016,15 +3016,18 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .prod-avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #e1f0d8; color: #2a8a3b; }
 .prod-total { min-width: 28px; height: 26px; font-size: 0.85rem; border-radius: 7px; cursor: help; }
 .prod-status { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border-radius: 999px; font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
-.prod-status.ok { background: #e1f0d8; color: #1d5e2c; }
+.prod-status.concl { background: #e1f0d8; color: #1d5e2c; }
 .prod-status.pend { background: #fde8d6; color: #c25a0a; }
 .prod-status.nao { background: #eef0ee; color: #666; }
 .prod-presenca { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.88rem; white-space: nowrap; }
-.prod-presenca.ok { color: #1d5e2c; }
+.prod-presenca.sim { color: #1d5e2c; }
 .prod-presenca.ausente { color: #666; }
 .prod-legenda { display: inline-flex; gap: 16px; align-items: center; padding: 6px 14px; border: 1px solid #edf1ea; border-radius: 10px; font-size: 0.85rem; color: #444; }
 .prod-legenda .ponto { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
-.prod-legenda .ponto.ok { background: #1d8a3b; } .prod-legenda .ponto.pend { background: #f07d1a; } .prod-legenda .ponto.nao { background: #777; }
+.prod-legenda .ponto.concl { background: #1d8a3b; } .prod-legenda .ponto.pend { background: #f07d1a; } .prod-legenda .ponto.nao { background: #777; }
 .prod-quadro .rodape-tabela { justify-content: space-between; gap: 16px; }
 .prod-quadro .botao-detalhes.so-icone { width: 36px; height: 28px; }
 .prod-quadro .botao-detalhes.so-icone { background: #fff; border: 1px solid #cfe5c8; color: #1d5e2c; }
+
+/* Presença sem caixa: só ícone e texto */
+.prod-presenca { background: none; border: 0; padding: 0; box-shadow: none; margin: 0; }

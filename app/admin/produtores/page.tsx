@@ -113,10 +113,9 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         <table className="tabela-org prod-tabela">
           <thead>
             <tr>
-              <th>ID</th>
               <th aria-label="Foto" />
               <th>Expositor</th>
-              <th>Município</th>
+              <th>ID</th>
               <th className="centro">Exposições</th>
               <th>Avaliação</th>
               <th>Votação Municípios</th>
@@ -126,33 +125,32 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={9} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
+              <tr><td colSpan={8} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
             )}
             {visiveis.map((l) => {
               const exps = l.exposicoes ?? [];
               const concluida = exps.length > 0 && l.avaliadas >= exps.length;
               return (
                 <tr key={l.id}>
-                  <td className="c-id"><span className="prod-id">{l.codigo}</span></td>
                   <td className="c-foto"><span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={18} /></span></td>
                   <td className="c-produtor"><span className="nome">{l.nome}</span></td>
-                  <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : <span className="prod-mun"><Icone nome="local" tamanho={16} /> {l.municipio}</span>}</td>
+                  <td className="c-id"><span className="prod-id">{l.codigo}</span></td>
                   <td className="c-exposicoes centro">
                     <span className={`prod-total${exps.length === 0 ? " zero" : ""}`} title={exps.length > 0 ? exps.join(", ") : "Nenhuma neste ciclo"}>{exps.length}</span>
                   </td>
                   <td>
                     {exps.length === 0 ? <span className="suave">—</span> : concluida
-                      ? <span className="prod-status ok"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
+                      ? <span className="prod-status concl"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
                       : <span className="prod-status pend"><Icone nome="relogio" tamanho={18} /> Pendente</span>}
                   </td>
                   <td>
                     {l.votou_cidades
-                      ? <span className="prod-status ok"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
+                      ? <span className="prod-status concl"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
                       : <span className="prod-status nao"><Icone nome="prancheta" tamanho={18} /> Não iniciada</span>}
                   </td>
                   <td>
                     {l.presente
-                      ? <span className="prod-presenca ok"><Icone nome="checkCirculo" tamanho={20} /> Presente</span>
+                      ? <span className="prod-presenca sim"><Icone nome="checkCirculo" tamanho={20} /> Presente</span>
                       : <span className="prod-presenca ausente"><Icone nome="relogio" tamanho={20} /> Ausente</span>}
                   </td>
                   <td className="c-acoes">
@@ -169,7 +167,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
 
         <div className="rodape-tabela">
           <span className="prod-legenda">
-            <span><i className="ponto ok" /> Concluída</span>
+            <span><i className="ponto concl" /> Concluída</span>
             <span><i className="ponto pend" /> Pendente</span>
             <span><i className="ponto nao" /> Não iniciada</span>
           </span>
