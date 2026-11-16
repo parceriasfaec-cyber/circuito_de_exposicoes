@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
+import ModoEmbutido from "@/components/ModoEmbutido";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
@@ -46,6 +47,7 @@ export default async function EditarProdutor({ params, searchParams }: { params:
 
   return (
     <>
+      <ModoEmbutido salvo={!!ok} />
       <CabecalhoAdmin titulo={novo ? "Novo expositor" : dados.nome} subtitulo={novo ? "Cadastre um participante da lista de votação." : `ID ${dados.codigo} · Edite os dados e as exposições em que o expositor participou.`} ciclos={ciclos} ciclo={ciclo} />
       <div className="barra">
         {daPresenca

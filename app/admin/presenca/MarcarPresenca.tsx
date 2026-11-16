@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
@@ -34,6 +35,22 @@ const POR_PAGINA = 20;
 export default function MarcarPresenca({ cicloId, expositores: doServidor, avalInicial = "todos" }: { cicloId: string; expositores: Expositor[]; avalInicial?: FiltroAval }) {
   // Cópia local: a linha, o contador e os filtros mudam na hora, sem recarregar a página.
   const [expositores, setExpositores] = useState(doServidor);
+  const router = useRouter();
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  // Atualiza a lista com o que veio do servidor (depois de salvar o cadastro na janela).
+  useEffect(() => { setExpositores(doServidor); }, [doServidor]);
+  // A janela de edição avisa quando o cadastro é salvo: fecha e recarrega os dados, mantendo a busca.
+  useEffect(() => {
+    function aoReceber(ev: MessageEvent) {
+      if (ev.origin !== window.location.origin || ev.data?.tipo !== "produtor-salvo") return;
+      setEditandoId(null);
+      router.refresh();
+    }
+    function aoTecla(ev: KeyboardEvent) { if (ev.key === "Escape") setEditandoId(null); }
+    window.addEventListener("message", aoReceber);
+    window.addEventListener("keydown", aoTecla);
+    return () => { window.removeEventListener("message", aoReceber); window.removeEventListener("keydown", aoTecla); };
+  }, [router]);
   useEffect(() => setExpositores(doServidor), [doServidor]);
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
@@ -236,7 +253,8 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                   <a
                     className="pres-acao editar"
                     href={`/admin/produtores/${e.id}?ciclo=${cicloId}&voltar=presenca`}
-                    title="Editar cadastro (depois, é só clicar em Voltar para Presença)"
+                    onClick={(ev) => { if (ev.ctrlKey || ev.metaKey || ev.shiftKey) return; ev.preventDefault(); setEditandoId(e.id); }}
+                    title="Editar cadastro (abre aqui mesmo)"
                     aria-label={`Editar cadastro de ${e.nome}`}
                   >
                     <Icone nome="lapis" tamanho={20} />
@@ -249,6 +267,15 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
       </div>
 
       <Paginacao pagina={atual} porPagina={POR_PAGINA} total={visiveis.length} aoMudar={setPagina} rotulo="Páginas da presença" />
+
+      {editandoId && (
+        <div className="modal-edicao" role="dialog" aria-modal="true" aria-label="Editar expositor" onClick={() => setEditandoId(null)}>
+          <div className="modal-edicao-caixa" onClick={(ev) => ev.stopPropagation()}>
+            <button type="button" className="modal-edicao-fechar" onClick={() => setEditandoId(null)} aria-label="Fechar">× Fechar</button>
+            <iframe className="modal-edicao-quadro" title="Editar expositor" src={`/admin/produtores/${editandoId}?ciclo=${cicloId}&voltar=presenca`} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
