@@ -3000,3 +3000,8 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .prod-mais-chip:hover { background: #17502a; }
 .prod-chips.aberto { flex-wrap: wrap; }
 .prod-chips.aberto .prod-chip { white-space: nowrap; }
+
+/* Logo ao lado do nome na lista de exposições */
+.exp-linha { display: flex; align-items: center; gap: 14px; }
+.exp-logo { flex: none; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #eef4ea; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(29, 94, 44, 0.25); }
+.exp-logo.sem { display: grid; place-items: center; color: var(--verde-escuro); }
