@@ -3026,3 +3026,14 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .pres-txt.sim svg { color: #12873a; }
 .pres-txt.ausente { color: #d93025; }
 .pres-txt.ausente svg { color: #d93025; }
+
+/* Telão: botão do PDF e impressão em A4 horizontal, só com o cartaz */
+.telao-pdf { position: fixed; top: 12px; right: 12px; z-index: 20; }
+@media print {
+  html:has(.telao) { font-size: 16px !important; }
+  html:has(.telao), body:has(.telao) { background: transparent !important; }
+  body:has(.telao) .topo-claro { display: none !important; }
+  body:has(.telao) .pagina { min-height: 100vh; height: 100vh; overflow: hidden; }
+  body:has(.telao) .conteudo { padding: 0 !important; }
+  body:has(.telao) .telao { height: 100vh; justify-content: center; }
+}

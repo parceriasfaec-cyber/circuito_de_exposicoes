@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import BotaoPdfTelao from "@/components/BotaoPdfTelao";
 import Icone from "@/components/Icone";
 import { FaixaTitulo, LogoCircuito } from "@/components/Marca";
 import PaginaPublica from "@/components/PaginaPublica";
@@ -29,6 +30,7 @@ export default async function Telao() {
   return (
     <PaginaPublica>
     <div className="telao">
+      <BotaoPdfTelao />
       <LogoCircuito />
       {votacao.aberta ? (
         <>
