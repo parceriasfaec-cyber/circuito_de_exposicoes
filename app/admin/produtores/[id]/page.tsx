@@ -10,10 +10,11 @@ import FormProdutor from "./FormProdutor";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditarProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string; juntado?: string; ok?: string }> }) {
+export default async function EditarProdutor({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; ciclo?: string; juntado?: string; ok?: string; voltar?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const { id } = await params;
-  const { erro, ciclo: cicloParam, juntado, ok } = await searchParams;
+  const { erro, ciclo: cicloParam, juntado, ok, voltar } = await searchParams;
+  const daPresenca = voltar === "presenca";
   const { ciclo, ciclos } = await cicloEscolhido(cicloParam);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
   const novo = id === "novo";
@@ -47,7 +48,9 @@ export default async function EditarProdutor({ params, searchParams }: { params:
     <>
       <CabecalhoAdmin titulo={novo ? "Novo expositor" : dados.nome} subtitulo={novo ? "Cadastre um participante da lista de votação." : `ID ${dados.codigo} · Edite os dados e as exposições em que o expositor participou.`} ciclos={ciclos} ciclo={ciclo} />
       <div className="barra">
-        <Link href={`/admin/produtores?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Expositores</Link>
+        {daPresenca
+          ? <Link href={`/admin/presenca?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Presença</Link>
+          : <Link href={`/admin/produtores?ciclo=${cid}`} className="acao-link"><Icone nome="voltar" tamanho={18} /> Voltar para Expositores</Link>}
         {!novo && <Link href={`/admin/avaliacoes/${id}?ciclo=${cid}`} className="acao-link"><Icone nome="olho" tamanho={18} /> Ver avaliação</Link>}
       </div>
 
@@ -56,7 +59,7 @@ export default async function EditarProdutor({ params, searchParams }: { params:
       {ok && <div className="ok">Alterações salvas.</div>}
       {juntado && <div className="ok">Cadastros juntados. As exposições dos dois estão marcadas abaixo.</div>}
 
-      <FormProdutor key={ok ?? "inicio"} dados={dados} exposicoes={exposicoes} cicloId={cid} cicloNome={ciclo?.nome ?? ""} />
+      <FormProdutor key={ok ?? "inicio"} dados={dados} exposicoes={exposicoes} cicloId={cid} cicloNome={ciclo?.nome ?? ""} voltar={daPresenca ? "presenca" : ""} />
 
       {!novo && (
         <section className="bloco" style={{ paddingTop: 14 }}>

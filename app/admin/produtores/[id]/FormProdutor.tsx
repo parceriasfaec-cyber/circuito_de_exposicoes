@@ -22,7 +22,7 @@ const ATIVIDADES = [
   "Avicultura", "Suinocultura", "Apicultura", "Agricultura familiar", "Fruticultura",
 ];
 
-export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: { dados: Dados; exposicoes: { id: string; nome: string }[]; cicloId: string; cicloNome: string }) {
+export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome, voltar = "" }: { dados: Dados; exposicoes: { id: string; nome: string }[]; cicloId: string; cicloNome: string; voltar?: string }) {
   const [estado, acao, salvando] = useActionState<EstadoForm, FormData>(salvarProdutor, {});
   const [tipo, setTipo] = useState(dados.tipo_documento);
   const novo = !dados.id;
@@ -36,6 +36,7 @@ export default function FormProdutor({ dados, exposicoes, cicloId, cicloNome }: 
     <form action={acao} className="bloco" style={{ paddingTop: 6 }} onReset={() => setTipo(dados.tipo_documento)}>
       <input type="hidden" name="id" value={dados.id} />
       <input type="hidden" name="ciclo_id" value={cicloId} />
+      <input type="hidden" name="voltar" value={voltar} />
       <div className="form-grade">
         <div style={{ gridColumn: "1 / -1" }}>
           <label htmlFor="nome">Nome completo</label>

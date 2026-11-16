@@ -175,7 +175,8 @@ export async function salvarProdutor(_: EstadoForm, form: FormData): Promise<Est
   }
   revalidatePath("/admin");
   // Continua no registro que está sendo editado.
-  redirect(`/admin/produtores/${salvoId}?ok=${Date.now()}&ciclo=${cicloProd}`);
+  const voltarPara = texto(form, "voltar") === "presenca" ? "&voltar=presenca" : "";
+  redirect(`/admin/produtores/${salvoId}?ok=${Date.now()}&ciclo=${cicloProd}${voltarPara}`);
 }
 
 export async function excluirProdutor(form: FormData) {

@@ -235,10 +235,8 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                   </a>
                   <a
                     className="pres-acao editar"
-                    href={`/admin/produtores/${e.id}?ciclo=${cicloId}`}
-                    target="_blank"
-                    rel="noopener"
-                    title="Editar cadastro (abre em outra aba)"
+                    href={`/admin/produtores/${e.id}?ciclo=${cicloId}&voltar=presenca`}
+                    title="Editar cadastro (depois, é só clicar em Voltar para Presença)"
                     aria-label={`Editar cadastro de ${e.nome}`}
                   >
                     <Icone nome="lapis" tamanho={20} />
