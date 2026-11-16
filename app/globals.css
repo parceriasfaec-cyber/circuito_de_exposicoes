@@ -2968,3 +2968,30 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .prod-quadro .paginas a, .prod-quadro .paginas span { width: 30px; height: 30px; border-radius: 7px; border: 1px solid #dfe5dc; background: #fff; color: #555; font-weight: 700; }
 .prod-quadro .paginas .atual { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
 @media (max-width: 760px) { .prod-busca { min-width: 0; flex: 1 1 100%; } .prod-titulo { flex: 1 1 100%; } }
+
+/* Segunda versão do modelo: ícones no cabeçalho, município com pino, "+N", ações coloridas */
+.prod-th { display: inline-flex; align-items: center; gap: 8px; }
+.prod-tabela thead th .prod-th svg { color: var(--verde-escuro); }
+.prod-mun { display: inline-flex; align-items: center; gap: 8px; }
+.prod-mun svg { color: #2c5e34; }
+.prod-mais-chip { background: var(--verde-escuro); color: #fff; font-weight: 800; font-size: 0.8rem; padding: 3px 9px; border-radius: 999px; cursor: help; }
+.prod-quadro .botao-detalhes.so-icone { width: 40px; height: 32px; border-radius: 8px; }
+.prod-quadro .botao-detalhes.so-icone:not(.verde):not(.perigo) { background: #fff; border: 1px solid #cfe5c8; color: #3f9a3a; }
+.prod-quadro .botao-detalhes.so-icone:not(.verde):not(.perigo):hover { background: #f1f8ee; }
+.prod-quadro .botao-detalhes.perigo { background: #fff; border: 1px solid #e7a59b; color: #c0392b; }
+.prod-quadro .botao-detalhes.perigo:hover { background: #fdeeeb; }
+.prod-quadro .paginas a, .prod-quadro .paginas span { border-radius: 50%; width: 34px; height: 34px; }
+
+/* Filtros recolhidos por padrão para a tela ficar limpa */
+.prod-filtros-caixa { margin: 0 0 12px; }
+.prod-filtros-caixa > summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; padding: 7px 14px; border: 1px solid #cfe5c8; border-radius: 999px; background: #fff; color: var(--verde-escuro); font-weight: 700; font-size: 0.92rem; }
+.prod-filtros-caixa > summary::-webkit-details-marker { display: none; }
+.prod-filtros-caixa > summary::before { content: "▸"; }
+.prod-filtros-caixa[open] > summary::before { content: "▾"; }
+.prod-filtros-caixa[open] > summary { margin-bottom: 10px; }
+
+/* Nome completo e exposições em uma linha só */
+.prod-tabela td.c-produtor, .prod-tabela td.c-produtor .nome { white-space: nowrap; }
+.prod-chips { flex-wrap: nowrap; }
+.prod-chip, .prod-mais-chip { white-space: nowrap; }
+.prod-quadro { overflow-x: auto; -webkit-overflow-scrolling: touch; }

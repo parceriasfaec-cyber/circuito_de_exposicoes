@@ -33,7 +33,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
     from exposicoes where ciclo_id = ${cid} order by data_inicio, nome`).map((e) => e.nome);
 
   const q = normalizar(busca);
-  const achados = q ? todos.filter((l) => normalizar(`${l.codigo} ${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""}`).includes(q)) : todos;
+  const achados = q ? todos.filter((l) => normalizar(`${l.codigo} ${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""} ${(l.exposicoes ?? []).join(" ")}`).includes(q)) : todos;
   const totalDe = (l: Linha) => l.exposicoes?.length ?? 0;
   // Filtro por exposição: quantos produtores (da busca) participaram de cada uma.
   const porExposicao = new Map<string, number>();
@@ -60,6 +60,8 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
       {params.ok && <div className="ok">Expositor salvo.</div>}
       {params.excluido && <div className="ok">Expositor excluído.</div>}
 
+      <details className="prod-filtros-caixa" open={expEscolhida !== null || totalEscolhido !== null}>
+        <summary>Filtros{expEscolhida !== null || totalEscolhido !== null ? " (ativos)" : ""}</summary>
       <nav className="filtros prod-filtro" aria-label="Filtrar por exposição">
         <span className="prod-filtro-rotulo"><Icone nome="local" tamanho={18} /> Total de Participantes por Exposição:</span>
         <Link href={url(1, null, null)} className={`filtro${expEscolhida === null ? " ativo" : ""}`}>Todas <span className="filtro-num">{achados.length}</span></Link>
@@ -86,6 +88,8 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         ))}
       </nav>
 
+      </details>
+
       <div className="prod-quadro">
         <div className="prod-topo">
           <h2 className="prod-titulo"><Icone nome="usuarios" tamanho={28} /> Expositores Cadastrados</h2>
@@ -94,7 +98,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
             {totalEscolhido !== null && <input type="hidden" name="total" value={totalEscolhido} />}
             {expEscolhida && <input type="hidden" name="exp" value={expEscolhida} />}
             <Icone nome="busca" tamanho={20} />
-            <input type="text" name="q" defaultValue={busca} placeholder="Pesquisar expositor..." aria-label="Pesquisar expositor" />
+            <input type="text" name="q" defaultValue={busca} placeholder="Pesquisar expositor ou exposição..." aria-label="Pesquisar por expositor ou exposição" />
             {busca && <Link href={`/admin/produtores${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="prod-limpar" title="Limpar busca">×</Link>}
           </form>
           <a
@@ -109,9 +113,9 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
             <tr>
               <th>Expositor</th>
               <th>ID</th>
-              <th>Município</th>
-              <th>Exposições</th>
-              <th className="direita">Ações</th>
+              <th><span className="prod-th"><Icone nome="local" tamanho={20} /> Município</span></th>
+              <th><span className="prod-th"><Icone nome="capelo" tamanho={22} /> Exposições</span></th>
+              <th className="direita"><span className="prod-th"><Icone nome="engrenagem" tamanho={20} /> Ações</span></th>
             </tr>
           </thead>
           <tbody>
@@ -129,10 +133,10 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                     </div>
                   </td>
                   <td className="c-id"><span className="prod-id">{l.codigo}</span></td>
-                  <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : l.municipio}</td>
+                  <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : <span className="prod-mun"><Icone nome="local" tamanho={18} /> {l.municipio}</span>}</td>
                   <td className="c-exposicoes">
                     {exps.length > 0 ? (
-                      <div className="prod-chips">{exps.map((e, i) => <span key={i} className="prod-chip">{e}</span>)}</div>
+                      <div className="prod-chips">{exps.slice(0, 3).map((e, i) => <span key={i} className="prod-chip">{e}</span>)}{exps.length > 3 && <span className="prod-mais-chip" title={exps.slice(3).join(", ")}>+{exps.length - 3}</span>}</div>
                     ) : <span className="suave">nenhuma neste ciclo</span>}
                   </td>
                   <td className="c-acoes">

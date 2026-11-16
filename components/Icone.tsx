@@ -35,6 +35,7 @@ const caminhos: Record<string, React.ReactNode> = {
   usuarioMais: <><circle cx="10" cy="8" r="4" /><path d="M2.5 21c0-4 3.5-6 7.5-6 1.6 0 3.1.3 4.3.9" /><path d="M19 14v6M16 17h6" /></>,
   documento: <><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /><path d="M9 12h6M9 16h6" /></>,
   entrar: <><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" /><path d="M3 12h11" /><path d="M10 8l4 4-4 4" /></>,
+  capelo: <><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" /><path d="M6.5 11.8v4.2c0 1.2 2.5 2.5 5.5 2.5s5.5-1.3 5.5-2.5v-4.2" /><path d="M21.5 9.5V15" /></>,
   estrela:<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.8z" />,
 };
 
