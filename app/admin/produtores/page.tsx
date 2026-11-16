@@ -8,14 +8,14 @@ import { excluirProdutor } from "@/app/admin/cadastros-actions";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
-import { documentoCompleto, normalizar } from "@/lib/texto";
+import { campoDaBusca, CAMPOS_BUSCA, casaBusca, documentoCompleto, normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
 type Linha = { id: string; codigo: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null; avaliou: number };
 const POR_PAGINA = 25;
 
-export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string; exp?: string }> }) {
+export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string; exp?: string; campo?: string }> }) {
   if (!(await ehAdmin())) redirect("/admin");
   const params = await searchParams;
   const busca = (params.q ?? "").trim();
@@ -34,7 +34,8 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
     from exposicoes where ciclo_id = ${cid} order by data_inicio, nome`).map((e) => e.nome);
 
   const q = normalizar(busca);
-  const achados = q ? todos.filter((l) => normalizar(`${l.codigo} ${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""} ${(l.exposicoes ?? []).join(" ")} ${documentoCompleto(l.tipo_documento, l.documento)}`).includes(q)) : todos;
+  const campo = campoDaBusca(params.campo);
+  const achados = q ? todos.filter((l) => casaBusca(campo, busca, l, `${l.atividade ?? ""} ${(l.exposicoes ?? []).join(" ")}`)) : todos;
   const totalDe = (l: Linha) => l.exposicoes?.length ?? 0;
   // Filtro por exposição: quantos produtores (da busca) participaram de cada uma.
   const porExposicao = new Map<string, number>();
@@ -51,7 +52,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
   const pagina = Math.min(Math.max(1, Number(params.pagina) || 1), paginas);
   const visiveis = filtrados.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
   const url = (n: number, total: number | null = totalEscolhido, exp: string | null = expEscolhida) =>
-    `/admin/produtores?${new URLSearchParams({ ...(busca ? { q: busca } : {}), ...(params.ciclo ? { ciclo: params.ciclo } : {}), ...(exp ? { exp } : {}), ...(total !== null ? { total: String(total) } : {}), ...(n > 1 ? { pagina: String(n) } : {}) })}`;
+    `/admin/produtores?${new URLSearchParams({ ...(busca ? { q: busca } : {}), ...(campo !== "todos" ? { campo } : {}), ...(params.ciclo ? { ciclo: params.ciclo } : {}), ...(exp ? { exp } : {}), ...(total !== null ? { total: String(total) } : {}), ...(n > 1 ? { pagina: String(n) } : {}) })}`;
 
   const maiorTotal = Math.max(1, ...totais.map((t) => porTotal.get(t) ?? 0));
   return (
@@ -98,10 +99,16 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
             {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
             {totalEscolhido !== null && <input type="hidden" name="total" value={totalEscolhido} />}
             {expEscolhida && <input type="hidden" name="exp" value={expEscolhida} />}
+            {campo !== "todos" && <input type="hidden" name="campo" value={campo} />}
             <Icone nome="busca" tamanho={20} />
             <input type="text" name="q" defaultValue={busca} placeholder="Pesquisar expositor ou exposição..." aria-label="Pesquisar por expositor ou exposição" />
             {busca && <Link href={`/admin/produtores${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="prod-limpar" title="Limpar busca">×</Link>}
           </form>
+          <div className="campos-busca" role="group" aria-label="Buscar em">
+            {CAMPOS_BUSCA.map((c) => (
+              <Link key={c.id} href={`/admin/produtores?${new URLSearchParams({ ...(busca ? { q: busca } : {}), ...(c.id !== "todos" ? { campo: c.id } : {}), ...(params.ciclo ? { ciclo: params.ciclo } : {}), ...(expEscolhida ? { exp: expEscolhida } : {}), ...(totalEscolhido !== null ? { total: String(totalEscolhido) } : {}) })}`} className={`campo-busca${campo === c.id ? " ativo" : ""}`} aria-current={campo === c.id}>{c.rotulo}</Link>
+            ))}
+          </div>
           <a
             href={`/admin/produtores/excel?${new URLSearchParams({ ciclo: cid, ...(busca ? { q: busca } : {}), ...(expEscolhida ? { exp: expEscolhida } : {}), ...(totalEscolhido !== null ? { total: String(totalEscolhido) } : {}) })}`}
             className="botao secundario com-icone" download

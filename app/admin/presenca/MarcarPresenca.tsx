@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
-import { documentoCompleto, normalizar, soDigitos } from "@/lib/texto";
+import { CAMPOS_BUSCA, casaBusca, documentoCompleto, type CampoBusca } from "@/lib/texto";
 import { desmarcarPresenca, desmarcarTodasPresencas, marcarPresenca } from "./actions";
 
 export type Expositor = {
@@ -66,6 +66,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   }, [router]);
   useEffect(() => setExpositores(doServidor), [doServidor]);
   const [busca, setBusca] = useState("");
+  const [campoBusca, setCampoBusca] = useState<CampoBusca>("todos");
   const [filtro, setFiltro] = useState<Filtro>("todos");
   const [filtroAval, setFiltroAval] = useState<FiltroAval>(avalInicial);
   const [pagina, setPagina] = useState(0);
@@ -77,15 +78,13 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   const pct = total ? Math.round((presentes / total) * 100) : 0;
 
   const visiveis = useMemo(() => {
-    const q = normalizar(busca);
-    const qDigitos = soDigitos(busca);
     return expositores.filter(
       (e) =>
         (filtro === "todos" || (filtro === "presentes") === e.presente) &&
         (filtroAval === "todos" || (filtroAval === "avaliou") === avaliou(e)) &&
-        (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio} ${documentoCompleto(e.tipo_documento, e.documento)}`).includes(q) || (qDigitos.length >= 3 && soDigitos(e.documento ?? "").includes(qDigitos))),
+        casaBusca(campoBusca, busca, e),
     );
-  }, [expositores, busca, filtro, filtroAval]);
+  }, [expositores, busca, campoBusca, filtro, filtroAval]);
   const avaliaram = expositores.filter(avaliou).length;
   const { atual, itens: daPagina } = paginar(visiveis, pagina, POR_PAGINA);
 
@@ -186,6 +185,11 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
           onChange={(ev) => { setBusca(ev.target.value); setPagina(0); }}
           autoFocus
         />
+        <div className="campos-busca" role="group" aria-label="Buscar em">
+          {CAMPOS_BUSCA.map((c) => (
+            <button key={c.id} type="button" className={`campo-busca${campoBusca === c.id ? " ativo" : ""}`} aria-pressed={campoBusca === c.id} onClick={() => { setCampoBusca(c.id); setPagina(0); }}>{c.rotulo}</button>
+          ))}
+        </div>
         {presentes > 0 && (
           <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
         )}

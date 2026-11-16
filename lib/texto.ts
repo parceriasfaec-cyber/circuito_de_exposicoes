@@ -93,3 +93,33 @@ export function nomeProprio(nome: string) {
     .map((p, i) => (i > 0 && LIGACOES.has(p) ? p : p.replace(/(^|[-'/])(\p{L})/gu, (_, sep: string, l: string) => sep + l.toLocaleUpperCase("pt-BR"))))
     .join(" ");
 }
+
+export type CampoBusca = "todos" | "nome" | "id" | "cpf";
+export const CAMPOS_BUSCA: { id: CampoBusca; rotulo: string }[] = [
+  { id: "todos", rotulo: "Tudo" },
+  { id: "nome", rotulo: "Nome" },
+  { id: "id", rotulo: "ID" },
+  { id: "cpf", rotulo: "CPF" },
+];
+export function campoDaBusca(v: string | undefined): CampoBusca {
+  return v === "nome" || v === "id" || v === "cpf" ? v : "todos";
+}
+
+/** Diz se o expositor combina com o que foi digitado, olhando só o campo escolhido (ou todos). `extra` entra só em "todos". */
+export function casaBusca(
+  campo: CampoBusca,
+  busca: string,
+  e: { codigo: string; nome: string; empresa: string | null; municipio?: string; tipo_documento: string | null; documento: string | null },
+  extra = "",
+) {
+  const q = normalizar(busca);
+  if (!q) return true;
+  const dig = soDigitos(busca);
+  if (campo === "nome") return normalizar(`${e.nome} ${e.empresa ?? ""}`).includes(q);
+  if (campo === "id") return normalizar(e.codigo).includes(q);
+  if (campo === "cpf") return dig.length > 0 ? soDigitos(e.documento ?? "").includes(dig) : normalizar(documentoCompleto(e.tipo_documento, e.documento)).includes(q);
+  return (
+    normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio ?? ""} ${documentoCompleto(e.tipo_documento, e.documento)} ${extra}`).includes(q) ||
+    (dig.length >= 3 && soDigitos(e.documento ?? "").includes(dig))
+  );
+}

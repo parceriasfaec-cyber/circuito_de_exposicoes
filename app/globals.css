@@ -3058,3 +3058,9 @@ html.embutido .admin-principal { padding: 10px 18px 24px !important; max-width: 
 .pres-tabela td .doc { font-size: 0.8rem; color: var(--suave); font-variant-numeric: tabular-nums; margin-top: 1px; }
 
 .prod-tabela td.c-produtor .doc { font-size: 0.8rem; color: var(--suave); margin-top: 1px; white-space: nowrap; }
+
+/* Escolher onde a busca procura: Tudo, Nome, ID ou CPF */
+.campos-busca { display: inline-flex; gap: 4px; padding: 3px; background: #eef3ea; border-radius: 999px; flex: none; }
+.campo-busca { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 0.88rem; color: var(--verde-escuro); padding: 6px 14px; border-radius: 999px; cursor: pointer; text-decoration: none; }
+.campo-busca:hover { background: #fff; }
+.campo-busca.ativo { background: var(--verde-escuro); color: #fff; }
