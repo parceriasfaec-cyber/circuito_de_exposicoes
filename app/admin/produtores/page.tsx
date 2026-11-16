@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
+import ChipsExposicoes from "@/components/ChipsExposicoes";
 import Icone from "@/components/Icone";
+import FormConfirmar from "@/app/admin/FormConfirmar";
+import { excluirProdutor } from "@/app/admin/cadastros-actions";
 import { cicloEscolhido } from "@/lib/ciclo";
-import { anoCredenciamento } from "@/lib/credenciamento";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { documentoCompleto, normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
-type Linha = { id: string; codigo: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null; avaliadas: number; presente: boolean; votou_cidades: boolean };
+type Linha = { id: string; codigo: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null; avaliou: number };
 const POR_PAGINA = 25;
 
 export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string; exp?: string }> }) {
@@ -19,12 +21,9 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
   const busca = (params.q ?? "").trim();
   const { ciclo, ciclos } = await cicloEscolhido(params.ciclo);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
-  const ano = await anoCredenciamento();
 
   const todos = await sql()<Linha[]>`
-    select (select count(*)::int from avaliacoes av join exposicoes ev on ev.id = av.exposicao_id where av.produtor_id = p.id and ev.ciclo_id = ${cid}) avaliadas,
-           exists (select 1 from presencas pr where pr.produtor_id = p.id and pr.ciclo_id = ${cid}) presente,
-           exists (select 1 from votos_cidades vc where vc.produtor_id = p.id and vc.ano = ${ano}) votou_cidades, p.id, p.codigo, p.nome, p.empresa, p.municipio, p.atividade, p.tipo_documento, p.documento,
+    select (select count(*)::int from avaliacoes av where av.produtor_id = p.id) avaliou, p.id, p.codigo, p.nome, p.empresa, p.municipio, p.atividade, p.tipo_documento, p.documento,
            array_remove(array_agg(regexp_replace(e.nome, '^Exposição (Agropecuária )?(de|do|da) ', '') order by e.data_inicio), null) exposicoes
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
@@ -113,50 +112,46 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         <table className="tabela-org prod-tabela">
           <thead>
             <tr>
-              <th aria-label="Foto" />
               <th>Expositor</th>
               <th>ID</th>
-              <th className="centro">Exposições</th>
-              <th>Avaliação</th>
-              <th>Votação Municípios</th>
-              <th>Presença</th>
-              <th className="direita">Ações</th>
+              <th><span className="prod-th"><Icone nome="local" tamanho={20} /> Município</span></th>
+              <th><span className="prod-th"><Icone nome="capelo" tamanho={22} /> Exposições</span></th>
+              <th className="direita"><span className="prod-th"><Icone nome="engrenagem" tamanho={20} /> Ações</span></th>
             </tr>
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={8} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
+              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
             )}
             {visiveis.map((l) => {
               const exps = l.exposicoes ?? [];
-              const concluida = exps.length > 0 && l.avaliadas >= exps.length;
               return (
                 <tr key={l.id}>
-                  <td className="c-foto"><span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={18} /></span></td>
-                  <td className="c-produtor"><span className="nome">{l.nome}</span></td>
+                  <td className="c-produtor">
+                    <div className="prod-pessoa">
+                      <span className="prod-avatar" aria-hidden="true"><Icone nome="usuarioCheio" tamanho={16} /></span>
+                      <span className="nome">{l.nome}</span>
+                    </div>
+                  </td>
                   <td className="c-id"><span className="prod-id">{l.codigo}</span></td>
-                  <td className="c-exposicoes centro">
-                    <span className={`prod-total${exps.length === 0 ? " zero" : ""}`} title={exps.length > 0 ? exps.join(", ") : "Nenhuma neste ciclo"}>{exps.length}</span>
-                  </td>
-                  <td>
-                    {exps.length === 0 ? <span className="suave">—</span> : concluida
-                      ? <span className="prod-status concl"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
-                      : <span className="prod-status pend"><Icone nome="relogio" tamanho={18} /> Pendente</span>}
-                  </td>
-                  <td>
-                    {l.votou_cidades
-                      ? <span className="prod-status concl"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
-                      : <span className="prod-status nao"><Icone nome="prancheta" tamanho={18} /> Não iniciada</span>}
-                  </td>
-                  <td>
-                    {l.presente
-                      ? <span className="prod-presenca sim"><Icone nome="checkCirculo" tamanho={20} /> Presente</span>
-                      : <span className="prod-presenca ausente"><Icone nome="relogio" tamanho={20} /> Ausente</span>}
+                  <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : <span className="prod-mun"><Icone nome="local" tamanho={18} /> {l.municipio}</span>}</td>
+                  <td className="c-exposicoes">
+                    {exps.length > 0 ? (
+                      <ChipsExposicoes exposicoes={exps} />
+                    ) : <span className="suave">nenhuma neste ciclo</span>}
                   </td>
                   <td className="c-acoes">
                     <div className="prod-acoes">
-                      <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Ver avaliação" aria-label={`Ver avaliação de ${l.nome}`}><Icone nome="olho" tamanho={16} /></Link>
-                      <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={16} /></Link>
+                      <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone verde" title="Ver avaliação" aria-label={`Ver avaliação de ${l.nome}`}><Icone nome="olho" tamanho={15} /></Link>
+                      <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={15} /></Link>
+                      {l.avaliou > 0 ? (
+                        <span className="botao-detalhes so-icone desativado" title="Não pode excluir: já enviou avaliação" aria-label="Exclusão indisponível"><Icone nome="lixeira" tamanho={15} /></span>
+                      ) : (
+                        <FormConfirmar action={excluirProdutor} mensagem={`Excluir o expositor ${l.nome}?`}>
+                          <input type="hidden" name="id" value={l.id} />
+                          <button className="botao-detalhes so-icone perigo" title="Excluir" aria-label={`Excluir ${l.nome}`}><Icone nome="lixeira" tamanho={15} /></button>
+                        </FormConfirmar>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -166,11 +161,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         </table>
 
         <div className="rodape-tabela">
-          <span className="prod-legenda">
-            <span><i className="ponto concl" /> Concluída</span>
-            <span><i className="ponto pend" /> Pendente</span>
-            <span><i className="ponto nao" /> Não iniciada</span>
-          </span>
+          <span className="total">{filtrados.length === 0 ? "Nenhum registro" : `Mostrando ${(pagina - 1) * POR_PAGINA + 1} a ${Math.min(pagina * POR_PAGINA, filtrados.length)} de ${filtrados.length} registros`}</span>
           <nav className="paginas" aria-label="Páginas">
             {pagina > 1 ? <Link href={url(pagina - 1)} aria-label="Página anterior"><Icone nome="esquerda" tamanho={14} /></Link> : <span className="desligado"><Icone nome="esquerda" tamanho={14} /></span>}
             {Array.from({ length: paginas }, (_, i) => i + 1).map((n) =>
@@ -178,7 +169,6 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
             )}
             {pagina < paginas ? <Link href={url(pagina + 1)} aria-label="Próxima página"><Icone nome="direita" tamanho={14} /></Link> : <span className="desligado"><Icone nome="direita" tamanho={14} /></span>}
           </nav>
-          <span className="total">{filtrados.length === 0 ? "Nenhum registro" : `Mostrando ${(pagina - 1) * POR_PAGINA + 1} a ${Math.min(pagina * POR_PAGINA, filtrados.length)} de ${filtrados.length} registros`}</span>
         </div>
       </div>
     </>

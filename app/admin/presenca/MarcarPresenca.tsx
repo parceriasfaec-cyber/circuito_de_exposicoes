@@ -166,10 +166,11 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
         <table className="tabela-org pres-tabela">
           <thead>
             <tr>
+              <th aria-label="Foto" />
+              <th>Expositor</th>
               <th className="centro">ID</th>
-              <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
               <th className="centro"><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
-              <th className="centro"><span><Icone nome="prancheta" tamanho={18} /> Avaliação</span></th>
+              <th className="centro"><span><Icone nome="prancheta" tamanho={18} /> Avaliação das Etapas</span></th>
               <th className="centro"><span><Icone nome="local" tamanho={18} /> Votação Municípios</span></th>
               <th className="centro"><span><Icone nome="escudo" tamanho={18} /> Status de Presença</span></th>
               <th className="centro">Ações</th>
@@ -177,15 +178,16 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={7} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
+              <tr><td colSpan={8} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
             )}
             {daPagina.map((e) => (
               <tr key={e.id} className={e.presente ? "presente" : undefined}>
-                <td className="centro"><span className="prod-id">{e.codigo}</span></td>
+                <td className="pres-avatar-cel"><span className="pres-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={18} /></span></td>
                 <td>
                   <div className="nome">{e.nome}</div>
                   {e.empresa && <div className="prod-empresa">{e.empresa}</div>}
                 </td>
+                <td className="centro"><span className="prod-id">{e.codigo}</span></td>
                 <td className="centro">
                   <span className={`prod-total${e.total_exposicoes === 0 ? " zero" : ""}`} title={e.exposicoes ?? "Nenhuma exposição neste ciclo"}>
                     {e.total_exposicoes}
@@ -193,25 +195,23 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                 </td>
                 <td className="centro">
                   {avaliou(e) ? (
-                    <span className="pres-status-ic avaliou" title="Avaliou" aria-label="Avaliou" role="img"><Icone nome="check" tamanho={18} /></span>
+                    <span className="pres-pill concl" title="Avaliou"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
                   ) : (
-                    <span className="pres-status-ic nao-avaliou" title="Não avaliou" aria-label="Não avaliou" role="img"><Icone nome="alerta" tamanho={18} /></span>
+                    <span className="pres-pill pend" title="Não avaliou"><Icone nome="relogio" tamanho={18} /> Pendente</span>
                   )}
                 </td>
                 <td className="centro">
                   {e.votou_cidades ? (
-                    <span className="pres-status-ic avaliou" title="Votou nos municípios" aria-label="Votou nos municípios" role="img"><Icone nome="check" tamanho={18} /></span>
+                    <span className="pres-pill concl" title="Votou nos municípios"><Icone nome="checkCirculo" tamanho={18} /> Concluída</span>
                   ) : (
-                    <span className="pres-status-ic sem-voto" title="Ainda não votou nos municípios" aria-label="Ainda não votou nos municípios" role="img">–</span>
+                    <span className="pres-pill nao" title="Ainda não votou nos municípios"><Icone nome="prancheta" tamanho={18} /> Não iniciada</span>
                   )}
                 </td>
                 <td className="centro">
                   {e.presente ? (
-                    <span className="pres-status-ic presente" title={e.hora ? `Presente · marcado às ${e.hora}` : "Presente"} aria-label={e.hora ? `Presente, marcado às ${e.hora}` : "Presente"} role="img">
-                      <Icone nome="check" tamanho={18} />
-                    </span>
+                    <span className="pres-txt sim" title={e.hora ? `Presente · marcado às ${e.hora}` : "Presente"}><Icone nome="checkCirculo" tamanho={20} /> Presente</span>
                   ) : (
-                    <span className="pres-status-ic pendente" title="Pendente" aria-label="Pendente" role="img"><Icone nome="relogio" tamanho={18} /></span>
+                    <span className="pres-txt ausente" title="Ausente"><Icone nome="relogio" tamanho={20} /> Ausente</span>
                   )}
                 </td>
                 <td className="centro">
