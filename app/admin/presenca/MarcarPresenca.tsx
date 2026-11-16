@@ -83,7 +83,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
       (e) =>
         (filtro === "todos" || (filtro === "presentes") === e.presente) &&
         (filtroAval === "todos" || (filtroAval === "avaliou") === avaliou(e)) &&
-        (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio} ${e.documento ?? ""}`).includes(q) || (qDigitos.length >= 3 && soDigitos(e.documento ?? "").includes(qDigitos))),
+        (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio} ${documentoCompleto(e.tipo_documento, e.documento)}`).includes(q) || (qDigitos.length >= 3 && soDigitos(e.documento ?? "").includes(qDigitos))),
     );
   }, [expositores, busca, filtro, filtroAval]);
   const avaliaram = expositores.filter(avaliou).length;

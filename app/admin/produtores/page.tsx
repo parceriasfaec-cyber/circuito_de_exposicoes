@@ -34,7 +34,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
     from exposicoes where ciclo_id = ${cid} order by data_inicio, nome`).map((e) => e.nome);
 
   const q = normalizar(busca);
-  const achados = q ? todos.filter((l) => normalizar(`${l.codigo} ${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""} ${(l.exposicoes ?? []).join(" ")}`).includes(q)) : todos;
+  const achados = q ? todos.filter((l) => normalizar(`${l.codigo} ${l.nome} ${l.empresa ?? ""} ${l.municipio} ${l.documento ?? ""} ${l.atividade ?? ""} ${(l.exposicoes ?? []).join(" ")} ${documentoCompleto(l.tipo_documento, l.documento)}`).includes(q)) : todos;
   const totalDe = (l: Linha) => l.exposicoes?.length ?? 0;
   // Filtro por exposição: quantos produtores (da busca) participaram de cada uma.
   const porExposicao = new Map<string, number>();
@@ -130,7 +130,10 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                   <td className="c-produtor">
                     <div className="prod-pessoa">
                       <span className="prod-avatar" aria-hidden="true"><Icone nome="usuarioCheio" tamanho={16} /></span>
-                      <span className="nome">{l.nome}</span>
+                      <div>
+                        <div className="nome">{l.nome}</div>
+                        <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>
+                      </div>
                     </div>
                   </td>
                   <td className="c-id"><span className="prod-id">{l.codigo}</span></td>
