@@ -60,26 +60,6 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
       {params.ok && <div className="ok">Expositor salvo.</div>}
       {params.excluido && <div className="ok">Expositor excluído.</div>}
 
-      <div className="barra">
-        <form className="busca" action="/admin/produtores" style={{ flex: 1, marginBottom: 0 }}>
-          {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
-          {totalEscolhido !== null && <input type="hidden" name="total" value={totalEscolhido} />}
-          {expEscolhida && <input type="hidden" name="exp" value={expEscolhida} />}
-          <div className="busca-campo">
-            <Icone nome="busca" tamanho={20} />
-            <input type="text" name="q" defaultValue={busca} placeholder="Buscar por ID, nome, empresa, município, documento ou atividade..." />
-          </div>
-          <button className="botao com-icone"><Icone nome="busca" tamanho={18} /> Buscar</button>
-          {busca && <Link href={`/admin/produtores${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="link">Limpar</Link>}
-        </form>
-        <a
-          href={`/admin/produtores/excel?${new URLSearchParams({ ciclo: cid, ...(busca ? { q: busca } : {}), ...(expEscolhida ? { exp: expEscolhida } : {}), ...(totalEscolhido !== null ? { total: String(totalEscolhido) } : {}) })}`}
-          className="botao secundario com-icone" download
-          title={busca || expEscolhida || totalEscolhido !== null ? "Baixa só os expositores do filtro escolhido" : "Baixa todos os expositores"}
-        ><Icone nome="documento" tamanho={18} /> Baixar Excel</a>
-        <Link href={`/admin/produtores/novo?ciclo=${cid}`} className="botao com-icone">+ Novo expositor</Link>
-      </div>
-
       <nav className="filtros prod-filtro" aria-label="Filtrar por exposição">
         <span className="prod-filtro-rotulo"><Icone nome="local" tamanho={18} /> Total de Participantes por Exposição:</span>
         <Link href={url(1, null, null)} className={`filtro${expEscolhida === null ? " ativo" : ""}`}>Todas <span className="filtro-num">{achados.length}</span></Link>
@@ -107,55 +87,64 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
       </nav>
 
       <div className="prod-quadro">
+        <div className="prod-topo">
+          <h2 className="prod-titulo"><Icone nome="usuarios" tamanho={28} /> Expositores Cadastrados</h2>
+          <form className="prod-busca" action="/admin/produtores">
+            {params.ciclo && <input type="hidden" name="ciclo" value={params.ciclo} />}
+            {totalEscolhido !== null && <input type="hidden" name="total" value={totalEscolhido} />}
+            {expEscolhida && <input type="hidden" name="exp" value={expEscolhida} />}
+            <Icone nome="busca" tamanho={20} />
+            <input type="text" name="q" defaultValue={busca} placeholder="Pesquisar expositor..." aria-label="Pesquisar expositor" />
+            {busca && <Link href={`/admin/produtores${params.ciclo ? `?ciclo=${params.ciclo}` : ""}`} className="prod-limpar" title="Limpar busca">×</Link>}
+          </form>
+          <a
+            href={`/admin/produtores/excel?${new URLSearchParams({ ciclo: cid, ...(busca ? { q: busca } : {}), ...(expEscolhida ? { exp: expEscolhida } : {}), ...(totalEscolhido !== null ? { total: String(totalEscolhido) } : {}) })}`}
+            className="botao secundario com-icone" download
+            title={busca || expEscolhida || totalEscolhido !== null ? "Baixa só os expositores do filtro escolhido" : "Baixa todos os expositores"}
+          ><Icone nome="documento" tamanho={18} /> Excel</a>
+          <Link href={`/admin/produtores/novo?ciclo=${cid}`} className="botao com-icone"><span className="prod-mais">+</span> Novo Expositor</Link>
+        </div>
         <table className="tabela-org prod-tabela">
           <thead>
             <tr>
-              <th className="centro">ID</th>
-              <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
-              <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
-              <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
-              <th className="centro">Total de Exposições</th>
-              <th className="centro">Ações</th>
+              <th>Expositor</th>
+              <th>ID</th>
+              <th>Município</th>
+              <th>Exposições</th>
+              <th className="direita">Ações</th>
             </tr>
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={6} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
+              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
             )}
             {visiveis.map((l) => {
               const exps = l.exposicoes ?? [];
               return (
                 <tr key={l.id}>
-                  <td className="c-id centro"><span className="prod-id">{l.codigo}</span></td>
                   <td className="c-produtor">
                     <div className="prod-pessoa">
-                      <span className="prod-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={20} /></span>
-                      <div>
-                        <div className="nome">{l.nome}</div>
-                        {l.empresa && <div className="prod-empresa">{l.empresa}</div>}
-                        <div className="doc">{documentoCompleto(l.tipo_documento, l.documento)}</div>
-                      </div>
+                      <span className="prod-avatar" aria-hidden="true"><Icone nome="usuarioCheio" tamanho={16} /></span>
+                      <span className="nome">{l.nome}</span>
                     </div>
                   </td>
+                  <td className="c-id"><span className="prod-id">{l.codigo}</span></td>
                   <td className="c-municipio">{l.municipio === "Não informado" ? <span className="suave">—</span> : l.municipio}</td>
                   <td className="c-exposicoes">
                     {exps.length > 0 ? (
                       <div className="prod-chips">{exps.map((e, i) => <span key={i} className="prod-chip">{e}</span>)}</div>
                     ) : <span className="suave">nenhuma neste ciclo</span>}
                   </td>
-                  <td className="c-total centro">
-                    <span className={`prod-total${exps.length === 0 ? " zero" : ""}`} title={`${exps.length} ${exps.length === 1 ? "exposição" : "exposições"}`}>{exps.length}</span>
-                  </td>
-                  <td className="c-acoes centro">
+                  <td className="c-acoes">
                     <div className="prod-acoes">
-                      <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone verde" title="Ver avaliação" aria-label={`Ver avaliação de ${l.nome}`}><Icone nome="olho" tamanho={18} /></Link>
-                      <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={18} /></Link>
+                      <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone verde" title="Ver avaliação" aria-label={`Ver avaliação de ${l.nome}`}><Icone nome="olho" tamanho={15} /></Link>
+                      <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={15} /></Link>
                       {l.avaliou > 0 ? (
-                        <span className="botao-detalhes so-icone desativado" title="Não pode excluir: já enviou avaliação" aria-label="Exclusão indisponível"><Icone nome="lixeira" tamanho={18} /></span>
+                        <span className="botao-detalhes so-icone desativado" title="Não pode excluir: já enviou avaliação" aria-label="Exclusão indisponível"><Icone nome="lixeira" tamanho={15} /></span>
                       ) : (
                         <FormConfirmar action={excluirProdutor} mensagem={`Excluir o expositor ${l.nome}?`}>
                           <input type="hidden" name="id" value={l.id} />
-                          <button className="botao-detalhes so-icone perigo" title="Excluir" aria-label={`Excluir ${l.nome}`}><Icone nome="lixeira" tamanho={18} /></button>
+                          <button className="botao-detalhes so-icone perigo" title="Excluir" aria-label={`Excluir ${l.nome}`}><Icone nome="lixeira" tamanho={15} /></button>
                         </FormConfirmar>
                       )}
                     </div>
@@ -167,16 +156,14 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         </table>
 
         <div className="rodape-tabela">
-          <span className="total"><Icone nome="grafico" tamanho={20} /> {filtrados.length === 0 ? "Nenhum registro" : `Mostrando ${(pagina - 1) * POR_PAGINA + 1} a ${Math.min(pagina * POR_PAGINA, filtrados.length)} de ${filtrados.length} registros`}</span>
-          {paginas > 1 && (
-            <nav className="paginas" aria-label="Páginas">
-              {pagina > 1 ? <Link href={url(pagina - 1)} aria-label="Página anterior"><Icone nome="esquerda" tamanho={16} /></Link> : <span className="desligado"><Icone nome="esquerda" tamanho={16} /></span>}
-              {Array.from({ length: paginas }, (_, i) => i + 1).map((n) =>
-                n === pagina ? <span key={n} className="atual">{n}</span> : <Link key={n} href={url(n)}>{n}</Link>,
-              )}
-              {pagina < paginas ? <Link href={url(pagina + 1)} aria-label="Próxima página"><Icone nome="direita" tamanho={16} /></Link> : <span className="desligado"><Icone nome="direita" tamanho={16} /></span>}
-            </nav>
-          )}
+          <span className="total">{filtrados.length === 0 ? "Nenhum registro" : `Mostrando ${(pagina - 1) * POR_PAGINA + 1} a ${Math.min(pagina * POR_PAGINA, filtrados.length)} de ${filtrados.length} registros`}</span>
+          <nav className="paginas" aria-label="Páginas">
+            {pagina > 1 ? <Link href={url(pagina - 1)} aria-label="Página anterior"><Icone nome="esquerda" tamanho={14} /></Link> : <span className="desligado"><Icone nome="esquerda" tamanho={14} /></span>}
+            {Array.from({ length: paginas }, (_, i) => i + 1).map((n) =>
+              n === pagina ? <span key={n} className="atual">{n}</span> : <Link key={n} href={url(n)}>{n}</Link>,
+            )}
+            {pagina < paginas ? <Link href={url(pagina + 1)} aria-label="Próxima página"><Icone nome="direita" tamanho={14} /></Link> : <span className="desligado"><Icone nome="direita" tamanho={14} /></span>}
+          </nav>
         </div>
       </div>
     </>

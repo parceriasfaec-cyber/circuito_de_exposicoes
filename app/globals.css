@@ -2937,3 +2937,34 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .prod-tabela td.c-municipio { white-space: nowrap; }
 .prod-acoes { gap: 6px; }
 .prod-quadro .botao-detalhes.so-icone { width: 36px; height: 36px; border-radius: 10px; }
+
+/* ===== Tela de expositores no modelo "Produtores Cadastrados" (compacta) ===== */
+.prod-quadro { border-radius: 16px; border: 1px solid #e3ecdf; box-shadow: 0 6px 20px rgba(29, 94, 44, 0.08); overflow: hidden; background: #fff; }
+.prod-topo { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 20px; }
+.prod-titulo { margin: 0 auto 0 0; display: flex; align-items: center; gap: 10px; font-size: 1.4rem; font-weight: 800; color: var(--verde-escuro); }
+.prod-busca { display: flex; align-items: center; gap: 8px; margin: 0; padding: 0 12px; height: 42px; min-width: 280px; background: #f4f6f3; border: 1px solid #dfe5dc; border-radius: 10px; color: #555; }
+.prod-busca input { flex: 1; border: 0; background: transparent; outline: 0; font: inherit; font-size: 1rem; min-width: 0; }
+.prod-limpar { color: var(--suave); font-size: 1.3rem; line-height: 1; text-decoration: none; }
+.prod-topo .botao { height: 42px; padding: 0 18px; border-radius: 10px; }
+.prod-mais { font-size: 1.4rem; line-height: 1; font-weight: 800; }
+.prod-quadro .prod-tabela { border: 0; border-radius: 0; }
+.prod-tabela thead th { background: #e1f0d8; color: var(--verde-escuro); font-weight: 800; font-size: 1rem; padding: 12px 16px; text-align: left; border: 0; }
+.prod-tabela th.direita, .prod-tabela td.c-acoes { text-align: right; }
+.prod-tabela tbody tr td, .prod-tabela tbody tr:nth-child(even) td, .prod-tabela tbody tr:hover td { background: #fff; }
+.prod-tabela tbody tr:hover td { background: #f7fbf5; }
+.prod-tabela td { padding: 7px 16px; border-bottom: 1px solid #edf1ea; font-size: 1rem; }
+.prod-tabela td.c-produtor .nome { font-weight: 700; font-size: 1.02rem; }
+.prod-pessoa { display: flex; align-items: center; gap: 10px; }
+.prod-avatar { width: 28px; height: 28px; background: #d3e8c8; color: #4f9a3f; }
+.prod-id { display: inline-block; background: #e1f0d8; color: var(--verde-escuro); font-weight: 700; font-size: 0.92rem; padding: 3px 14px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+.prod-chips { gap: 8px; }
+.prod-chip { background: #e1f0d8; color: var(--verde-escuro); font-weight: 600; font-size: 0.84rem; padding: 3px 13px; }
+.prod-acoes { gap: 10px; justify-content: flex-end; }
+.prod-quadro .botao-detalhes.so-icone { width: 36px; height: 26px; border-radius: 7px; padding: 0; }
+.prod-tabela td.c-acoes, .prod-tabela th:last-child { width: 1%; white-space: nowrap; }
+.prod-quadro .rodape-tabela { padding: 12px 20px; margin: 0; border-top: 0; }
+.prod-quadro .rodape-tabela .total { font-size: 0.92rem; color: #444; font-weight: 500; display: inline; }
+.prod-quadro .paginas { background: transparent; padding: 0; gap: 8px; }
+.prod-quadro .paginas a, .prod-quadro .paginas span { width: 30px; height: 30px; border-radius: 7px; border: 1px solid #dfe5dc; background: #fff; color: #555; font-weight: 700; }
+.prod-quadro .paginas .atual { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
+@media (max-width: 760px) { .prod-busca { min-width: 0; flex: 1 1 100%; } .prod-titulo { flex: 1 1 100%; } }
