@@ -226,11 +226,11 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                   <li key={p.nome}>
                     <div className="tx-part-linha">
                       <strong>{curto(p.nome).replace(/\s*\(.*\)\s*$/, "")}</strong>
-                      <span><b>{p.responderam}</b> de {p.na_lista} avaliaram</span>
+                      <span><b>{p.responderam}</b> de {p.na_lista} avaliaram · <b>{p.na_lista > 0 ? Math.round((p.responderam / p.na_lista) * 100) : 0}%</b></span>
                     </div>
                     <div className="tx-part-barra">
                       <span className="total" style={{ width: `${(p.na_lista / maior) * 100}%` }} />
-                      <span className="aval" style={{ width: `${(p.responderam / maior) * 100}%` }} />
+                      {p.responderam > 0 && <span className="aval" style={{ width: `${(p.responderam / maior) * 100}%` }} />}
                     </div>
                   </li>
                 ));
