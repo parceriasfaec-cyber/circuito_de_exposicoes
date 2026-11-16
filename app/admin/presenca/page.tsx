@@ -18,7 +18,7 @@ export default async function Presenca({ searchParams }: { searchParams: Promise
 
   // Expositores do ciclo (participam de alguma exposição dele) e quem já está presente.
   const expositores = await sql()<Expositor[]>`
-    select p.id, p.codigo, p.nome, p.empresa, p.municipio,
+    select p.id, p.codigo, p.nome, p.empresa, p.municipio, p.tipo_documento, p.documento,
            pr.marcado_em is not null presente,
            to_char(pr.marcado_em at time zone 'America/Fortaleza', 'HH24:MI') hora,
            pr.marcado_em,

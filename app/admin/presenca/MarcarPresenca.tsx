@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
-import { normalizar } from "@/lib/texto";
+import { documentoCompleto, normalizar, soDigitos } from "@/lib/texto";
 import { desmarcarPresenca, desmarcarTodasPresencas, marcarPresenca } from "./actions";
 
 export type Expositor = {
@@ -13,6 +13,8 @@ export type Expositor = {
   nome: string;
   empresa: string | null;
   municipio: string;
+  tipo_documento: string | null;
+  documento: string | null;
   presente: boolean;
   hora: string | null;
   marcado_em: Date | null;
@@ -76,11 +78,12 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
 
   const visiveis = useMemo(() => {
     const q = normalizar(busca);
+    const qDigitos = soDigitos(busca);
     return expositores.filter(
       (e) =>
         (filtro === "todos" || (filtro === "presentes") === e.presente) &&
         (filtroAval === "todos" || (filtroAval === "avaliou") === avaliou(e)) &&
-        (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio}`).includes(q)),
+        (!q || normalizar(`${e.codigo} ${e.nome} ${e.empresa ?? ""} ${e.municipio} ${e.documento ?? ""}`).includes(q) || (qDigitos.length >= 3 && soDigitos(e.documento ?? "").includes(qDigitos))),
     );
   }, [expositores, busca, filtro, filtroAval]);
   const avaliaram = expositores.filter(avaliou).length;
@@ -178,7 +181,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
         <input
           className="pres-busca"
           type="search"
-          placeholder="Buscar por ID, nome, empresa ou município..."
+          placeholder="Buscar por ID, nome, CPF, empresa ou município..."
           value={busca}
           onChange={(ev) => { setBusca(ev.target.value); setPagina(0); }}
           autoFocus
@@ -213,6 +216,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
                 <td className="pres-avatar-cel"><span className="pres-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={18} /></span></td>
                 <td>
                   <div className="nome">{e.nome}</div>
+                  <div className="doc">{documentoCompleto(e.tipo_documento, e.documento)}</div>
                   {e.empresa && <div className="prod-empresa">{e.empresa}</div>}
                 </td>
                 <td className="centro"><span className="prod-id">{e.codigo}</span></td>

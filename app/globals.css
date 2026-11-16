@@ -3054,3 +3054,5 @@ html.embutido .admin-principal { padding: 10px 18px 24px !important; max-width: 
 
 /* Linha do expositor recém-editado */
 .pres-tabela tr.linha-destaque td { background: #fff4c2 !important; transition: background 0.4s; }
+
+.pres-tabela td .doc { font-size: 0.8rem; color: var(--suave); font-variant-numeric: tabular-nums; margin-top: 1px; }
