@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
 import { normalizar } from "@/lib/texto";
@@ -37,12 +37,23 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   const [expositores, setExpositores] = useState(doServidor);
   const router = useRouter();
   const [editandoId, setEditandoId] = useState<string | null>(null);
+  const editandoRef = useRef<string | null>(null);
+  const [destaqueId, setDestaqueId] = useState<string | null>(null);
+  useEffect(() => { editandoRef.current = editandoId; }, [editandoId]);
+  // Depois de salvar, rola até o expositor editado e deixa a linha destacada por uns segundos.
+  useEffect(() => {
+    if (!destaqueId) return;
+    const t0 = setTimeout(() => document.getElementById(`exp-${destaqueId}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 250);
+    const t1 = setTimeout(() => setDestaqueId(null), 4000);
+    return () => { clearTimeout(t0); clearTimeout(t1); };
+  }, [destaqueId]);
   // Atualiza a lista com o que veio do servidor (depois de salvar o cadastro na janela).
   useEffect(() => { setExpositores(doServidor); }, [doServidor]);
   // A janela de edição avisa quando o cadastro é salvo: fecha e recarrega os dados, mantendo a busca.
   useEffect(() => {
     function aoReceber(ev: MessageEvent) {
       if (ev.origin !== window.location.origin || ev.data?.tipo !== "produtor-salvo") return;
+      if (editandoRef.current) setDestaqueId(editandoRef.current);
       setEditandoId(null);
       router.refresh();
     }
@@ -198,7 +209,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
               <tr><td colSpan={8} className="suave" style={{ textAlign: "center", padding: 24 }}>Ninguém encontrado.</td></tr>
             )}
             {daPagina.map((e) => (
-              <tr key={e.id} className={e.presente ? "presente" : undefined}>
+              <tr key={e.id} id={`exp-${e.id}`} className={`${e.presente ? "presente" : ""}${destaqueId === e.id ? " linha-destaque" : ""}`.trim() || undefined}>
                 <td className="pres-avatar-cel"><span className="pres-avatar" aria-hidden="true"><Icone nome="usuario" tamanho={18} /></span></td>
                 <td>
                   <div className="nome">{e.nome}</div>
