@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
+import FormConfirmar from "@/app/admin/FormConfirmar";
+import { excluirProdutor } from "@/app/admin/cadastros-actions";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { sql } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
@@ -9,7 +11,7 @@ import { documentoCompleto, normalizar } from "@/lib/texto";
 
 export const dynamic = "force-dynamic";
 
-type Linha = { id: string; codigo: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null };
+type Linha = { id: string; codigo: string; nome: string; empresa: string | null; municipio: string; atividade: string | null; tipo_documento: string | null; documento: string | null; exposicoes: string[] | null; avaliou: number };
 const POR_PAGINA = 25;
 
 export default async function Produtores({ searchParams }: { searchParams: Promise<{ q?: string; pagina?: string; ok?: string; excluido?: string; ciclo?: string; total?: string; exp?: string }> }) {
@@ -20,7 +22,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
   const todos = await sql()<Linha[]>`
-    select p.id, p.codigo, p.nome, p.empresa, p.municipio, p.atividade, p.tipo_documento, p.documento,
+    select (select count(*)::int from avaliacoes av where av.produtor_id = p.id) avaliou, p.id, p.codigo, p.nome, p.empresa, p.municipio, p.atividade, p.tipo_documento, p.documento,
            array_remove(array_agg(regexp_replace(e.nome, '^Exposição (Agropecuária )?(de|do|da) ', '') order by e.data_inicio), null) exposicoes
     from produtores p
     left join participacoes pa on pa.produtor_id = p.id
@@ -110,6 +112,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
             <tr>
               <th className="centro">ID</th>
               <th><span><Icone nome="usuario" tamanho={18} /> Expositor</span></th>
+              <th><span><Icone nome="local" tamanho={18} /> Município</span></th>
               <th><span><Icone nome="trofeu" tamanho={18} /> Exposições</span></th>
               <th className="centro">Total de Exposições</th>
               <th className="centro">Ações</th>
@@ -117,7 +120,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
           </thead>
           <tbody>
             {visiveis.length === 0 && (
-              <tr><td colSpan={5} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
+              <tr><td colSpan={6} className="suave" style={{ textAlign: "center", padding: 24 }}>Nenhum expositor encontrado.</td></tr>
             )}
             {visiveis.map((l) => {
               const exps = l.exposicoes ?? [];
@@ -134,6 +137,7 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                       </div>
                     </div>
                   </td>
+                  <td className="c-municipio">{l.municipio}</td>
                   <td className="c-exposicoes">
                     {exps.length > 0 ? (
                       <div className="prod-chips">{exps.map((e, i) => <span key={i} className="prod-chip">{e}</span>)}</div>
@@ -143,7 +147,18 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
                     <span className={`prod-total${exps.length === 0 ? " zero" : ""}`} title={`${exps.length} ${exps.length === 1 ? "exposição" : "exposições"}`}>{exps.length}</span>
                   </td>
                   <td className="c-acoes centro">
-                    <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={18} /></Link>
+                    <div className="prod-acoes">
+                      <Link href={`/admin/avaliacoes/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone verde" title="Ver avaliação" aria-label={`Ver avaliação de ${l.nome}`}><Icone nome="olho" tamanho={18} /></Link>
+                      <Link href={`/admin/produtores/${l.id}?ciclo=${cid}`} className="botao-detalhes so-icone" title="Editar" aria-label={`Editar ${l.nome}`}><Icone nome="lapis" tamanho={18} /></Link>
+                      {l.avaliou > 0 ? (
+                        <span className="botao-detalhes so-icone desativado" title="Não pode excluir: já enviou avaliação" aria-label="Exclusão indisponível"><Icone nome="lixeira" tamanho={18} /></span>
+                      ) : (
+                        <FormConfirmar action={excluirProdutor} mensagem={`Excluir o expositor ${l.nome}?`}>
+                          <input type="hidden" name="id" value={l.id} />
+                          <button className="botao-detalhes so-icone perigo" title="Excluir" aria-label={`Excluir ${l.nome}`}><Icone nome="lixeira" tamanho={18} /></button>
+                        </FormConfirmar>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
@@ -152,12 +167,14 @@ export default async function Produtores({ searchParams }: { searchParams: Promi
         </table>
 
         <div className="rodape-tabela">
-          <span className="total"><Icone nome="grafico" tamanho={20} /> Total de expositores: {filtrados.length}</span>
+          <span className="total"><Icone nome="grafico" tamanho={20} /> {filtrados.length === 0 ? "Nenhum registro" : `Mostrando ${(pagina - 1) * POR_PAGINA + 1} a ${Math.min(pagina * POR_PAGINA, filtrados.length)} de ${filtrados.length} registros`}</span>
           {paginas > 1 && (
             <nav className="paginas" aria-label="Páginas">
+              {pagina > 1 ? <Link href={url(pagina - 1)} aria-label="Página anterior"><Icone nome="esquerda" tamanho={16} /></Link> : <span className="desligado"><Icone nome="esquerda" tamanho={16} /></span>}
               {Array.from({ length: paginas }, (_, i) => i + 1).map((n) =>
                 n === pagina ? <span key={n} className="atual">{n}</span> : <Link key={n} href={url(n)}>{n}</Link>,
               )}
+              {pagina < paginas ? <Link href={url(pagina + 1)} aria-label="Próxima página"><Icone nome="direita" tamanho={16} /></Link> : <span className="desligado"><Icone nome="direita" tamanho={16} /></span>}
             </nav>
           )}
         </div>

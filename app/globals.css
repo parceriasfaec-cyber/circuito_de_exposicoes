@@ -2917,3 +2917,15 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .prod-filtro-colunas .filtro-col.ativo .filtro-col-barra { background: var(--verde-escuro); }
 .prod-filtro-colunas .filtro-col-rot { font-size: 0.8rem; color: var(--suave); }
 .prod-filtro-colunas .filtro-col.ativo .filtro-col-rot { color: var(--verde-escuro); font-weight: 700; }
+
+
+/* Tela de expositores: ações em linha (ver, editar, excluir) e município */
+.prod-acoes { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.prod-acoes form { margin: 0; }
+.prod-quadro .botao-detalhes.verde { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
+.prod-quadro .botao-detalhes.verde:hover { background: #17502a; }
+.prod-quadro .botao-detalhes.desativado { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.prod-tabela td.c-municipio { font-weight: 600; }
+.prod-tabela tbody tr:nth-child(even) td { background: #fbfdfa; }
+.prod-tabela tbody tr:hover td { background: #f1f8ee; }
+.paginas a, .paginas span { display: inline-grid; place-items: center; }
