@@ -3032,10 +3032,13 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 @media print {
   html:has(.telao) { font-size: 16px !important; }
   html:has(.telao), body:has(.telao) { background: transparent !important; }
-  body:has(.telao) .topo-claro { display: none !important; }
-  body:has(.telao) .pagina { min-height: 100vh; height: 100vh; overflow: hidden; }
-  body:has(.telao) .conteudo { padding: 0 !important; }
-  body:has(.telao) .telao { height: 100vh; justify-content: center; }
+  /* As duas logos (Sistema FAEC/SENAR e Circuito) ficam no topo do PDF, mais compactas */
+  body:has(.telao) .topo-claro { display: flex !important; padding: 10px 40px 2px !important; }
+  body:has(.telao) .topo-claro-marcas .sistema { height: 3.2rem; }
+  body:has(.telao) .topo-claro-marcas .circuito { height: 3.5rem; }
+  body:has(.telao) .pagina { display: flex; flex-direction: column; min-height: 100vh; height: 100vh; overflow: hidden; }
+  body:has(.telao) .conteudo { padding: 0 !important; flex: 1; min-height: 0; }
+  body:has(.telao) .telao { height: 100%; justify-content: center; }
 }
 
 /* Barra de avaliações: a bolinha amarela só aparece quando há avaliações */
