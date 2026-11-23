@@ -97,7 +97,10 @@ export default function FormCredenciamento({
 
         {(["1", "2"] as const).map((n) => (
           <fieldset key={n} className="periodo">
-            <legend>Período 0{n} que deseja participar</legend>
+            <legend>
+              Período 0{n} para realização do evento
+              <small style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, opacity: 0.85 }}>(O período será acordado com a organização do circuito)</small>
+            </legend>
             <div className="periodo-datas">
               <div>
                 <label htmlFor={`periodo${n}_inicio`}>Início</label>
