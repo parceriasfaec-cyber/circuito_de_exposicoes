@@ -14,7 +14,7 @@ export const metadata = { title: "Ranking das Avaliações · Circuito Cearense 
 
 type Ranking = {
   posicao: number; nome: string; questionarios: number; pontos: number;
-  media_produtor: number | null; media_p2: number | null; media_p5: number | null; media_p9: number | null;
+  media_produtor: number | null; media_p2: number | null; media_p5: number | null; media_p9: number | null; media_p3: number | null; media_p4: number | null;
 };
 
 /** "EXPOCECE (Quixadá)" -> { evento: "EXPOCECE", cidade: "Quixadá" } */
@@ -35,7 +35,7 @@ export default async function RankingExposicoes() {
   const progresso = await db<Progresso[]>`
     select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
   const ranking = await db<Ranking[]>`
-    select posicao::int, nome, questionarios::int, pontos::int, media_produtor::float, media_p2::float, media_p5::float, media_p9::float
+    select posicao::int, nome, questionarios::int, pontos::int, media_produtor::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
   const [t] = await db<{ produtores: number; completos: number }[]>`
     with pa as (select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid})
@@ -51,7 +51,7 @@ export default async function RankingExposicoes() {
     if (r.media_produtor === null) return null;
     const grupo = ranking.filter((x) => x.media_produtor === r.media_produtor);
     if (grupo.length < 2) return null;
-    for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"]] as const) {
+    for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"], [3, "media_p3"], [4, "media_p4"]] as const) {
       if (new Set(grupo.map((x) => x[campo])).size > 1) return { pergunta, nota: r[campo] };
     }
     return "total" as const;

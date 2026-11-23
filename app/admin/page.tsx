@@ -22,6 +22,8 @@ type Ranking = {
   media_p2: number | null;
   media_p5: number | null;
   media_p9: number | null;
+  media_p3: number | null;
+  media_p4: number | null;
   pontos: number;
   media_produtor: number | null;
 };
@@ -54,14 +56,14 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const progresso = await db<Progresso[]>`
     select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
   const ranking = await db<Ranking[]>`
-    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, pontos::int, media_produtor::float
+    select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float, pontos::int, media_produtor::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
   // Exposições com a mesma média: mostra embaixo a pergunta que decidiu o desempate (a primeira entre 2, 5 e 9 com notas diferentes).
   const desempate = (r: Ranking): { pergunta: number; nota: number | null } | "total" | null => {
     if (r.media_produtor === null) return null;
     const grupo = ranking.filter((x) => x.media_produtor === r.media_produtor);
     if (grupo.length < 2) return null;
-    for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"]] as const) {
+    for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"], [3, "media_p3"], [4, "media_p4"]] as const) {
       if (new Set(grupo.map((x) => x[campo])).size > 1) return { pergunta, nota: r[campo] };
     }
     return "total";
@@ -190,7 +192,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                           if (!d) return null;
                           return (
                             <div className="desempate-linha">
-                              {d === "total" ? "Empate total: a organização decide" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
+                              {d === "total" ? "Empate total: mesmas notas nas perguntas 2, 5, 9, 3 e 4" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
                             </div>
                           );
                         })()}
@@ -205,7 +207,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <span className="ranking-nota-i" aria-hidden="true">i</span>
             <span>
               <strong>Pontos</strong> = soma das notas. <strong>Média</strong> = pontos ÷ expositores que avaliaram (de 10 a 50).
-              No empate, vence a maior média na pergunta 2, depois na 5 e na 9.
+              No empate, vence a maior média na pergunta 2, depois na 5, na 9, na 3 e na 4.
             </span>
           </p>
         </section>
