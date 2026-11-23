@@ -120,7 +120,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
                   {votacaoCidades
                     ? `Podem votar: ${quemVota.toLowerCase()}`
                     : t.apresentaram < 2
-                      ? "Marque pelo menos 2 municípios como Apresentou"
+                      ? "Atenção: só entram na votação os municípios marcados como Apresentou"
                       : "Escolha quem pode votar e libere"}
                 </small>
               </div>
@@ -128,7 +128,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
             {votacaoCidades ? (
               <button className="botao vc2-principal" form="form-encerrar"><span className="vc-quadrado" aria-hidden="true" /> Encerrar votação</button>
             ) : (
-              <button className="botao vc2-principal" form="form-quem" disabled={t.apresentaram < 2}>▶ Liberar votação</button>
+              <button className="botao vc2-principal" form="form-quem">▶ Liberar votação</button>
             )}
 
             <div className="vc2-grupo">
