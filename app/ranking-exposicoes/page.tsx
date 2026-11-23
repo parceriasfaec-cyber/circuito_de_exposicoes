@@ -64,7 +64,7 @@ export default async function RankingExposicoes() {
   // Ordem do pódio na tela: 2º, 1º, 3º
   const ordemPodio = [podio[1], podio[0], podio[2]].map((r, i) => (r ? { r, lugar: [2, 1, 3][i] } : null));
 
-  const lista = [...progresso].sort((a, b) => b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
+  const lista = [...progresso].sort((a, b) => b.responderam - a.responderam || b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
   const maior = Math.max(1, ...lista.map((p) => p.na_lista));
 
   return (

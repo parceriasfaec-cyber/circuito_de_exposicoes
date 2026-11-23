@@ -222,7 +222,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             </div>
             <ul className="tx-part">
               {(() => {
-                const ordem = [...progresso].sort((a, b) => b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
+                const pct = (x: { responderam: number; na_lista: number }) => (x.na_lista > 0 ? x.responderam / x.na_lista : 0);
+                const ordem = [...progresso].sort((a, b) => pct(b) - pct(a) || b.responderam - a.responderam || b.na_lista - a.na_lista || a.nome.localeCompare(b.nome));
                 const maior = Math.max(1, ...ordem.map((x) => x.na_lista));
                 return ordem.map((p) => (
                   <li key={p.nome}>
