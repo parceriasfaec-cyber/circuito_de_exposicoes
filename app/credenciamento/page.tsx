@@ -48,7 +48,7 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
                         <>Prepare o vídeo ou a apresentação. A organização vai informar a data.</>
                       )}
                     </li>
-                    <li>A apresentação é obrigatória (vídeo e/ou PowerPoint), com no máximo <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>, em ordem alfabética dos municípios. Início às <strong>11h00</strong>: chegue até as <strong>10h30</strong> com o arquivo.</li>
+                    <li>A apresentação é obrigatória (vídeo e/ou PowerPoint), com no máximo <strong>{DURACAO_APRESENTACAO_MIN} minutos</strong>, em ordem alfabética dos municípios. Início às <strong>11h00</strong>: chegue até as <strong>10h00</strong> com o arquivo.</li>
                     <li>Ao final, votam os expositores presentes que participaram da avaliação das etapas do Circuito {ano - 1}. Os <strong>02 municípios mais votados</strong> serão contemplados em {ano}, após assinarem as contrapartidas do Termo de Adesão.</li>
                   </ol>
                 </div>
@@ -102,15 +102,15 @@ export default async function Credenciamento({ searchParams }: { searchParams: P
             <div className="cred-item">
               <Icone nome="relogio" tamanho={40} />
               <p>
-                <strong className="sem-destaque">Horário:</strong> início às <strong>11h00</strong>. Chegue com, no mínimo, 30 minutos de
-                antecedência (<strong>10h30</strong>), com o arquivo da apresentação (vídeo e/ou PowerPoint/PDF).
+                <strong className="sem-destaque">Horário:</strong> início às <strong>11h00</strong>. Chegue com, no mínimo, 01 hora de
+                antecedência (<strong>10h00</strong>), com o arquivo da apresentação (vídeo e/ou PowerPoint/PDF).
               </p>
             </div>
             <div className="cred-item">
               <Icone nome="trofeu" tamanho={40} />
               <p>
                 <strong className="sem-destaque">Votação:</strong> ao final das defesas, votam os expositores presentes que participaram da avaliação das
-                etapas do Circuito {ano - 1}. O expositor votará somente em relação às etapas das quais participou. Serão contemplados os <strong className="sem-destaque">02 municípios mais votados</strong>.
+                etapas do Circuito {ano - 1}. Serão contemplados os <strong className="sem-destaque">02 municípios mais votados</strong>.
               </p>
             </div>
             <div className="cred-item">
