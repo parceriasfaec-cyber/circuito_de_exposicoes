@@ -35,7 +35,7 @@ export default function RankingAoVivo({
   // Atualiza sozinho a cada INTERVALO segundos (pausa enquanto a janela de votantes está aberta).
   useEffect(() => {
     if (aberto) return;
-    const t = setInterval(() => router.refresh(), INTERVALO * 1000);
+    const t = setInterval(() => { if (!document.hidden) router.refresh(); }, INTERVALO * 1000);
     return () => clearInterval(t);
   }, [aberto, router]);
 

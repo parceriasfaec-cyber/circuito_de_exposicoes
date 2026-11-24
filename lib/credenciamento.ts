@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { sql } from "./db";
+import { sql, tentar } from "./db";
 import { normalizar } from "./texto";
 
 /**
@@ -7,7 +7,7 @@ import { normalizar } from "./texto";
  * Ao ativar um novo ciclo em Ciclos (ex.: 2027), o credenciamento passa sozinho para o ano seguinte (2028).
  */
 export const anoCredenciamento = cache(async (): Promise<number> => {
-  const [c] = await sql()<{ ano: number }[]>`select ano from ciclos where ativo`;
+  const [c] = await tentar(() => sql()<{ ano: number }[]>`select ano from ciclos where ativo`);
   return (c?.ano ?? Number(new Date().toLocaleDateString("en-CA", { timeZone: "America/Fortaleza" }).slice(0, 4))) + 1;
 });
 

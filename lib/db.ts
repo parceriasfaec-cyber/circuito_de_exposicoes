@@ -18,6 +18,21 @@ function criar() {
   });
 }
 
+/** Erros passageiros de conexão/tempo (pooler do Supabase): vale repetir a consulta uma vez. */
+const PASSAGEIROS = new Set(["57014", "53300", "08000", "08001", "08003", "08006", "57P01", "CONNECT_TIMEOUT", "CONNECTION_CLOSED", "CONNECTION_ENDED", "CONNECTION_DESTROYED", "ECONNRESET", "ETIMEDOUT"]);
+
+export async function tentar<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    const cod = String((e as { code?: unknown })?.code ?? "");
+    if (!PASSAGEIROS.has(cod)) throw e;
+    console.error("consulta falhou (" + cod + "), tentando de novo");
+    await new Promise((r) => setTimeout(r, 250));
+    return await fn();
+  }
+}
+
 export function sql() {
   if (!globalThis.__sql) globalThis.__sql = criar();
   return globalThis.__sql;
@@ -61,10 +76,10 @@ export async function lerVotacao(): Promise<Votacao> {
   } catch (e) {
     console.error("aplicar_horarios falhou (seguindo com o estado atual):", e);
   }
-  const [v] = await sql()<Votacao[]>`
+  const [v] = await tentar(() => sql()<Votacao[]>`
     select (exposicoes_aberta or cidades_aberta) aberta, exposicoes_aberta, cidades_aberta, codigo_do_dia, aberta_em,
            exposicoes_aberta_em, cidades_aberta_em, exposicoes_abrir_em, exposicoes_fechar_em, exposicoes_fechada_em, cidades_fechada_em, cidades_quem, exposicoes_so_presentes, cidades_so_presentes
-    from exposicao_cearense.votacao where id = 1`;
+    from exposicao_cearense.votacao where id = 1`);
   return (
     v ?? {
       aberta: false, exposicoes_aberta: false, cidades_aberta: false, codigo_do_dia: null, aberta_em: null,

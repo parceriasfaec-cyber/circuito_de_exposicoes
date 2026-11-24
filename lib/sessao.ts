@@ -1,6 +1,6 @@
 import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
-import { lerVotacao, sql } from "./db";
+import { lerVotacao, sql, tentar } from "./db";
 
 const COOKIE_PRODUTOR = "produtor";
 const COOKIE_ADMIN = "admin";
@@ -88,8 +88,8 @@ export async function adminLogado(): Promise<{ id: string; nome: string; usuario
   const [id, t] = v.split("|");
   if (Date.now() - Number(t) > 12 * 60 * 60 * 1000) return null;
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
-  const [a] = await sql()<{ id: string; nome: string; usuario: string }[]>`
-    select id, nome, usuario from exposicao_cearense.administradores where id = ${id} and ativo`;
+  const [a] = await tentar(() => sql()<{ id: string; nome: string; usuario: string }[]>`
+    select id, nome, usuario from exposicao_cearense.administradores where id = ${id} and ativo`);
   return a ?? null;
 }
 

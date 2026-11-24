@@ -69,7 +69,7 @@ export default async function RankingExposicoes() {
 
   return (
     <PaginaPublica>
-      <AtualizarSozinho segundos={15} />
+      <AtualizarSozinho segundos={20} />
       <div className="tx">
         <h1 className="tx-geral">Avaliações do Circuito Cearense de Exposição {ano}</h1>
         {/* ---------- Ranking ---------- */}

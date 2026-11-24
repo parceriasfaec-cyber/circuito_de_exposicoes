@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Icone from "@/components/Icone";
 import type { CidadeRanking, VotanteCidade } from "@/lib/credenciamento";
 
-const INTERVALO = 10; // segundos entre as atualizações
+const INTERVALO = 20; // segundos entre as atualizações
 const pts = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const votosTxt = (n: number) => `${n} ${n === 1 ? "voto" : "votos"}`;
 
@@ -35,7 +35,7 @@ export default function RankingPodio({
 
   useEffect(() => {
     if (aberto) return;
-    const t = setInterval(() => router.refresh(), INTERVALO * 1000);
+    const t = setInterval(() => { if (!document.hidden) router.refresh(); }, INTERVALO * 1000);
     return () => clearInterval(t);
   }, [aberto, router]);
   useEffect(() => {
@@ -66,10 +66,12 @@ export default function RankingPodio({
         <div className={`tp-podio n${ordem.length}`}>
           {ordem.length === 0 && <p className="tp-vazio">Ainda não há votos.</p>}
           {ordem.map((r) => {
-            const lugar = podio.indexOf(r) + 1;
+            const lugar = Math.min(3, r.posicao);
+            const empatada = r.votos > 0 && ranking.filter((x) => x.posicao === r.posicao).length > 1;
             return (
               <button key={r.credenciamento_id} type="button" className={`tp-degrau lugar-${lugar}`} onClick={() => setAberto(r.credenciamento_id)} title={`Ver quem votou em ${r.municipio}`}>
                 <span className="tp-selo">Classificada</span>
+                {empatada && <span className="tp-empate">Empate</span>}
                 <strong className="tp-podio-nome">{r.municipio}</strong>
                 <span className="tp-podio-votos">{votosTxt(r.votos)}</span>
                 <span className="tp-podio-pts">{pts(r.pontos)} pts</span>
@@ -116,7 +118,7 @@ export default function RankingPodio({
       </aside>
 
       <p className="tx-nota">
-        <strong>Como é o desempate:</strong> com os mesmos votos, fica na frente quem soma mais pontos. Cada voto vale de 1,0 a 1,9 conforme as exposições do expositor em {ano - 1}.
+        <strong>Como é o desempate:</strong> com os mesmos votos, fica na frente quem soma mais pontos. Cada voto vale de 1,0 a 1,9 conforme as exposições do expositor em {ano - 1}. Persistindo o empate, fica na frente quem tem votos de produtores com mais exposições; se ainda assim empatar, a organização decide.
       </p>
 
       {escolhida && (
