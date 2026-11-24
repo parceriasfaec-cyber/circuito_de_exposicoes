@@ -18,7 +18,7 @@ export default async function RankingTempoReal() {
   const votacao = await lerVotacao();
   const db = sql();
 
-  const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }]] = await Promise.all([
+  const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }], [{ presentes }]] = await Promise.all([
     resultadoCidades(ano),
     votantesPorCidade(ano),
     db<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
@@ -31,6 +31,8 @@ export default async function RankingTempoReal() {
                where a.produtor_id = pa.produtor_id and e2.ciclo_id = c.id))
         and (${!votacao.cidades_so_presentes} or exists (
                select 1 from presencas pr where pr.produtor_id = pa.produtor_id and pr.ciclo_id = c.id))`,
+    // Total de presentes (credenciados no evento) do ciclo ativo
+    db<{ presentes: number }[]>`select count(*)::int presentes from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo`,
   ]);
 
   return (
@@ -43,6 +45,7 @@ export default async function RankingTempoReal() {
         votantes={votantes}
         totalVotos={total_votos}
         elegiveis={elegiveis}
+        presentes={presentes}
         listaVotantes={listaVotantes.map((v) => ({ ...v, nome: esconderNome(v.nome), municipio: "" }))}
       />
     </PaginaPublica>

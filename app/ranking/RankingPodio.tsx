@@ -23,10 +23,10 @@ function Medidor({ pct }: { pct: number }) {
 
 /** Ranking das cidades no telão, em formato de pódio para as classificadas e lista para as demais. */
 export default function RankingPodio({
-  ano, aberta, ranking, vagas, votantes, totalVotos, elegiveis, listaVotantes,
+  ano, aberta, ranking, vagas, votantes, totalVotos, elegiveis, presentes, listaVotantes,
 }: {
   ano: number; aberta: boolean; ranking: CidadeRanking[]; vagas: number | null;
-  votantes: number; totalVotos: number; elegiveis: number; listaVotantes: VotanteCidade[];
+  votantes: number; totalVotos: number; elegiveis: number; presentes: number; listaVotantes: VotanteCidade[];
 }) {
   const router = useRouter();
   const [aberto, setAberto] = useState<string | null>(null);
@@ -70,7 +70,7 @@ export default function RankingPodio({
             return (
               <button key={r.credenciamento_id} type="button" className={`tp-degrau lugar-${lugar}`} onClick={() => setAberto(r.credenciamento_id)} title={`Ver quem votou em ${r.municipio}`}>
                 <span className="tp-selo">Classificada</span>
-                <strong className="tp-podio-nome" style={r.municipio.length > 12 ? { fontSize: "clamp(1.1rem, 3.1vh, 2.3rem)" } : undefined}>{r.municipio}</strong>
+                <strong className="tp-podio-nome">{r.municipio}</strong>
                 <span className="tp-podio-votos">{votosTxt(r.votos)}</span>
                 <span className="tp-podio-pts">{pts(r.pontos)} pts</span>
                 <span className="tp-bloco"><span className={`tp-medalha m${lugar}`}>{lugar}º</span></span>
@@ -107,7 +107,7 @@ export default function RankingPodio({
         <div className="tp-kpis">
           <div><Icone nome="checkCirculo" tamanho={20} /><strong>{votantes}</strong><small>Expositores que votaram</small></div>
           <div><Icone nome="urna" tamanho={20} /><strong>{totalVotos}</strong><small>Votos registrados</small></div>
-          <div><Icone nome="usuarios" tamanho={20} /><strong>{elegiveis}</strong><small>Podem votar</small></div>
+          <div><Icone nome="usuarios" tamanho={20} /><strong>{presentes}</strong><small>Total de Presentes</small></div>
         </div>
         <div className="tp-quorum">
           <Medidor pct={pct} />
