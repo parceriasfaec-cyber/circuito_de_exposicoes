@@ -2701,8 +2701,9 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 .pagina:has(.tx) .topo-claro-marcas .circuito { height: 7vh; min-height: 40px; }
 .pagina:has(.tx) .topo-claro-sep { height: 6vh; }
 .pagina:has(.tx) .conteudo { flex: 1; min-height: 0; max-width: none; display: flex; align-items: center; justify-content: center; padding: 1.2vh 2vw 2vh; }
-.tx { width: min(1500px, 100%); height: 100%; max-height: 900px; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 1.6vw; }
-.tx-nota { margin: auto 0 0; padding-top: 0.8vh; border-top: 1px solid #e3ece5; font-size: clamp(0.6rem, 1.15vh, 0.78rem); line-height: 1.3; color: #7b8a7f; }
+.tx { width: min(1500px, 100%); height: 100%; max-height: 900px; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 1.6vw; }
+.tx-nota { grid-column: 1 / -1; justify-self: center; margin: 0; max-width: 1100px; padding: 0.7vh 1.6vw; border-radius: 14px; background: rgba(255, 255, 255, 0.9); color: #3d4a41; font-size: clamp(0.62rem, 1.3vh, 0.85rem); line-height: 1.35; text-align: center; }
+.tx-nota strong { color: #155a2c; }
 .tx-geral { grid-column: 1 / -1; justify-self: center; margin: 0; padding: 0.9vh 2.4vw; border-radius: 999px; background: #0f4a24; color: #fff; border: 3px solid #7cc24a; font-size: clamp(1.1rem, 2.8vh, 1.9rem); font-weight: 900; text-align: center; box-shadow: 0 8px 22px rgba(18, 61, 34, 0.25); }
 .tx-card { min-height: 0; display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.96); border-radius: 22px; padding: 2.2vh 1.8vw; box-shadow: 0 12px 34px rgba(18, 61, 34, 0.16); }
 .tx-titulo { display: flex; align-items: center; gap: 12px; margin: 0 0 1.4vh; color: #123d22; font-size: clamp(0.95rem, 2vh, 1.35rem); font-weight: 900; line-height: 1.2; }

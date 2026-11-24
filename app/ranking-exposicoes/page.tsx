@@ -58,7 +58,6 @@ export default async function RankingExposicoes() {
   };
   const ano = ciclo?.ano ?? new Date().getFullYear();
 
-  const totalAvaliacoes = ranking.reduce((soma, r) => soma + (r.questionarios ?? 0), 0);
   const avaliadas = ranking.filter((r) => r.media_produtor !== null);
   const podio = avaliadas.slice(0, 3);
   const resto = ranking.filter((r) => !podio.includes(r));
@@ -123,10 +122,6 @@ export default async function RankingExposicoes() {
               );
             })}
           </ol>
-          <p className="tx-nota">
-            Empate na média? Decide a maior nota em: Infraestrutura dos animais (P2), depois Apoio aos tratadores (P5),
-            Atendimento (P9), Bem-estar dos animais (P3) e Alimentação e água dos animais (P4).
-          </p>
         </section>
 
         {/* ---------- Participantes ---------- */}
@@ -139,7 +134,6 @@ export default async function RankingExposicoes() {
             <div><Icone nome="usuarios" tamanho={20} /><strong>{t.produtores}</strong><small>Participantes</small></div>
             <div><Icone nome="escudo" tamanho={20} /><strong>{presentes}</strong><small>Presentes</small></div>
             <div><Icone nome="checkCirculo" tamanho={20} /><strong>{t.completos}</strong><small>Avaliaram tudo</small></div>
-            <div><Icone nome="prancheta" tamanho={20} /><strong>{totalAvaliacoes}</strong><small>Total de Avaliações</small></div>
           </div>
           <ul className="tx-part">
             {lista.map((p) => (
@@ -160,6 +154,12 @@ export default async function RankingExposicoes() {
             <li><span className="ponto aval" /> Avaliaram</li>
           </ul>
         </section>
+
+        <p className="tx-nota">
+          <strong>Como é o desempate:</strong> se duas etapas tiverem a mesma média, vence a que tiver a maior nota em
+          1º Infraestrutura dos animais (P2) · 2º Apoio aos tratadores (P5) · 3º Atendimento (P9) · 4º Bem-estar dos animais (P3) · 5º Alimentação e água (P4).
+          A seguinte só vale se a anterior também empatar.
+        </p>
       </div>
     </PaginaPublica>
   );
