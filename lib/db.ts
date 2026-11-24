@@ -10,8 +10,10 @@ function criar() {
   if (!url) throw new Error("DATABASE_URL (ou SUPABASE_DB_URL) não configurada");
   return postgres(url, {
     prepare: false, // necessário no pooler de transação do Supabase
-    max: 3,
-    idle_timeout: 20,
+    max: 2, // cada servidor da Vercel usa poucas conexões: o pooler do Supabase atende muitos servidores ao mesmo tempo
+    idle_timeout: 10, // devolve ao pooler a conexão ociosa logo, em vez de segurá-la
+    max_lifetime: 300, // renova conexões velhas (evita ficar com uma pendurada)
+    connect_timeout: 10,
     connection: { search_path: "exposicao_cearense" },
   });
 }
