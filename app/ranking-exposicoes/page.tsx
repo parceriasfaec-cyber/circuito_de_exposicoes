@@ -71,12 +71,13 @@ export default async function RankingExposicoes() {
     <PaginaPublica>
       <AtualizarSozinho segundos={15} />
       <div className="tx">
+        <h1 className="tx-geral">Avaliações do Circuito Cearense de Exposição {ano}</h1>
         {/* ---------- Ranking ---------- */}
         <section className="tx-card">
-          <h1 className="tx-titulo">
+          <h2 className="tx-titulo">
             <span className="tx-ic"><Icone nome="trofeu" tamanho={22} /></span>
-            Ranking das Avaliações das Etapas do Circuito Cearense de Exposição {ano}
-          </h1>
+            Ranking das Etapas
+          </h2>
 
           <div className="tx-podio">
             {ordemPodio.map((item, i) =>
@@ -127,7 +128,7 @@ export default async function RankingExposicoes() {
         <section className="tx-card">
           <h2 className="tx-titulo">
             <span className="tx-ic"><Icone nome="usuarios" tamanho={22} /></span>
-            Participantes por Etapa do Circuito
+            Quem já avaliou, por etapa
           </h2>
           <div className="tx-kpis">
             <div><Icone nome="usuarios" tamanho={20} /><strong>{t.produtores}</strong><small>Participantes</small></div>
