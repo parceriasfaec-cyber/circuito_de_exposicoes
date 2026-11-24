@@ -1,9 +1,9 @@
-import { sql } from "./db";
+import { sql, tentar } from "./db";
 
 export type Ciclo = { id: string; ano: number; nome: string; ativo: boolean };
 
 export async function listarCiclos(): Promise<Ciclo[]> {
-  return sql()<Ciclo[]>`select id, ano, nome, ativo from exposicao_cearense.ciclos order by ano desc`;
+  return tentar(() => sql()<Ciclo[]>`select id, ano, nome, ativo from exposicao_cearense.ciclos order by ano desc`);
 }
 
 export async function cicloAtivo(): Promise<Ciclo | null> {

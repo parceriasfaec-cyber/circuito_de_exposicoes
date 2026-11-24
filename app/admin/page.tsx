@@ -4,7 +4,7 @@ import CabecalhoAdmin from "@/components/CabecalhoAdmin";
 import Icone from "@/components/Icone";
 import { FaixaTitulo } from "@/components/Marca";
 import { cicloEscolhido } from "@/lib/ciclo";
-import { lerVotacao, sql } from "@/lib/db";
+import { lerVotacao, sql, tentar } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import { formatarMedia } from "@/lib/escala";
 import { encerrarVotacao, liberarVotacao } from "./actions";
@@ -53,11 +53,11 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const db = sql();
   // Uma consulta de cada vez, para não ocupar várias conexões do pooler ao mesmo tempo.
   const votacao = await lerVotacao();
-  const progresso = await db<Progresso[]>`
-    select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`;
-  const ranking = await db<Ranking[]>`
+  const progresso = await tentar(() => db<Progresso[]>`
+    select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`);
+  const ranking = await tentar(() => db<Ranking[]>`
     select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float, pontos::int, media_produtor::float
-    from v_ranking where ciclo_id = ${cid} order by posicao, nome`;
+    from v_ranking where ciclo_id = ${cid} order by posicao, nome`);
   // Exposições com a mesma média: mostra embaixo a pergunta que decidiu o desempate (a primeira entre 2, 5 e 9 com notas diferentes).
   const desempate = (r: Ranking): { pergunta: number; nota: number | null } | "total" | null => {
     if (r.media_produtor === null) return null;
@@ -68,7 +68,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     }
     return "total";
   };
-  const [t] = await db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
+  const [t] = await tentar(() => db<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
     with pa as (
       select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}
     )
@@ -78,9 +78,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
            (select count(*)::int from (
               select pa.produtor_id from pa
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
-              group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`;
+              group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`);
 
-  const [{ presentes }] = await db<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`;
+  const [{ presentes }] = await tentar(() => db<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`);
   const agora = new Date();
 
   return (

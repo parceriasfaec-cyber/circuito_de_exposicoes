@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
+import { useAtualizar } from "@/components/useAtualizar";
 import type { CidadeRanking, VotanteCidade } from "@/lib/credenciamento";
 
 
@@ -33,11 +34,7 @@ export default function RankingAoVivo({
   const deles = listaVotantes.filter((v) => v.credenciamento_id === aberto);
 
   // Atualiza sozinho a cada INTERVALO segundos (pausa enquanto a janela de votantes está aberta).
-  useEffect(() => {
-    if (aberto) return;
-    const t = setInterval(() => { if (!document.hidden) router.refresh(); }, INTERVALO * 1000);
-    return () => clearInterval(t);
-  }, [aberto, router]);
+  useAtualizar(INTERVALO, !aberto);
 
   // Fecha a janela com Esc
   useEffect(() => {

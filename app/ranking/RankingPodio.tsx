@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Icone from "@/components/Icone";
+import { useAtualizar } from "@/components/useAtualizar";
 import type { CidadeRanking, VotanteCidade } from "@/lib/credenciamento";
 
 const INTERVALO = 20; // segundos entre as atualizações
@@ -33,11 +34,7 @@ export default function RankingPodio({
   const escolhida = ranking.find((r) => r.credenciamento_id === aberto) ?? null;
   const deles = listaVotantes.filter((v) => v.credenciamento_id === aberto);
 
-  useEffect(() => {
-    if (aberto) return;
-    const t = setInterval(() => { if (!document.hidden) router.refresh(); }, INTERVALO * 1000);
-    return () => clearInterval(t);
-  }, [aberto, router]);
+  useAtualizar(INTERVALO, !aberto);
   useEffect(() => {
     if (!aberto) return;
     const f = (e: KeyboardEvent) => e.key === "Escape" && setAberto(null);

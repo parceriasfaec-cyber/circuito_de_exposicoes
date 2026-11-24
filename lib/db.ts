@@ -19,17 +19,26 @@ function criar() {
 }
 
 /** Erros passageiros de conexão/tempo (pooler do Supabase): vale repetir a consulta uma vez. */
-const PASSAGEIROS = new Set(["57014", "53300", "08000", "08001", "08003", "08006", "57P01", "CONNECT_TIMEOUT", "CONNECTION_CLOSED", "CONNECTION_ENDED", "CONNECTION_DESTROYED", "ECONNRESET", "ETIMEDOUT"]);
+const PASSAGEIROS = new Set(["57014", "53300", "08000", "08001", "08003", "08006", "57P01", "CONNECT_TIMEOUT", "CONNECTION_CLOSED", "CONNECTION_ENDED", "CONNECTION_DESTROYED", "ECONNRESET", "ETIMEDOUT", "TEMPO_APP"]);
 
 export async function tentar<T>(fn: () => Promise<T>): Promise<T> {
+  const uma = () =>
+    new Promise<T>((ok, erro) => {
+      // Uma consulta normal leva milissegundos; se passar de 7 s a conexão travou: desiste e tenta de novo em outra.
+      const relogio = setTimeout(() => erro(Object.assign(new Error("consulta parada"), { code: "TEMPO_APP" })), 7000);
+      fn().then(
+        (v) => { clearTimeout(relogio); ok(v); },
+        (e) => { clearTimeout(relogio); erro(e); },
+      );
+    });
   try {
-    return await fn();
+    return await uma();
   } catch (e) {
     const cod = String((e as { code?: unknown })?.code ?? "");
     if (!PASSAGEIROS.has(cod)) throw e;
     console.error("consulta falhou (" + cod + "), tentando de novo");
     await new Promise((r) => setTimeout(r, 250));
-    return await fn();
+    return await uma();
   }
 }
 
