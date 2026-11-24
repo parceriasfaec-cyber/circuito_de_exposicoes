@@ -16,14 +16,13 @@ export default async function RankingTempoReal() {
   if (!(await ehAdmin())) redirect("/admin");
   const ano = await anoCredenciamento();
   const votacao = await lerVotacao();
-  const db = sql();
 
   const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }], [{ presentes }]] = await tentar(() => Promise.all([
     resultadoCidades(ano),
     votantesPorCidade(ano),
-    db<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
+    sql()<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
     // Quem pode votar, pela regra definida no painel (todos, só quem avaliou e/ou só quem está presente)
-    db<{ elegiveis: number }[]>`
+    sql()<{ elegiveis: number }[]>`
       select count(distinct pa.produtor_id)::int elegiveis
       from participacoes pa join exposicoes e on e.id = pa.exposicao_id join ciclos c on c.id = e.ciclo_id and c.ativo
       where (${votacao.cidades_quem !== "avaliaram"} or exists (
@@ -32,7 +31,7 @@ export default async function RankingTempoReal() {
         and (${!votacao.cidades_so_presentes} or exists (
                select 1 from presencas pr where pr.produtor_id = pa.produtor_id and pr.ciclo_id = c.id))`,
     // Total de presentes (credenciados no evento) do ciclo ativo
-    db<{ presentes: number }[]>`select count(*)::int presentes from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo`,
+    sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo`,
   ]));
 
   return (

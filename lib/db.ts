@@ -21,6 +21,13 @@ function criar() {
 /** Erros passageiros de conexão/tempo (pooler do Supabase): vale repetir a consulta uma vez. */
 const PASSAGEIROS = new Set(["57014", "53300", "08000", "08001", "08003", "08006", "57P01", "CONNECT_TIMEOUT", "CONNECTION_CLOSED", "CONNECTION_ENDED", "CONNECTION_DESTROYED", "ECONNRESET", "ETIMEDOUT", "TEMPO_APP"]);
 
+/** Abandona as conexões atuais (podem estar mortas depois de a função da Vercel ficar congelada); a próxima consulta abre novas. */
+function descartarConexoes() {
+  const velho = globalThis.__sql;
+  globalThis.__sql = undefined;
+  if (velho) velho.end({ timeout: 0 }).catch(() => {});
+}
+
 export async function tentar<T>(fn: () => Promise<T>): Promise<T> {
   const uma = () =>
     new Promise<T>((ok, erro) => {
@@ -36,7 +43,8 @@ export async function tentar<T>(fn: () => Promise<T>): Promise<T> {
   } catch (e) {
     const cod = String((e as { code?: unknown })?.code ?? "");
     if (!PASSAGEIROS.has(cod)) throw e;
-    console.error("consulta falhou (" + cod + "), tentando de novo");
+    console.error("consulta falhou (" + cod + "), tentando de novo com conexões novas");
+    descartarConexoes();
     await new Promise((r) => setTimeout(r, 250));
     return await uma();
   }
