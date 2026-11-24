@@ -3085,3 +3085,15 @@ html.embutido .admin-principal { padding: 10px 18px 24px !important; max-width: 
 .tx-mais.aberto svg{transform:rotate(180deg)}
 .tx-lista{overflow:hidden}
 .tx-card:has(.tx-mais) .tx-lista li{padding:1.1vh 0}
+/* Telões: nunca mostrar barra de rolagem da página (nem ao abrir "ver demais etapas") */
+html:has(.tx), body:has(.tx), html:has(.tp), body:has(.tp) { overflow: hidden !important; height: 100%; scrollbar-width: none; }
+html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: none; }
+.tx-card { overflow: hidden; }
+.tx-card:has(.tx-mais) .tx-lista { overflow: hidden; }
+.tx-card:has(.tx-mais) .tx-lista li { padding: 0.6vh 0; }
+/* Lista das demais etapas: rola dentro do quadro (barra visível); a página não rola */
+.tx-card:has(.tx-mais) .tx-lista { overflow-y: auto; overflow-x: hidden; justify-content: flex-start; padding-right: 6px; scrollbar-width: thin; scrollbar-color: #6db04a #e4ece0; }
+.tx-card:has(.tx-mais) .tx-lista::-webkit-scrollbar { width: 10px; }
+.tx-card:has(.tx-mais) .tx-lista::-webkit-scrollbar-track { background: #e4ece0; border-radius: 99px; }
+.tx-card:has(.tx-mais) .tx-lista::-webkit-scrollbar-thumb { background: #6db04a; border-radius: 99px; }
+.tx-card:has(.tx-mais) .tx-lista li { flex: none; padding: 1.1vh 0; }
