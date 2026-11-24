@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import PaginaPublica from "@/components/PaginaPublica";
 import { anoCredenciamento, resultadoCidades, votantesPorCidade } from "@/lib/credenciamento";
-import { lerVotacao, sql, tentar } from "@/lib/db";
+import { cacheCurto, lerVotacao, sql, tentar } from "@/lib/db";
 import { ehAdmin } from "@/lib/sessao";
 import RankingPodio from "./RankingPodio";
 
@@ -17,7 +17,7 @@ export default async function RankingTempoReal() {
   const ano = await anoCredenciamento();
   const votacao = await lerVotacao();
 
-  const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }], [{ presentes }]] = await tentar(() => Promise.all([
+  const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }], [{ presentes }]] = await cacheCurto(`rank-cidades:${ano}:${votacao.cidades_quem}:${votacao.cidades_so_presentes}`, 8000, () => tentar(() => Promise.all([
     resultadoCidades(ano),
     votantesPorCidade(ano),
     sql()<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
@@ -32,7 +32,7 @@ export default async function RankingTempoReal() {
                select 1 from presencas pr where pr.produtor_id = pa.produtor_id and pr.ciclo_id = c.id))`,
     // Total de presentes (credenciados no evento) do ciclo ativo
     sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo`,
-  ]));
+  ])));
 
   return (
     <PaginaPublica>

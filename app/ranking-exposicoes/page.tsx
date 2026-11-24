@@ -4,7 +4,7 @@ import Icone from "@/components/Icone";
 import PaginaPublica from "@/components/PaginaPublica";
 import { type Progresso } from "@/components/ParticipacaoExposicoes";
 import { cicloEscolhido } from "@/lib/ciclo";
-import { sql, tentar } from "@/lib/db";
+import { cacheCurto, sql, tentar } from "@/lib/db";
 import { formatarMedia } from "@/lib/escala";
 import { ehAdmin } from "@/lib/sessao";
 import { nomeCurto } from "@/lib/texto";
@@ -30,19 +30,19 @@ export default async function RankingExposicoes() {
   if (!(await ehAdmin())) redirect("/admin");
   const { ciclo } = await cicloEscolhido(undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
-  const progresso = await tentar(() => sql()<Progresso[]>`
-    select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`);
-  const ranking = await tentar(() => sql()<Ranking[]>`
+  const progresso = await cacheCurto(`rx-prog:${cid}`, 8000, () => tentar(() => sql()<Progresso[]>`
+    select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`));
+  const ranking = await cacheCurto(`rx-rank:${cid}`, 8000, () => tentar(() => sql()<Ranking[]>`
     select posicao::int, nome, questionarios::int, pontos::int, media_produtor::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float
-    from v_ranking where ciclo_id = ${cid} order by posicao, nome`);
-  const [t] = await tentar(() => sql()<{ produtores: number; completos: number }[]>`
+    from v_ranking where ciclo_id = ${cid} order by posicao, nome`));
+  const [t] = await cacheCurto(`rx-tot:${cid}`, 8000, () => tentar(() => sql()<{ produtores: number; completos: number }[]>`
     with pa as (select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid})
     select (select count(distinct produtor_id)::int from pa) produtores,
            (select count(*)::int from (
               select pa.produtor_id from pa
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
-              group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`);
-  const [{ presentes }] = await tentar(() => sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`);
+              group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`));
+  const [{ presentes }] = await cacheCurto(`rx-pres:${cid}`, 8000, () => tentar(() => sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`));
 
   // Mesma regra do painel: no empate de média, mostra a pergunta que decidiu (2, depois 5, depois 9).
   const desempate = (r: Ranking) => {

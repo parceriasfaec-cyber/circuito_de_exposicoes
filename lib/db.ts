@@ -21,11 +21,26 @@ function criar() {
 /** Erros passageiros de conexão/tempo (pooler do Supabase): vale repetir a consulta uma vez. */
 const PASSAGEIROS = new Set(["57014", "53300", "08000", "08001", "08003", "08006", "57P01", "CONNECT_TIMEOUT", "CONNECTION_CLOSED", "CONNECTION_ENDED", "CONNECTION_DESTROYED", "ECONNRESET", "ETIMEDOUT", "TEMPO_APP"]);
 
+const _curto = new Map<string, { t: number; p: Promise<unknown> }>();
+
+/**
+ * Telas ao vivo (ranking, telão) são abertas em muitas abas ao mesmo tempo: em vez de cada aba consultar o banco, uma só
+ * consulta vale por `ttlMs` para todas as que chegarem nesse servidor. Se a consulta falhar, não fica guardada.
+ */
+export function cacheCurto<T>(chave: string, ttlMs: number, fn: () => Promise<T>): Promise<T> {
+  const h = _curto.get(chave);
+  if (h && Date.now() - h.t < ttlMs) return h.p as Promise<T>;
+  const p = fn();
+  _curto.set(chave, { t: Date.now(), p });
+  p.catch(() => { if (_curto.get(chave)?.p === p) _curto.delete(chave); });
+  return p;
+}
+
 /** Abandona as conexões atuais (podem estar mortas depois de a função da Vercel ficar congelada); a próxima consulta abre novas. */
 function descartarConexoes() {
   const velho = globalThis.__sql;
   globalThis.__sql = undefined;
-  if (velho) velho.end({ timeout: 0 }).catch(() => {});
+  if (velho) velho.end({ timeout: 5 }).catch(() => {}); // espera até 5 s as consultas em andamento (não derruba as que estão boas)
 }
 
 export async function tentar<T>(fn: () => Promise<T>): Promise<T> {
