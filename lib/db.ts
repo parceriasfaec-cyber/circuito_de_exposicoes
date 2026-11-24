@@ -48,7 +48,17 @@ export type Votacao = {
 
 export async function lerVotacao(): Promise<Votacao> {
   // Abre ou fecha a avaliação se chegou um horário programado no Painel.
-  await sql()`select exposicao_cearense.aplicar_horarios()`;
+  // Só chama a função (que faz UPDATE na linha única da votação) quando há horário vencido; um SELECT simples nunca
+  // espera trava de linha. Se mesmo assim falhar (ex.: tempo esgotado), a página abre com o estado atual.
+  try {
+    const [d] = await sql()<{ n: number }[]>`
+      select count(*)::int n from exposicao_cearense.votacao
+      where id = 1 and ((exposicoes_fechar_em is not null and now() >= exposicoes_fechar_em)
+                     or (exposicoes_abrir_em is not null and now() >= exposicoes_abrir_em))`;
+    if (d?.n) await sql()`select exposicao_cearense.aplicar_horarios()`;
+  } catch (e) {
+    console.error("aplicar_horarios falhou (seguindo com o estado atual):", e);
+  }
   const [v] = await sql()<Votacao[]>`
     select (exposicoes_aberta or cidades_aberta) aberta, exposicoes_aberta, cidades_aberta, codigo_do_dia, aberta_em,
            exposicoes_aberta_em, cidades_aberta_em, exposicoes_abrir_em, exposicoes_fechar_em, exposicoes_fechada_em, cidades_fechada_em, cidades_quem, exposicoes_so_presentes, cidades_so_presentes
