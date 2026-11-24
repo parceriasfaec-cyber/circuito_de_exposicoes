@@ -58,6 +58,7 @@ export default async function RankingExposicoes() {
   };
   const ano = ciclo?.ano ?? new Date().getFullYear();
 
+  const totalAvaliacoes = ranking.reduce((soma, r) => soma + (r.questionarios ?? 0), 0);
   const avaliadas = ranking.filter((r) => r.media_produtor !== null);
   const podio = avaliadas.slice(0, 3);
   const resto = ranking.filter((r) => !podio.includes(r));
@@ -122,6 +123,10 @@ export default async function RankingExposicoes() {
               );
             })}
           </ol>
+          <p className="tx-nota">
+            Empate na média? Decide a maior nota em: Infraestrutura dos animais (P2), depois Apoio aos tratadores (P5),
+            Atendimento (P9), Bem-estar dos animais (P3) e Alimentação e água dos animais (P4).
+          </p>
         </section>
 
         {/* ---------- Participantes ---------- */}
@@ -134,6 +139,7 @@ export default async function RankingExposicoes() {
             <div><Icone nome="usuarios" tamanho={20} /><strong>{t.produtores}</strong><small>Participantes</small></div>
             <div><Icone nome="escudo" tamanho={20} /><strong>{presentes}</strong><small>Presentes</small></div>
             <div><Icone nome="checkCirculo" tamanho={20} /><strong>{t.completos}</strong><small>Avaliaram tudo</small></div>
+            <div><Icone nome="prancheta" tamanho={20} /><strong>{totalAvaliacoes}</strong><small>Total de Avaliações</small></div>
           </div>
           <ul className="tx-part">
             {lista.map((p) => (
