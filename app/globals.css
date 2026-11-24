@@ -2775,6 +2775,7 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
 /* pódio */
 .tp-podio { display: flex; justify-content: center; align-items: flex-end; gap: 1.2vw; height: 34vh; }
 .tp-degrau { flex: 0 1 30%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; text-align: center; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+.tp-empate { font-size: clamp(0.6rem, 1.15vh, 0.78rem); font-weight: 800; color: #7a4a00; background: #ffe7a8; border: 1px solid #e0b24a; border-radius: 99px; padding: 1px 10px; margin-bottom: 0.6vh; }
 .tp-selo { font-size: clamp(0.6rem, 1.15vh, 0.78rem); font-weight: 800; color: #fff; background: #1d5e2c; border-radius: 99px; padding: 2px 10px; margin-bottom: 0.6vh; }
 .tp-podio-nome { font-size: clamp(1rem, 2.6vh, 1.7rem); color: #123d22; font-weight: 900; line-height: 1.15; overflow-wrap: normal; word-break: normal; hyphens: none; }
 .tp-podio-votos { font-size: clamp(1.3rem, 3.8vh, 2.5rem); font-weight: 900; color: #155a2c; line-height: 1.05; margin-top: 0.4vh; }
@@ -3070,3 +3071,13 @@ html.embutido .admin-principal { padding: 10px 18px 24px !important; max-width: 
 .campo-busca { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 0.88rem; color: var(--verde-escuro); padding: 6px 14px; border-radius: 999px; cursor: pointer; text-decoration: none; }
 .campo-busca:hover { background: #fff; }
 .campo-busca.ativo { background: var(--verde-escuro); color: #fff; }
+
+/* Botão discreto de atualizar (telões) e seta "ver demais etapas" */
+.atu-btn{position:fixed;top:10px;right:12px;z-index:50;display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:0;border-radius:999px;background:rgba(255,255,255,.55);color:#2b4d33;font:600 12px/1 inherit;cursor:pointer;opacity:.45;transition:opacity .2s,background .2s}
+.atu-btn:hover,.atu-btn:focus-visible{opacity:1;background:#fff}
+.atu-btn.girando svg{animation:atu-gira .8s linear infinite}
+@keyframes atu-gira{to{transform:rotate(360deg)}}
+.tx-mais{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:12px;padding:10px;border:1px solid #cfe0d1;border-radius:12px;background:#f1f7f1;color:#1d5e2c;font-weight:700;font-size:15px;cursor:pointer}
+.tx-mais:hover{background:#e6f1e7}
+.tx-mais svg{transition:transform .2s}
+.tx-mais.aberto svg{transform:rotate(180deg)}

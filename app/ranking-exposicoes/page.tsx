@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import AtualizarSozinho from "@/components/AtualizarSozinho";
 import Icone from "@/components/Icone";
 import PaginaPublica from "@/components/PaginaPublica";
+import RestoRanking from "./RestoRanking";
 import { type Progresso } from "@/components/ParticipacaoExposicoes";
 import { cicloEscolhido } from "@/lib/ciclo";
 import { cacheCurto, sql, tentar } from "@/lib/db";
@@ -94,6 +95,7 @@ export default async function RankingExposicoes() {
             )}
           </div>
 
+          <RestoRanking total={resto.length}>
           <ol className="tx-lista">
             {resto.map((r) => {
               const { evento, cidade } = separar(r.nome);
@@ -120,6 +122,7 @@ export default async function RankingExposicoes() {
               );
             })}
           </ol>
+          </RestoRanking>
         </section>
 
         {/* ---------- Participantes ---------- */}
