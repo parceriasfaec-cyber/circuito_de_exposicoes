@@ -55,11 +55,12 @@ export default function RankingPodio({
 
   return (
     <div className="tp">
+      <h1 className="tx-geral">Votação das cidades para o Circuito Cearense de Exposição {ano}</h1>
       <section className="tp-card">
-        <h1 className="tp-titulo">
+        <h2 className="tp-titulo">
           <span className="tp-ic"><Icone nome="trofeu" tamanho={22} /></span>
-          Ranking dos municípios para a etapa do Circuito Cearense de Exposição {ano}
-        </h1>
+          Ranking dos municípios
+        </h2>
         {!aberta && <p className="tp-aviso">A votação está fechada. Os números são os registrados até agora.</p>}
 
         <div className={`tp-podio n${ordem.length}`}>
@@ -69,7 +70,7 @@ export default function RankingPodio({
             return (
               <button key={r.credenciamento_id} type="button" className={`tp-degrau lugar-${lugar}`} onClick={() => setAberto(r.credenciamento_id)} title={`Ver quem votou em ${r.municipio}`}>
                 <span className="tp-selo">Classificada</span>
-                <strong className="tp-podio-nome">{r.municipio}</strong>
+                <strong className="tp-podio-nome" style={r.municipio.length > 12 ? { fontSize: "clamp(1.1rem, 3.1vh, 2.3rem)" } : undefined}>{r.municipio}</strong>
                 <span className="tp-podio-votos">{votosTxt(r.votos)}</span>
                 <span className="tp-podio-pts">{pts(r.pontos)} pts</span>
                 <span className="tp-bloco"><span className={`tp-medalha m${lugar}`}>{lugar}º</span></span>
@@ -96,7 +97,6 @@ export default function RankingPodio({
             </li>
           ))}
         </ol>
-        <p className="tp-nota"><b>Desempate:</b> com os mesmos votos, fica na frente quem soma mais pontos (cada voto vale de 1,0 a 1,9 conforme as exposições do expositor em {ano - 1}).</p>
       </section>
 
       <aside className="tp-card tp-lado">
@@ -114,6 +114,10 @@ export default function RankingPodio({
           <span>Quórum de votação</span>
         </div>
       </aside>
+
+      <p className="tx-nota">
+        <strong>Como é o desempate:</strong> com os mesmos votos, fica na frente quem soma mais pontos. Cada voto vale de 1,0 a 1,9 conforme as exposições do expositor em {ano - 1}.
+      </p>
 
       {escolhida && (
         <div className="aovivo-janela-fundo" onClick={() => setAberto(null)}>
