@@ -32,24 +32,26 @@ export default async function RankingExposicoes() {
   if (!(await ehAdmin())) redirect("/admin");
   const { ciclo } = await cicloEscolhido(undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
-  const progresso = await cacheCurto(`rx-prog:${cid}`, 8000, () => tentar(() => sql()<(Progresso & { exposicao_id: string })[]>`
+  const qProgresso = cacheCurto(`rx-prog:${cid}`, 8000, () => tentar(() => sql()<(Progresso & { exposicao_id: string })[]>`
     select exposicao_id, nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`));
-  const ranking = await cacheCurto(`rx-rank:${cid}`, 8000, () => tentar(() => sql()<Ranking[]>`
+  const qRanking = cacheCurto(`rx-rank:${cid}`, 8000, () => tentar(() => sql()<Ranking[]>`
     select exposicao_id, posicao::int, nome, questionarios::int, pontos::int, media_produtor::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`));
-  const [t] = await cacheCurto(`rx-tot:${cid}`, 8000, () => tentar(() => sql()<{ produtores: number; completos: number }[]>`
+  const qTot = cacheCurto(`rx-tot:${cid}`, 8000, () => tentar(() => sql()<{ produtores: number; completos: number }[]>`
     with pa as (select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid})
     select (select count(distinct produtor_id)::int from pa) produtores,
            (select count(*)::int from (
               select pa.produtor_id from pa
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
               group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`));
-  const [{ presentes }] = await cacheCurto(`rx-pres:${cid}`, 8000, () => tentar(() => sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`));
+  const qPres = cacheCurto(`rx-pres:${cid}`, 8000, () => tentar(() => sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`));
 
-  const avals = await cacheCurto(`rx-aval:${cid}`, 8000, () => tentar(() => sql()<{ exposicao_id: string; codigo: string; nome: string; media: number | null; enviada_em: Date }[]>`
+  const qAvals = cacheCurto(`rx-aval:${cid}`, 8000, () => tentar(() => sql()<{ exposicao_id: string; codigo: string; nome: string; media: number | null; enviada_em: Date }[]>`
     select a.exposicao_id, p.codigo, p.nome, a.media::float, a.enviada_em
     from avaliacoes a join produtores p on p.id = a.produtor_id join exposicoes e on e.id = a.exposicao_id
     where e.ciclo_id = ${cid} order by a.enviada_em desc`));
+  // As cinco consultas rodam juntas (antes eram uma depois da outra e a tela demorava a atualizar).
+  const [progresso, ranking, [t], [{ presentes }], avals] = await Promise.all([qProgresso, qRanking, qTot, qPres, qAvals]);
   const mascarar = (n: string) => n.split(/\s+/).filter(Boolean).map((w) => w[0] + "*".repeat(Math.max(0, w.length - 1))).join(" ");
   const hora = (d: Date) => new Date(d).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Fortaleza" });
   const etapas: Record<string, Etapa> = {};
