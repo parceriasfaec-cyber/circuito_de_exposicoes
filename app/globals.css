@@ -3097,3 +3097,6 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .tx-card:has(.tx-mais) .tx-lista::-webkit-scrollbar-track { background: #e4ece0; border-radius: 99px; }
 .tx-card:has(.tx-mais) .tx-lista::-webkit-scrollbar-thumb { background: #6db04a; border-radius: 99px; }
 .tx-card:has(.tx-mais) .tx-lista li { flex: none; padding: 1.1vh 0; }
+.tx .clicavel{cursor:pointer}
+.tx li.clicavel:hover,.tx .tx-part li.clicavel:hover{background:rgba(29,94,44,.06)}
+.tx .tx-degrau.clicavel:hover .tx-bloco{filter:brightness(1.12)}

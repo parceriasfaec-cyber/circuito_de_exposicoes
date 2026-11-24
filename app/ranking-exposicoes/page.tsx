@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import AtualizarSozinho from "@/components/AtualizarSozinho";
 import Icone from "@/components/Icone";
 import PaginaPublica from "@/components/PaginaPublica";
+import { AvaliadoresProvider, Clicavel, type Etapa } from "./Avaliadores";
 import RestoRanking from "./RestoRanking";
 import { type Progresso } from "@/components/ParticipacaoExposicoes";
 import { cicloEscolhido } from "@/lib/ciclo";
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Ranking das Avaliações · Circuito Cearense de Exposição" };
 
 type Ranking = {
-  posicao: number; nome: string; questionarios: number; pontos: number;
+  exposicao_id: string; posicao: number; nome: string; questionarios: number; pontos: number;
   media_produtor: number | null; media_p2: number | null; media_p5: number | null; media_p9: number | null; media_p3: number | null; media_p4: number | null;
 };
 
@@ -31,10 +32,10 @@ export default async function RankingExposicoes() {
   if (!(await ehAdmin())) redirect("/admin");
   const { ciclo } = await cicloEscolhido(undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
-  const progresso = await cacheCurto(`rx-prog:${cid}`, 8000, () => tentar(() => sql()<Progresso[]>`
-    select nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`));
+  const progresso = await cacheCurto(`rx-prog:${cid}`, 8000, () => tentar(() => sql()<(Progresso & { exposicao_id: string })[]>`
+    select exposicao_id, nome, foto, na_lista::int, responderam::int from v_progresso where ciclo_id = ${cid} order by nome`));
   const ranking = await cacheCurto(`rx-rank:${cid}`, 8000, () => tentar(() => sql()<Ranking[]>`
-    select posicao::int, nome, questionarios::int, pontos::int, media_produtor::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float
+    select exposicao_id, posicao::int, nome, questionarios::int, pontos::int, media_produtor::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`));
   const [t] = await cacheCurto(`rx-tot:${cid}`, 8000, () => tentar(() => sql()<{ produtores: number; completos: number }[]>`
     with pa as (select pa.* from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid})
@@ -44,6 +45,26 @@ export default async function RankingExposicoes() {
               left join avaliacoes a on a.produtor_id = pa.produtor_id and a.exposicao_id = pa.exposicao_id
               group by pa.produtor_id having count(a.produtor_id) = count(*)) c) completos`));
   const [{ presentes }] = await cacheCurto(`rx-pres:${cid}`, 8000, () => tentar(() => sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas where ciclo_id = ${cid}`));
+
+  const avals = await cacheCurto(`rx-aval:${cid}`, 8000, () => tentar(() => sql()<{ exposicao_id: string; codigo: string; nome: string; media: number | null; enviada_em: Date }[]>`
+    select a.exposicao_id, p.codigo, p.nome, a.media::float, a.enviada_em
+    from avaliacoes a join produtores p on p.id = a.produtor_id join exposicoes e on e.id = a.exposicao_id
+    where e.ciclo_id = ${cid} order by a.enviada_em desc`));
+  const mascarar = (n: string) => n.split(/\s+/).filter(Boolean).map((w) => w[0] + "*".repeat(Math.max(0, w.length - 1))).join(" ");
+  const hora = (d: Date) => new Date(d).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Fortaleza" });
+  const etapas: Record<string, Etapa> = {};
+  for (const r of ranking) {
+    const { evento, cidade } = separar(r.nome);
+    const linhas = avals.filter((a) => a.exposicao_id === r.exposicao_id).map((a) => ({ codigo: a.codigo, nome: mascarar(a.nome), media: formatarMedia(a.media), hora: hora(a.enviada_em) }));
+    etapas[r.exposicao_id] = {
+      titulo: cidade ? `${evento} · ${cidade}` : evento,
+      sub: r.media_produtor === null ? "Aguardando avaliações" : `${r.posicao}º lugar · média ${formatarMedia(r.media_produtor)} · ${linhas.length} ${linhas.length === 1 ? "avaliação" : "avaliações"}`,
+      linhas,
+    };
+  }
+  for (const p of progresso) {
+    if (!etapas[p.exposicao_id]) etapas[p.exposicao_id] = { titulo: separar(p.nome).evento, sub: "Aguardando avaliações", linhas: [] };
+  }
 
   // Mesma regra do painel: no empate de média, mostra a pergunta que decidiu (2, depois 5, depois 9).
   const desempate = (r: Ranking) => {
@@ -68,6 +89,7 @@ export default async function RankingExposicoes() {
 
   return (
     <PaginaPublica>
+      <AvaliadoresProvider etapas={etapas}>
       <AtualizarSozinho segundos={20} />
       <div className="tx">
         <h1 className="tx-geral">Avaliações do Circuito Cearense de Exposição {ano}</h1>
@@ -82,14 +104,14 @@ export default async function RankingExposicoes() {
           <div className="tx-podio">
             {ordemPodio.map((item, i) =>
               item ? (
-                <div key={item.r.nome} className={`tx-degrau lugar-${item.lugar}`}>
+                <Clicavel key={item.r.nome} id={item.r.exposicao_id} className={`tx-degrau lugar-${item.lugar}`}>
                   <span className="tx-podio-cidade">{separar(item.r.nome).cidade}</span>
                   <strong className="tx-podio-nome">{separar(item.r.nome).evento}</strong>
                   <span className="tx-podio-media">{formatarMedia(item.r.media_produtor)}</span>
                   <div className="tx-bloco">
                     <span className={`tx-medalha m${item.lugar}`}>{item.lugar}</span>
                   </div>
-                </div>
+                </Clicavel>
               ) : (
                 <div key={`vazio-${i}`} className="tx-degrau vazio" />
               ),
@@ -102,7 +124,7 @@ export default async function RankingExposicoes() {
               const d = desempate(r);
               const sem = r.media_produtor === null;
               return (
-                <li key={r.nome} className={sem ? "sem" : undefined}>
+                <Clicavel como="li" key={r.nome} id={r.exposicao_id} className={sem ? "sem" : undefined}>
                   <span className="tx-pos">{r.posicao}º</span>
                   <div className="tx-item">
                     <div className="tx-linha1">
@@ -118,7 +140,7 @@ export default async function RankingExposicoes() {
                       </div>
                     )}
                   </div>
-                </li>
+                </Clicavel>
               );
             })}
           </ol>
@@ -138,7 +160,7 @@ export default async function RankingExposicoes() {
           </div>
           <ul className="tx-part">
             {lista.map((p) => (
-              <li key={p.nome}>
+              <Clicavel como="li" key={p.nome} id={p.exposicao_id}>
                 <div className="tx-part-linha">
                   <strong>{separar(p.nome).evento}</strong>
                   <span><b>{p.responderam}</b> de {p.na_lista} avaliaram</span>
@@ -147,7 +169,7 @@ export default async function RankingExposicoes() {
                   <span className="total" style={{ width: `${(p.na_lista / maior) * 100}%` }} />
                   <span className="aval" style={{ width: `${(p.responderam / maior) * 100}%` }} />
                 </div>
-              </li>
+              </Clicavel>
             ))}
           </ul>
           <ul className="tx-legenda">
@@ -162,6 +184,7 @@ export default async function RankingExposicoes() {
           A seguinte só vale se a anterior também empatar.
         </p>
       </div>
+      </AvaliadoresProvider>
     </PaginaPublica>
   );
 }

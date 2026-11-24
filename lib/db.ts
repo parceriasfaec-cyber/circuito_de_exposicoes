@@ -27,10 +27,15 @@ const _curto = new Map<string, { t: number; p: Promise<unknown> }>();
  * Telas ao vivo (ranking, telão) são abertas em muitas abas ao mesmo tempo: em vez de cada aba consultar o banco, uma só
  * consulta vale por `ttlMs` para todas as que chegarem nesse servidor. Se a consulta falhar, não fica guardada.
  */
+const _ultimo = new Map<string, unknown>();
 export function cacheCurto<T>(chave: string, ttlMs: number, fn: () => Promise<T>): Promise<T> {
   const h = _curto.get(chave);
   if (h && Date.now() - h.t < ttlMs) return h.p as Promise<T>;
-  const p = fn();
+  // Se a consulta falhar e já houve uma boa antes, devolve a última boa (a tela do telão não cai).
+  const p = fn().then(
+    (v) => { _ultimo.set(chave, v); return v; },
+    (e) => { if (_ultimo.has(chave)) { console.error("usando ultimo resultado bom de", chave); return _ultimo.get(chave) as T; } throw e; },
+  );
   _curto.set(chave, { t: Date.now(), p });
   p.catch(() => { if (_curto.get(chave)?.p === p) _curto.delete(chave); });
   return p;
