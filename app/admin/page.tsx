@@ -59,14 +59,14 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     select posicao::int, nome, questionarios::int, media::float, media_p2::float, media_p5::float, media_p9::float, media_p3::float, media_p4::float, pontos::int, media_produtor::float
     from v_ranking where ciclo_id = ${cid} order by posicao, nome`);
   // Exposições com a mesma média: mostra embaixo a pergunta que decidiu o desempate (a primeira entre 2, 5 e 9 com notas diferentes).
-  const desempate = (r: Ranking): { pergunta: number; nota: number | null } | "total" | null => {
+  const desempate = (r: Ranking): { pergunta: number; nota: number | null } | "total" | "aval" | null => {
     if (r.media_produtor === null) return null;
     const grupo = ranking.filter((x) => x.media_produtor === r.media_produtor);
     if (grupo.length < 2) return null;
     for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"], [3, "media_p3"], [4, "media_p4"]] as const) {
       if (new Set(grupo.map((x) => x[campo])).size > 1) return { pergunta, nota: r[campo] };
     }
-    return "total";
+    return new Set(grupo.map((x) => x.questionarios)).size > 1 ? "aval" : "total";
   };
   const [t] = await tentar(() => sql()<{ produtores: number; questionarios: number; respondidos: number; completos: number }[]>`
     with pa as (
@@ -192,7 +192,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                           if (!d) return null;
                           return (
                             <div className="desempate-linha">
-                              {d === "total" ? "Empate total: mesmas notas nas perguntas 2, 5, 9, 3 e 4" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
+                              {d === "aval" ? "Desempate: maior número de avaliações" : d === "total" ? "Empate total: mesmas notas e mesmo número de avaliações" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
                             </div>
                           );
                         })()}

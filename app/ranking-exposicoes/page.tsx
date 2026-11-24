@@ -76,7 +76,7 @@ export default async function RankingExposicoes() {
     for (const [pergunta, campo] of [[2, "media_p2"], [5, "media_p5"], [9, "media_p9"], [3, "media_p3"], [4, "media_p4"]] as const) {
       if (new Set(grupo.map((x) => x[campo])).size > 1) return { pergunta, nota: r[campo] };
     }
-    return "total" as const;
+    return new Set(grupo.map((x) => x.questionarios)).size > 1 ? ("aval" as const) : ("total" as const);
   };
   const ano = ciclo?.ano ?? new Date().getFullYear();
 
@@ -137,7 +137,8 @@ export default async function RankingExposicoes() {
                       <div className="tx-linha2">
                         <div className="tx-barra"><span style={{ width: `${Math.min(100, ((r.media_produtor ?? 0) / MEDIA_MAX) * 100)}%` }} /></div>
                         <span className="tx-info">{r.pontos.toLocaleString("pt-BR")} pts · {r.questionarios} aval.</span>
-                        {d && d !== "total" && <span className="tx-chip">P{d.pergunta} {formatarMedia(d.nota)}</span>}
+                        {d && d !== "total" && d !== "aval" && <span className="tx-chip">P{d.pergunta} {formatarMedia(d.nota)}</span>}
+                        {d === "aval" && <span className="tx-chip">+ aval.</span>}
                         {d === "total" && <span className="tx-chip">Empate</span>}
                       </div>
                     )}
@@ -182,8 +183,8 @@ export default async function RankingExposicoes() {
 
         <p className="tx-nota">
           <strong>Como é o desempate:</strong> se duas etapas tiverem a mesma média, vence a que tiver a maior nota em
-          1º Infraestrutura dos animais (P2) · 2º Apoio aos tratadores (P5) · 3º Atendimento (P9) · 4º Bem-estar dos animais (P3) · 5º Alimentação e água (P4).
-          A seguinte só vale se a anterior também empatar.
+          1º Infraestrutura dos animais (P2) · 2º Apoio aos tratadores (P5) · 3º Atendimento (P9) · 4º Bem-estar dos animais (P3) · 5º Alimentação e água (P4) · 6º Maior número de avaliações.
+          A seguinte só vale se a anterior também empatar; se ainda assim empatar, a organização decide.
         </p>
       </div>
       </AvaliadoresProvider>
