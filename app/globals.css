@@ -3081,3 +3081,7 @@ html.embutido .admin-principal { padding: 10px 18px 24px !important; max-width: 
 .tx-mais:hover{background:#e6f1e7}
 .tx-mais svg{transition:transform .2s}
 .tx-mais.aberto svg{transform:rotate(180deg)}
+.tx-card .tx-mais{margin-top:0;margin-bottom:1vh;padding:0.8vh 10px;flex:none}
+.tx-mais.aberto svg{transform:rotate(180deg)}
+.tx-lista{overflow:hidden}
+.tx-card:has(.tx-mais) .tx-lista li{padding:1.1vh 0}

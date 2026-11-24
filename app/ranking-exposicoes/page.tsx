@@ -78,6 +78,7 @@ export default async function RankingExposicoes() {
             Ranking das Etapas
           </h2>
 
+          <RestoRanking total={resto.length} podio={(
           <div className="tx-podio">
             {ordemPodio.map((item, i) =>
               item ? (
@@ -94,8 +95,7 @@ export default async function RankingExposicoes() {
               ),
             )}
           </div>
-
-          <RestoRanking total={resto.length}>
+          )}>
           <ol className="tx-lista">
             {resto.map((r) => {
               const { evento, cidade } = separar(r.nome);
