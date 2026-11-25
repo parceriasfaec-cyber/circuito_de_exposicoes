@@ -6,12 +6,17 @@ import { cacheCurto, lerVotacaoCache, sql, tentar } from "@/lib/db";
 import { formatarMedia } from "@/lib/escala";
 import { dadosRankingCidades } from "@/lib/rankingCidades";
 import { nomeCurto } from "@/lib/texto";
+import MapaCircuito, { type EtapaMapa } from "./MapaCircuito";
 import "./indicadores.css";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Indicadores · Circuito Cearense de Exposição" };
 
 type Etapa = { exposicao_id: string; posicao: number; nome: string; questionarios: number; media_produtor: number | null };
+
+type LinhaMapa = { id: string; nome: string; municipio: string; data_inicio: Date; data_fim: Date; posicao: number | null; media: number | null; avaliacoes: number; participantes: number };
+const dm = (d: Date) => new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", timeZone: "UTC" });
+const iso = (d: Date) => new Date(d).toISOString().slice(0, 10);
 
 const pts = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const votosTxt = (n: number) => `${n} ${n === 1 ? "voto" : "votos"}`;
@@ -23,12 +28,30 @@ export default async function Indicadores() {
   const { ciclo } = await cicloEscolhido(undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
-  const [cidades, etapas] = await Promise.all([
+  const [cidades, etapas, linhasMapa] = await Promise.all([
     dadosRankingCidades(ano, votacao),
     cacheCurto(`ind-etapas:${cid}`, 8000, () => tentar(() => sql()<Etapa[]>`
       select exposicao_id, posicao::int, nome, questionarios::int, media_produtor::float
       from v_ranking where ciclo_id = ${cid} order by posicao, nome`)),
+    cacheCurto(`ind-mapa:${cid}`, 8000, () => tentar(() => sql()<LinhaMapa[]>`
+      select e.id, e.nome, e.municipio, e.data_inicio, e.data_fim, r.posicao::int posicao, r.media_produtor::float media,
+             coalesce(r.questionarios, 0)::int avaliacoes,
+             (select count(*)::int from participacoes p where p.exposicao_id = e.id) participantes
+      from exposicoes e left join v_ranking r on r.exposicao_id = e.id and r.ciclo_id = e.ciclo_id
+      where e.ciclo_id = ${cid} order by e.data_inicio, e.nome`)),
   ]);
+
+  // Etapa "atual": a que está acontecendo hoje; se nenhuma, a última que já terminou.
+  const hoje = new Date().toLocaleDateString("en-CA", { timeZone: "America/Fortaleza" });
+  const emCurso = linhasMapa.findIndex((l) => iso(l.data_inicio) <= hoje && hoje <= iso(l.data_fim));
+  const ultima = linhasMapa.reduce((a, l, i) => (iso(l.data_fim) < hoje ? i : a), -1);
+  const iAtual = emCurso >= 0 ? emCurso : ultima;
+  const mapa: EtapaMapa[] = linhasMapa.map((l, i) => ({
+    id: l.id, nome: nomeCurto(l.nome), municipio: l.municipio,
+    periodo: iso(l.data_inicio) === iso(l.data_fim) ? dm(l.data_inicio) : `${dm(l.data_inicio)} a ${dm(l.data_fim)}`,
+    posicao: l.media === null ? null : l.posicao, media: l.media === null ? null : formatarMedia(l.media),
+    avaliacoes: l.avaliacoes, participantes: l.participantes, atual: i === iAtual,
+  }));
 
   const { ranking, vagas, votantes, totalVotos, elegiveis, presentes } = cidades;
   const pct = elegiveis > 0 ? Math.min(100, (votantes / elegiveis) * 100) : 0;
@@ -36,6 +59,8 @@ export default async function Indicadores() {
   const podio = ranking.filter((r) => r.votos > 0).slice(0, nVagas);
   const maxVotos = Math.max(1, ...podio.map((r) => r.votos));
   const avaliadas = etapas.filter((e) => e.media_produtor !== null).slice(0, 3);
+  // Expositores distintos que participam de alguma etapa do circuito (cada um conta uma vez só).
+  const participantesTotal = new Set(linhasMapa.flatMap((l) => (l.participantes > 0 ? [l.id] : []))).size && linhasMapa.reduce((s, l) => s + l.participantes, 0);
   const totalAval = etapas.reduce((s, e) => s + e.questionarios, 0);
   const anoCircuito = ciclo?.ano ?? ano - 1; // ano do circuito em andamento (o "ano" acima é o do próximo circuito)
   const medalha = ["ouro", "prata", "bronze"];
@@ -57,6 +82,12 @@ export default async function Indicadores() {
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="trofeu" tamanho={20} /></span><strong>{totalVotos}</strong><small>Votos nos municípios</small></div>
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{presentes}</strong><small>Presentes no evento</small></div>
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{totalAval}</strong><small>Avaliações das etapas</small></div>
+        </section>
+
+        <section className="ind-card ind-card-mapa">
+          <h2><span className="ind-ic p"><Icone nome="local" tamanho={16} /></span>Mapa do Circuito</h2>
+          <MapaCircuito etapas={mapa} />
+          <p className="ind-dica">Toque num marcador para ver os dados da etapa. Use dois dedos para aproximar.</p>
         </section>
 
         <section className="ind-card">
