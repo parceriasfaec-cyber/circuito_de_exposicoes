@@ -3142,11 +3142,11 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 /* ---- Menu do organizador: grupos recolhíveis ---- */
 .lateral-menu { gap: 2px; }
 .lateral-menu .lateral-grupo:first-child a { margin: 6px 12px 0; padding: 9px 12px; border: 0; border-radius: 12px; font-size: 0.9rem; font-weight: 800; gap: 9px; }
-.lateral-menu .lateral-grupo:first-child a.ativo { background: #8fd14f; color: #0f3a1c; }
+.lateral-menu .lateral-grupo:first-child a.ativo { background: #2f8a42; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2); }
 .lateral-sanfona { margin: 8px 12px 0; }
-.lateral-cab { width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px 12px; border: 0; border-radius: 12px; background: #8fd14f; color: #0f3a1c; font: inherit; font-weight: 800; font-size: 0.9rem; text-align: left; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18); transition: filter 0.15s; }
+.lateral-cab { width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px 12px; border: 0; border-radius: 12px; background: #2f8a42; color: #fff; font: inherit; font-weight: 800; font-size: 0.9rem; text-align: left; cursor: pointer; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.28), 0 2px 6px rgba(0, 0, 0, 0.2); transition: filter 0.15s; }
 .lateral-cab:hover { filter: brightness(1.06); }
-.lateral-cab-ic { flex: none; display: grid; place-items: center; width: 22px; height: 22px; color: #0f3a1c; }
+.lateral-cab-ic { flex: none; display: grid; place-items: center; width: 22px; height: 22px; color: #fff; }
 .lateral-cab-txt { flex: 1; min-width: 0; line-height: 1.15; }
 .lateral-seta { flex: none; transition: transform 0.2s; }
 .lateral-sanfona.aberto .lateral-seta { transform: rotate(180deg); }
@@ -3156,3 +3156,4 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .lateral-menu .lateral-sub a svg { flex: none; width: 16px; height: 16px; }
 .lateral-menu .lateral-sub a:hover { background: rgba(255, 255, 255, 0.10); }
 .lateral-menu .lateral-sub a.ativo { background: rgba(255, 255, 255, 0.20); font-weight: 800; }
+.lateral-sanfona.aberto .lateral-cab { background: #38983f; }
