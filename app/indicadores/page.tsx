@@ -28,7 +28,7 @@ export default async function Indicadores() {
   const { ciclo } = await cicloEscolhido(undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
-  const [cidades, etapas, linhasMapa] = await Promise.all([
+  const [cidades, etapas, linhasMapa, [{ produtores }]] = await Promise.all([
     dadosRankingCidades(ano, votacao),
     cacheCurto(`ind-etapas:${cid}`, 8000, () => tentar(() => sql()<Etapa[]>`
       select exposicao_id, posicao::int, nome, questionarios::int, media_produtor::float
@@ -39,6 +39,10 @@ export default async function Indicadores() {
              (select count(*)::int from participacoes p where p.exposicao_id = e.id) participantes
       from exposicoes e left join v_ranking r on r.exposicao_id = e.id and r.ciclo_id = e.ciclo_id
       where e.ciclo_id = ${cid} order by e.data_inicio, e.nome`)),
+    // Expositores distintos que participam de alguma etapa do circuito (cada um conta uma vez só).
+    cacheCurto(`ind-prod:${cid}`, 8000, () => tentar(() => sql()<{ produtores: number }[]>`
+      select count(distinct pa.produtor_id)::int produtores
+      from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}`)),
   ]);
 
   // Etapa "atual": a que está acontecendo hoje; se nenhuma, a última que já terminou.
@@ -59,8 +63,6 @@ export default async function Indicadores() {
   const podio = ranking.filter((r) => r.votos > 0).slice(0, nVagas);
   const maxVotos = Math.max(1, ...podio.map((r) => r.votos));
   const avaliadas = etapas.filter((e) => e.media_produtor !== null).slice(0, 3);
-  // Expositores distintos que participam de alguma etapa do circuito (cada um conta uma vez só).
-  const participantesTotal = new Set(linhasMapa.flatMap((l) => (l.participantes > 0 ? [l.id] : []))).size && linhasMapa.reduce((s, l) => s + l.participantes, 0);
   const totalAval = etapas.reduce((s, e) => s + e.questionarios, 0);
   const anoCircuito = ciclo?.ano ?? ano - 1; // ano do circuito em andamento (o "ano" acima é o do próximo circuito)
   const medalha = ["ouro", "prata", "bronze"];
@@ -82,6 +84,7 @@ export default async function Indicadores() {
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="trofeu" tamanho={20} /></span><strong>{totalVotos}</strong><small>Votos nos municípios</small></div>
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{presentes}</strong><small>Presentes no evento</small></div>
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{totalAval}</strong><small>Avaliações das etapas</small></div>
+          <div className="ind-kpi ind-kpi-destaque"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{produtores}</strong><small>Participantes em todas as etapas do Circuito</small></div>
         </section>
 
         <section className="ind-card ind-card-mapa">
