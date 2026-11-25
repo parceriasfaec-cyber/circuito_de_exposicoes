@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import AtualizarSozinho from "@/components/AtualizarSozinho";
 import Icone from "@/components/Icone";
 import { cicloEscolhido } from "@/lib/ciclo";
@@ -6,7 +5,6 @@ import { anoCredenciamento } from "@/lib/credenciamento";
 import { cacheCurto, lerVotacaoCache, sql, tentar } from "@/lib/db";
 import { formatarMedia } from "@/lib/escala";
 import { dadosRankingCidades } from "@/lib/rankingCidades";
-import { ehAdmin } from "@/lib/sessao";
 import { nomeCurto } from "@/lib/texto";
 import "./indicadores.css";
 
@@ -18,9 +16,8 @@ type Etapa = { exposicao_id: string; posicao: number; nome: string; questionario
 const pts = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const votosTxt = (n: number) => `${n} ${n === 1 ? "voto" : "votos"}`;
 
-/** Painel de indicadores para o celular (somente totais, sem nomes de participantes). */
+/** Painel de indicadores para o celular: página aberta, somente totais (sem nomes de participantes). */
 export default async function Indicadores() {
-  if (!(await ehAdmin())) redirect("/admin");
   const ano = await anoCredenciamento();
   const votacao = await lerVotacaoCache();
   const { ciclo } = await cicloEscolhido(undefined);
