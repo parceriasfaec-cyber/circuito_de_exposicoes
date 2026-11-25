@@ -1,0 +1,38 @@
+.ind { min-height: 100vh; background: #f2f6f0; color: #123d22; font-family: inherit; -webkit-text-size-adjust: 100%; }
+.ind-capa { position: relative; height: 34vw; min-height: 190px; max-height: 300px; background: #1d5e2c url("/marcas/capa-circuito.jpg") center 60% / cover no-repeat; }
+.ind-capa-sombra { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 45, 22, 0.05) 0%, rgba(10, 45, 22, 0.35) 55%, rgba(10, 45, 22, 0.88) 100%); }
+.ind-capa-texto { position: absolute; left: 18px; right: 18px; bottom: 34px; color: #fff; }
+.ind-capa-texto h1 { margin: 6px 0 0; font-size: clamp(1.35rem, 6vw, 2rem); font-weight: 900; line-height: 1.1; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45); }
+.ind-selo { display: inline-block; padding: 3px 12px; border-radius: 99px; background: #7cc24a; color: #0f3a1c; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+.ind-corpo { position: relative; margin-top: -22px; padding: 0 14px 28px; display: grid; gap: 14px; max-width: 640px; margin-inline: auto; }
+.ind-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ind-kpi { display: grid; gap: 2px; padding: 14px; border-radius: 18px; background: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.12); }
+.ind-kpi strong { font-size: 2rem; font-weight: 900; line-height: 1.05; color: #155a2c; }
+.ind-kpi small { font-size: 0.74rem; font-weight: 700; color: #4d5a4d; text-transform: uppercase; letter-spacing: 0.02em; }
+.ind-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #1d5e2c; color: #fff; margin-bottom: 6px; }
+.ind-ic.p { display: inline-grid; width: 28px; height: 28px; margin: 0 8px 0 0; vertical-align: middle; }
+.ind-card { padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.12); }
+.ind-card h2 { margin: 0 0 12px; font-size: 1.02rem; font-weight: 900; color: #123d22; display: flex; align-items: center; }
+.ind-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.ind-meta strong { font-size: 2.1rem; font-weight: 900; color: #155a2c; }
+.ind-meta span { font-size: 0.82rem; color: #4d5a4d; }
+.ind-trilho { height: 14px; border-radius: 99px; background: #e4ece0; overflow: hidden; }
+.ind-preench { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #2e7d3e, #7cc24a); transition: width 0.6s; }
+.ind-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.ind-lista li { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; align-items: center; }
+.ind-medalha { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #e4ece0; color: #155a2c; font-weight: 900; font-size: 0.95rem; }
+.ind-medalha.ouro { background: linear-gradient(145deg, #ffd54a, #e0a400); color: #4a3300; box-shadow: 0 3px 10px rgba(224, 164, 0, 0.45); }
+.ind-medalha.prata { background: linear-gradient(145deg, #e3e7ea, #aab2b8); color: #2f3a40; }
+.ind-medalha.bronze { background: linear-gradient(145deg, #eba474, #c4682f); color: #fff; }
+.ind-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 0.98rem; }
+.ind-linha strong { font-weight: 900; overflow-wrap: anywhere; }
+.ind-linha span { white-space: nowrap; font-weight: 800; color: #155a2c; }
+.ind-linha small, .ind-sub { color: #5f6e60; font-weight: 600; font-size: 0.76rem; }
+.ind-barra { height: 9px; margin-top: 6px; border-radius: 99px; background: #e4ece0; overflow: hidden; }
+.ind-barra i { display: block; height: 100%; border-radius: 99px; background: #6db04a; }
+.ind-vazio { margin: 0; color: #5f6e60; }
+.ind-mais { margin-top: 14px; }
+.ind-mais summary { list-style: none; cursor: pointer; text-align: center; padding: 11px; border: 1px solid #cfe0d1; border-radius: 12px; background: #f1f7f1; color: #1d5e2c; font-weight: 800; font-size: 0.92rem; }
+.ind-mais summary::-webkit-details-marker { display: none; }
+.ind-mais[open] summary { margin-bottom: 14px; }
+.ind-rodape { text-align: center; color: #5f6e60; font-size: 0.74rem; padding-top: 4px; }
