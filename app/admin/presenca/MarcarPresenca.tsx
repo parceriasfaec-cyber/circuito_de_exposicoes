@@ -103,17 +103,20 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
     if (salvando.has(e.id)) return;
     setErro(null);
     ocupar(e.id, true);
+    // A linha muda na hora; se o servidor não confirmar, volta ao que era e mostra o motivo.
+    const antes = { presente: e.presente, hora: e.hora, marcado_em: e.marcado_em };
+    atualizar(e.id, e.presente ? { presente: false, hora: null, marcado_em: null } : { presente: true, hora: "…", marcado_em: null });
     try {
       if (e.presente) {
         const r = await desmarcarPresenca(cicloId, e.id);
-        if (r.ok) atualizar(e.id, { presente: false, hora: null, marcado_em: null });
-        else setErro(r.erro ?? "Não foi possível desmarcar.");
+        if (!r.ok) { atualizar(e.id, antes); setErro(r.erro ?? "Não foi possível desmarcar."); }
       } else {
         const r = await marcarPresenca(cicloId, { id: e.id });
         if (r.ok) atualizar(e.id, { presente: true, hora: r.hora, marcado_em: new Date(r.marcadoEm) });
-        else setErro(r.erro);
+        else { atualizar(e.id, antes); setErro(r.erro); }
       }
     } catch {
+      atualizar(e.id, antes);
       setErro("Não foi possível salvar. Confira a internet e toque de novo.");
     } finally {
       ocupar(e.id, false);
