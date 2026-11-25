@@ -183,7 +183,7 @@ export default async function RankingExposicoes() {
 
         <p className="tx-nota">
           <strong>Como é o desempate:</strong> se duas etapas tiverem a mesma média, vence a que tiver a maior nota em
-          1º Infraestrutura dos animais (P2) · 2º Apoio aos tratadores (P5) · 3º Atendimento (P9) · 4º Bem-estar dos animais (P3) · 5º Alimentação e água (P4) · 6º Maior número de avaliações.
+          1º Infraestrutura dos animais (P2) · 2º Apoio aos tratadores (P5) · 3º Atendimento (P9) · 4º Bem-estar dos animais (P3) · 5º Alimentação e água (P4) · 6º Maior peso das avaliações (quem participou de mais exposições no ciclo pesa mais: 1,0 até 1 exposição; 1 + nº de exposições ÷ 10 para quem tem mais) · 7º Maior número de avaliações.
           A seguinte só vale se a anterior também empatar; se ainda assim empatar, a organização decide.
         </p>
       </div>
