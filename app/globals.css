@@ -3176,3 +3176,12 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .lateral-menu a.ativo { font-weight: 500; }
 .lateral-menu .lateral-sub a { font-weight: 400; }
 .lateral-menu .lateral-sub a.ativo { font-weight: 500; }
+
+/* ---------- Tela de login do Painel do Organizador: foto dos animais ao fundo, suavizada (meio transparente) ---------- */
+.pagina:has(.tela-login) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.62) 55%, rgba(255, 255, 255, 0.8) 100%),
+    url("/marcas/fundo-animais.jpg") center 35% / cover no-repeat,
+    #eef6e6;
+  background-attachment: scroll;
+}

@@ -38,7 +38,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     return (
       <>
         <FaixaTitulo>Painel do Organizador</FaixaTitulo>
-        <div className="estreito" style={{ maxWidth: 520 }}>
+        <div className="estreito tela-login" style={{ maxWidth: 520 }}>
           <p className="intro">Entre com o seu usuário e senha para liberar a votação e acompanhar os resultados.</p>
           <Login />
         </div>
