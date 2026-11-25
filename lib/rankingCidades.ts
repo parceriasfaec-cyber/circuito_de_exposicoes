@@ -26,6 +26,6 @@ export function dadosRankingCidades(ano: number, votacao: Votacao) {
         sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo`,
       ]);
       return { ranking, vagas, votantes, listaVotantes, totalVotos: listaVotantes.length, elegiveis, presentes };
-    }, 15000),
+    }, 5000),
   );
 }
