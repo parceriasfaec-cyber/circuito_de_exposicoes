@@ -8,41 +8,47 @@ import { sair } from "./actions";
 
 type Item = { href: string; rotulo: string; icone: NomeIcone; novaAba?: boolean; exato?: boolean };
 
-/** Três blocos por assunto: gestão do circuito, avaliação das exposições e credenciamento/votação das cidades do próximo ano. */
+/** Menu por assunto: início, etapas e expositores, avaliação das etapas, votação dos municípios e telas públicas. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const grupos = (ano: number): { titulo: string; itens: Item[] }[] => [
   {
-    titulo: "Gestão do circuito",
-    itens: [
-      { href: "/admin", rotulo: "Painel de Avaliação", icone: "painel", exato: true },
-      { href: "/admin/horario", rotulo: "Prazo e horário", icone: "calendario" },
-      { href: "/admin/ciclos", rotulo: "Ciclos", icone: "calendario" },
-      { href: "/admin/exposicoes", rotulo: "Exposições", icone: "trofeu" },
-      { href: "/admin/produtores", rotulo: "Expositores", icone: "usuarios" },
-      { href: "/admin/presenca", rotulo: "Presença e avaliação", icone: "check" },
-    ],
-  },
-  {
-    titulo: "Avaliação das exposições",
-    itens: [
-      { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
-      { href: "/admin/diagnostico", rotulo: "Avaliação por Circuito", icone: "alerta" },
-    ],
-  },
-  {
-    titulo: "Credenciamento e votação",
-    itens: [
-      { href: "/admin/proximo", rotulo: "Painel de Votação", icone: "grafico", exato: true },
-      { href: "/admin/proximo/credenciados", rotulo: "Credenciados", icone: "local" },
-      { href: "/admin/proximo/prazos", rotulo: "Prazos", icone: "calendario" },
-    ],
-  },
-  {
     titulo: "",
     itens: [
-      { href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true },
+      { href: "/admin", rotulo: "Painel do Organizador", icone: "painel", exato: true },
+    ],
+  },
+  {
+    titulo: "Etapas e expositores",
+    itens: [
+      { href: "/admin/exposicoes", rotulo: "Etapas do Circuito", icone: "trofeu" },
+      { href: "/admin/produtores", rotulo: "Expositores", icone: "usuarios" },
+      { href: "/admin/presenca", rotulo: "Presença no evento", icone: "check" },
+      { href: "/admin/ciclos", rotulo: "Anos do Circuito", icone: "calendario" },
+    ],
+  },
+  {
+    titulo: "Avaliação das etapas",
+    itens: [
+      { href: "/admin/horario", rotulo: "Horário da avaliação", icone: "calendario" },
+      { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
+      { href: "/admin/diagnostico", rotulo: "Etapa em último lugar", icone: "alerta" },
       { href: "/ranking-exposicoes", rotulo: "Ranking das avaliações", icone: "grafico", novaAba: true },
-      { href: "/ranking", rotulo: "Ranking ao vivo", icone: "trofeu", novaAba: true },
+    ],
+  },
+  {
+    titulo: "Votação dos municípios",
+    itens: [
+      { href: "/admin/proximo", rotulo: "Painel de votação", icone: "grafico", exato: true },
+      { href: "/admin/proximo/credenciados", rotulo: "Credenciados", icone: "local" },
+      { href: "/admin/proximo/prazos", rotulo: "Prazos do credenciamento", icone: "calendario" },
+      { href: "/ranking", rotulo: "Ranking dos municípios", icone: "trofeu", novaAba: true },
+    ],
+  },
+  {
+    titulo: "Telas públicas",
+    itens: [
+      { href: "/telao", rotulo: "Tela do telão", icone: "olho", novaAba: true },
+      { href: "/indicadores", rotulo: "Indicadores no celular", icone: "grafico", novaAba: true },
     ],
   },
 ];
