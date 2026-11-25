@@ -10,7 +10,6 @@ import MapaCircuito, { type EtapaMapa } from "./MapaCircuito";
 import "./indicadores.css";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Indicadores · Circuito Cearense de Exposição" };
 
 type Etapa = { exposicao_id: string; posicao: number; nome: string; questionarios: number; media_produtor: number | null };
 

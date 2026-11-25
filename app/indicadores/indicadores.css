@@ -1,7 +1,7 @@
 .ind { min-height: 100vh; background: #f2f6f0; color: #123d22; font-family: inherit; -webkit-text-size-adjust: 100%; }
-.ind-capa { position: relative; height: 34vw; min-height: 190px; max-height: 300px; background: #1d5e2c url("/marcas/capa-circuito.jpg") center 60% / cover no-repeat; }
+.ind-capa { position: relative; height: 34vw; min-height: 190px; max-height: 340px; background: #1d5e2c url("/marcas/capa-circuito.jpg") center 60% / cover no-repeat; }
 .ind-capa-sombra { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 45, 22, 0.05) 0%, rgba(10, 45, 22, 0.35) 55%, rgba(10, 45, 22, 0.88) 100%); }
-.ind-capa-texto { position: absolute; left: 18px; right: 18px; bottom: 34px; color: #fff; }
+.ind-capa-texto { position: absolute; left: max(18px, calc((100% - 640px) / 2 + 14px)); right: 18px; bottom: 38px; color: #fff; }
 .ind-capa-texto h1 { margin: 6px 0 0; font-size: clamp(1.35rem, 6vw, 2rem); font-weight: 900; line-height: 1.1; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45); }
 .ind-selo { display: inline-block; padding: 3px 12px; border-radius: 99px; background: #7cc24a; color: #0f3a1c; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
 .ind-corpo { position: relative; margin-top: -22px; padding: 0 14px 28px; display: grid; gap: 14px; max-width: 640px; margin-inline: auto; }
