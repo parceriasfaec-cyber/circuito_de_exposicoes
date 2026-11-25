@@ -73,6 +73,8 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   const [filtroAval, setFiltroAval] = useState<FiltroAval>(avalInicial);
   const [pagina, setPagina] = useState(0);
   const [salvando, setSalvando] = useState<Set<string>>(new Set());
+  // Quem acabou de ser marcado (ou desmarcado) continua na lista do filtro atual, para você ver a linha mudar em vez de sumir.
+  const [mantidos, setMantidos] = useState<Set<string>>(new Set());
   const [erro, setErro] = useState<string | null>(null);
 
   const presentes = expositores.filter((e) => e.presente).length;
@@ -82,11 +84,12 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   const visiveis = useMemo(() => {
     return expositores.filter(
       (e) =>
-        (filtro === "todos" || (filtro === "presentes") === e.presente) &&
+        (filtro === "todos" || (filtro === "presentes") === e.presente || mantidos.has(e.id)) &&
         (filtroAval === "todos" || (filtroAval === "avaliou") === avaliou(e)) &&
         casaBusca(campoBusca, busca, e),
     );
-  }, [expositores, busca, campoBusca, filtro, filtroAval]);
+  }, [expositores, busca, campoBusca, filtro, filtroAval, mantidos]);
+  useEffect(() => { setMantidos(new Set()); }, [filtro]);
   const avaliaram = expositores.filter(avaliou).length;
   const { atual, itens: daPagina } = paginar(visiveis, pagina, POR_PAGINA);
 
@@ -106,6 +109,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
     if (salvando.has(e.id)) return;
     setErro(null);
     ocupar(e.id, true);
+    setMantidos((m) => new Set(m).add(e.id));
     // A linha muda na hora; se o servidor não confirmar, volta ao que era e mostra o motivo.
     const antes = { presente: e.presente, hora: e.hora, marcado_em: e.marcado_em };
     atualizar(e.id, e.presente ? { presente: false, hora: null, marcado_em: null } : { presente: true, hora: "…", marcado_em: null });
