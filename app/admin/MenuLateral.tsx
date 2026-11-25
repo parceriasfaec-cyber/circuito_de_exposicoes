@@ -98,7 +98,7 @@ export default function MenuLateral({ anoProximo }: { anoProximo: number }) {
           return (
             <div key={g.id} className={`lateral-grupo lateral-sanfona${estaAberto ? " aberto" : ""}${temAtivo ? " com-ativo" : ""}`}>
               <button type="button" className="lateral-cab" onClick={() => alternar(g.id, estaAberto)} aria-expanded={estaAberto} aria-controls={`menu-${g.id}`}>
-                <span className="lateral-cab-ic"><Icone nome={g.icone} tamanho={18} /></span>
+                <span className="lateral-cab-ic"><Icone nome={g.icone} tamanho={26} /></span>
                 <span className="lateral-cab-txt">{g.titulo}</span>
                 <svg className="lateral-seta" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
               </button>
