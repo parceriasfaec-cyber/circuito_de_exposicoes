@@ -145,6 +145,22 @@ export default async function Indicadores() {
               </li>
             ))}
           </ol>
+          {etapas.length > avaliadas.length && (
+            <details className="ind-mais">
+              <summary>Ver demais etapas ({etapas.length - avaliadas.length})</summary>
+              <ol className="ind-lista">
+                {etapas.filter((e) => !avaliadas.includes(e)).map((e) => (
+                  <li key={e.exposicao_id}>
+                    <span className="ind-medalha">{e.media_produtor === null ? "–" : `${e.posicao}º`}</span>
+                    <div className="ind-item">
+                      <div className="ind-linha"><strong>{nomeCurto(e.nome)}</strong><span>{formatarMedia(e.media_produtor)}</span></div>
+                      <small className="ind-sub">{e.media_produtor === null ? "Aguardando avaliações" : `${e.questionarios} ${e.questionarios === 1 ? "avaliação" : "avaliações"}`}</small>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
         </section>
 
         <footer className="ind-rodape">Sistema FAEC/SENAR · Atualiza automaticamente</footer>
