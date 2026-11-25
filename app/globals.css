@@ -3143,12 +3143,12 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .lateral-menu { gap: 0; padding: 6px 10px 10px; }
 .lateral-menu a, .lateral-menu .lateral-sair { border-left: 0; border-radius: 14px; }
 /* Painel do Organizador: ícone, divisória e texto */
-.lateral-menu .lateral-grupo:first-child a { margin: 0 0 6px; padding: 12px 14px; font-size: 1rem; font-weight: 800; gap: 0; line-height: 1.15; }
+.lateral-menu .lateral-grupo:first-child a { margin: 0 0 6px; padding: 12px 14px; font-size: 1rem; font-weight: 500; gap: 0; line-height: 1.15; }
 .lateral-menu .lateral-grupo:first-child a svg { width: 24px; height: 24px; flex: none; margin-right: 12px; padding-right: 12px; box-sizing: content-box; border-right: 1.5px solid rgba(255, 255, 255, 0.35); }
 .lateral-menu .lateral-grupo:first-child a.ativo { background: linear-gradient(135deg, #43b94f, #2f9a42); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22); color: #fff; }
 /* Grupos */
 .lateral-sanfona { margin: 0; padding-top: 0; border-top: 1px solid rgba(255, 255, 255, 0.14); border-radius: 0; background: none; }
-.lateral-sanfona .lateral-cab { width: 100%; display: flex; align-items: center; gap: 14px; padding: 13px 12px; border: 0; border-radius: 14px; background: none; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; text-align: left; cursor: pointer; transition: background 0.15s; }
+.lateral-sanfona .lateral-cab { width: 100%; display: flex; align-items: center; gap: 14px; padding: 13px 12px; border: 0; border-radius: 14px; background: none; color: #fff; font: inherit; font-weight: 500; font-size: 1rem; text-align: left; cursor: pointer; transition: background 0.15s; }
 .lateral-sanfona .lateral-cab:hover { background: rgba(255, 255, 255, 0.08); }
 .lateral-cab-ic { flex: none; display: grid; place-items: center; width: 26px; height: 26px; color: #fff; }
 .lateral-cab-ic svg { width: 26px; height: 26px; }
@@ -3160,13 +3160,19 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 /* Submenus: recuo e linha de conexão */
 .lateral-sub { position: relative; margin: 4px 0 6px 25px; padding: 2px 0 2px 14px; border-left: 1.5px solid rgba(255, 255, 255, 0.28); display: grid; gap: 2px; }
 .lateral-sub[hidden] { display: none; }
-.lateral-menu .lateral-sub a { padding: 9px 10px; border: 0; border-radius: 10px; font-size: 0.9rem; font-weight: 600; gap: 12px; line-height: 1.2; color: #fff; }
+.lateral-menu .lateral-sub a { padding: 9px 10px; border: 0; border-radius: 10px; font-size: 0.9rem; font-weight: 400; gap: 12px; line-height: 1.2; color: #fff; }
 .lateral-menu .lateral-sub a svg { flex: none; width: 18px; height: 18px; }
 .lateral-menu .lateral-sub a:hover { background: rgba(255, 255, 255, 0.10); }
-.lateral-menu .lateral-sub a.ativo { background: linear-gradient(135deg, #43b94f, #2f9a42); font-weight: 800; }
+.lateral-menu .lateral-sub a.ativo { background: linear-gradient(135deg, #43b94f, #2f9a42); font-weight: 500; }
 /* Sair e marca */
 .lateral-menu .lateral-grupo:last-child { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
-.lateral-menu .lateral-sair { padding: 13px 14px; font-size: 1rem; font-weight: 800; gap: 14px; }
+.lateral-menu .lateral-sair { padding: 13px 14px; font-size: 1rem; font-weight: 500; gap: 14px; }
 .lateral-menu .lateral-sair svg { width: 26px; height: 26px; }
 .lateral-marcas { margin: auto 14px 0; padding: 18px 8px 24px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
 .lateral-marcas img { width: 190px; max-width: 100%; opacity: 1; }
+
+/* Menu sem negrito: texto regular, o selecionado só destaca pela cor */
+.lateral-menu a, .lateral-menu .lateral-sair, .lateral-cab { font-weight: 500; }
+.lateral-menu a.ativo { font-weight: 500; }
+.lateral-menu .lateral-sub a { font-weight: 400; }
+.lateral-menu .lateral-sub a.ativo { font-weight: 500; }
