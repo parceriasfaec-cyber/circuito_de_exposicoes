@@ -3127,3 +3127,6 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 /* Municípios: lista de "demais" em uma coluna, um abaixo do outro */
 .tp-card .tp-lista { grid-template-columns: 1fr; grid-auto-rows: auto; column-gap: 0; overflow-y: auto; overflow-x: hidden; padding-right: 6px; align-content: start; scrollbar-width: thin; scrollbar-color: #6db04a #e4ece0; }
 .tp-card .tp-lista li button { padding: 1.4vh 0; height: auto; }
+
+/* Rankings (etapas e municípios): logos no canto esquerdo, com margem */
+.pagina:has(.tx) .topo-claro, .pagina:has(.tp) .topo-claro { justify-content: flex-start; padding-left: 2.4vw; padding-right: 2.4vw; }
