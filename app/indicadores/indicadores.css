@@ -205,3 +205,9 @@
 .ind-kpis-aval .ind-kpi { min-height: 0 !important; padding: 12px !important; }
 .ind-kpis-aval .ind-kpi strong { text-align: left !important; font-size: 2.3rem !important; }
 .ind-kpis-aval .ind-ilus { width: 44px !important; right: 14px !important; top: 50% !important; bottom: auto !important; transform: translateY(-50%) !important; }
+
+/* Dois primeiros cartões: sem ilustração e mais compactos */
+.ind-kpis-top .ind-onda, .ind-kpis-top .ind-ilus-mapa { display: none !important; }
+.ind-kpis-top > :nth-child(-n+2) { min-height: 0 !important; padding: 10px 12px !important; }
+.ind-kpis-top > :nth-child(-n+2) strong { margin-top: 2px !important; font-size: 2.1rem !important; }
+.ind-kpis-top > :nth-child(-n+2) .ind-ver { margin-top: 3px !important; }
