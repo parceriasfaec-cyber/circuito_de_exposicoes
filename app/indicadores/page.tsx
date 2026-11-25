@@ -37,6 +37,7 @@ export default async function Indicadores() {
   const maxVotos = Math.max(1, ...podio.map((r) => r.votos));
   const avaliadas = etapas.filter((e) => e.media_produtor !== null).slice(0, 3);
   const totalAval = etapas.reduce((s, e) => s + e.questionarios, 0);
+  const anoCircuito = ciclo?.ano ?? ano - 1; // ano do circuito em andamento (o "ano" acima é o do próximo circuito)
   const medalha = ["ouro", "prata", "bronze"];
 
   return (
@@ -46,7 +47,7 @@ export default async function Indicadores() {
         <div className="ind-capa-sombra" />
         <div className="ind-capa-texto">
           <span className="ind-selo">Painel ao vivo</span>
-          <h1>Circuito Cearense<br />de Exposição {ano}</h1>
+          <h1>Circuito Cearense<br />de Exposição {anoCircuito}</h1>
         </div>
       </header>
 
