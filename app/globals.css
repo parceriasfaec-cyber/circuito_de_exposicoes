@@ -3130,3 +3130,11 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 
 /* Rankings (etapas e municípios): logos no canto esquerdo, com margem */
 .pagina:has(.tx) .topo-claro, .pagina:has(.tp) .topo-claro { justify-content: flex-start; padding-left: 2.4vw; padding-right: 2.4vw; }
+
+/* Telão e cartaz em PDF: foto do Circuito desfocada ao fundo (com as ondas verdes embaixo) */
+.pagina:has(.telao) {
+  background: url("/marcas/fundo-telao.jpg") center bottom / cover no-repeat, #eef6e6;
+  background-attachment: scroll;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
