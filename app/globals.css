@@ -3037,7 +3037,7 @@ button.aovivo-cidade:hover { transform: translateY(-1px); box-shadow: 0 4px 12px
   html:has(.telao) { font-size: 16px !important; }
   html:has(.telao), body:has(.telao) { background: transparent !important; }
   /* As duas logos (Sistema FAEC/SENAR e Circuito) ficam no topo do PDF, mais compactas */
-  body:has(.telao) .topo-claro { display: flex !important; padding: 10px 40px 2px !important; }
+  body:has(.telao) .topo-claro { display: flex !important; padding: 30px 40px 4px !important; }
   body:has(.telao) .topo-claro-marcas .sistema { height: 3.2rem; }
   body:has(.telao) .topo-claro-marcas .circuito { height: 3.5rem; }
   body:has(.telao) .pagina { display: flex; flex-direction: column; min-height: 100vh; height: 100vh; overflow: hidden; }
