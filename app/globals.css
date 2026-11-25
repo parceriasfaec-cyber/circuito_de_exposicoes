@@ -3185,3 +3185,10 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
     #eef6e6;
   background-attachment: scroll;
 }
+
+/* Botão discreto de atualizar a lista de presença */
+.btn-atualizar { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--borda); background: #fff; color: var(--verde); cursor: pointer; opacity: .75; }
+.btn-atualizar:hover { opacity: 1; background: var(--verde-claro); }
+.btn-atualizar:disabled { cursor: default; }
+.btn-atualizar.girando svg { animation: girar-atualizar .8s linear infinite; }
+@keyframes girar-atualizar { to { transform: rotate(360deg); } }

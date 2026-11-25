@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
 import { CAMPOS_BUSCA, casaBusca, documentoCompleto, type CampoBusca } from "@/lib/texto";
@@ -38,6 +38,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   // Cópia local: a linha, o contador e os filtros mudam na hora, sem recarregar a página.
   const [expositores, setExpositores] = useState(doServidor);
   const router = useRouter();
+  const [atualizando, iniciarAtualizar] = useTransition();
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const editandoRef = useRef<string | null>(null);
   const [destaqueId, setDestaqueId] = useState<string | null>(null);
@@ -190,6 +191,9 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
             <button key={c.id} type="button" className={`campo-busca${campoBusca === c.id ? " ativo" : ""}`} aria-pressed={campoBusca === c.id} onClick={() => { setCampoBusca(c.id); setPagina(0); }}>{c.rotulo}</button>
           ))}
         </div>
+        <button type="button" className={`btn-atualizar${atualizando ? " girando" : ""}`} onClick={() => iniciarAtualizar(() => router.refresh())} disabled={atualizando} title="Atualizar a lista" aria-label="Atualizar a lista">
+          <Icone nome="atualizar" tamanho={18} />
+        </button>
         {presentes > 0 && (
           <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
         )}
