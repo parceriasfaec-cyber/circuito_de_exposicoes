@@ -48,11 +48,11 @@ function descartarConexoes() {
   if (velho) velho.end({ timeout: 5 }).catch(() => {}); // espera até 5 s as consultas em andamento (não derruba as que estão boas)
 }
 
-export async function tentar<T>(fn: () => Promise<T>): Promise<T> {
+export async function tentar<T>(fn: () => Promise<T>, limiteMs = 7000): Promise<T> {
   const uma = () =>
     new Promise<T>((ok, erro) => {
-      // Uma consulta normal leva milissegundos; se passar de 7 s a conexão travou: desiste e tenta de novo em outra.
-      const relogio = setTimeout(() => erro(Object.assign(new Error("consulta parada"), { code: "TEMPO_APP" })), 7000);
+      // Uma consulta normal leva milissegundos; se passar do limite (7 s por padrão) a conexão travou: desiste e tenta de novo em outra.
+      const relogio = setTimeout(() => erro(Object.assign(new Error("consulta parada"), { code: "TEMPO_APP" })), limiteMs);
       fn().then(
         (v) => { clearTimeout(relogio); ok(v); },
         (e) => { clearTimeout(relogio); erro(e); },
@@ -164,3 +164,6 @@ export async function avaliouAlgumaExposicao(produtorId: string): Promise<boolea
     where a.produtor_id = ${produtorId}`;
   return n > 0;
 }
+
+/** Igual a lerVotacao, mas telas ao vivo (ranking, telão) compartilham o resultado por 3 s em vez de cada aba consultar o banco. */
+export const lerVotacaoCache = () => cacheCurto("votacao", 3000, lerVotacao);

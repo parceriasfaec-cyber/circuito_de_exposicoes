@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import PaginaPublica from "@/components/PaginaPublica";
-import { anoCredenciamento, resultadoCidades, votantesPorCidade } from "@/lib/credenciamento";
-import { cacheCurto, lerVotacao, sql, tentar } from "@/lib/db";
+import { anoCredenciamento } from "@/lib/credenciamento";
+import { lerVotacaoCache } from "@/lib/db";
+import { dadosRankingCidades } from "@/lib/rankingCidades";
 import { ehAdmin } from "@/lib/sessao";
 import RankingPodio from "./RankingPodio";
 
@@ -15,24 +16,9 @@ const esconderNome = (nome: string) =>
 export default async function RankingTempoReal() {
   if (!(await ehAdmin())) redirect("/admin");
   const ano = await anoCredenciamento();
-  const votacao = await lerVotacao();
+  const votacao = await lerVotacaoCache();
 
-  const [{ ranking, vagas, votantes }, listaVotantes, [{ total_votos }], [{ elegiveis }], [{ presentes }]] = await cacheCurto(`rank-cidades:${ano}:${votacao.cidades_quem}:${votacao.cidades_so_presentes}`, 8000, () => tentar(() => Promise.all([
-    resultadoCidades(ano),
-    votantesPorCidade(ano),
-    sql()<{ total_votos: number }[]>`select count(*)::int total_votos from votos_cidades where ano = ${ano}`,
-    // Quem pode votar, pela regra definida no painel (todos, só quem avaliou e/ou só quem está presente)
-    sql()<{ elegiveis: number }[]>`
-      select count(distinct pa.produtor_id)::int elegiveis
-      from participacoes pa join exposicoes e on e.id = pa.exposicao_id join ciclos c on c.id = e.ciclo_id and c.ativo
-      where (${votacao.cidades_quem !== "avaliaram"} or exists (
-               select 1 from avaliacoes a join exposicoes e2 on e2.id = a.exposicao_id
-               where a.produtor_id = pa.produtor_id and e2.ciclo_id = c.id))
-        and (${!votacao.cidades_so_presentes} or exists (
-               select 1 from presencas pr where pr.produtor_id = pa.produtor_id and pr.ciclo_id = c.id))`,
-    // Total de presentes (credenciados no evento) do ciclo ativo
-    sql()<{ presentes: number }[]>`select count(*)::int presentes from presencas pr join ciclos c on c.id = pr.ciclo_id and c.ativo`,
-  ])));
+  const { ranking, vagas, votantes, listaVotantes, totalVotos, elegiveis, presentes } = await dadosRankingCidades(ano, votacao);
 
   return (
     <PaginaPublica>
@@ -42,7 +28,7 @@ export default async function RankingTempoReal() {
         ranking={ranking.filter((r) => r.posicao <= 10 || (vagas !== null && r.posicao <= vagas)).slice(0, Math.max(10, vagas ?? 0))}
         vagas={vagas}
         votantes={votantes}
-        totalVotos={total_votos}
+        totalVotos={totalVotos}
         elegiveis={elegiveis}
         presentes={presentes}
         listaVotantes={listaVotantes.map((v) => ({ ...v, nome: esconderNome(v.nome), municipio: "" }))}

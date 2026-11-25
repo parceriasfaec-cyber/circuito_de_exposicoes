@@ -9,7 +9,8 @@ import { QTD_PERGUNTAS } from "@/lib/escala";
 
 export type EstadoEntrada = { erro?: string };
 
-const MAX_ERROS = 8; // erros de código por IP
+// Erros de código por IP. No evento todo mundo usa o mesmo Wi-Fi (mesmo IP): com 8, poucos erros de digitação bloqueavam o salão inteiro.
+const MAX_ERROS = 40;
 const JANELA_MIN = 15;
 
 async function ipDoCliente() {
