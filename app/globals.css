@@ -3138,3 +3138,19 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
+
+/* ---- Menu do organizador: grupos recolhíveis ---- */
+.lateral-sanfona { margin: 4px 10px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.lateral-sanfona.aberto { background: rgba(0, 0, 0, 0.14); }
+.lateral-cab { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; background: rgba(255, 255, 255, 0.1); color: #fff; font: inherit; font-weight: 800; font-size: 0.98rem; text-align: left; cursor: pointer; }
+.lateral-cab:hover { background: rgba(255, 255, 255, 0.18); }
+.lateral-cab-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: #1d6a35; }
+.lateral-sanfona.com-ativo .lateral-cab-ic { background: #7cc24a; color: #0f3a1c; }
+.lateral-cab-txt { flex: 1; min-width: 0; line-height: 1.15; }
+.lateral-seta { flex: none; transition: transform 0.2s; }
+.lateral-sanfona.aberto .lateral-seta { transform: rotate(180deg); }
+.lateral-sub { padding: 4px 0 6px; }
+.lateral-sub[hidden] { display: none; }
+.lateral-menu .lateral-sub a { padding: 9px 14px 9px 18px; font-size: 0.93rem; font-weight: 600; gap: 10px; }
+.lateral-menu .lateral-sub a svg { width: 1.05rem; height: 1.05rem; }
+.lateral-menu .lateral-sub a.ativo { background: #2f8a42; border-left-color: #7cc24a; }
