@@ -3123,3 +3123,7 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .tp-card:has(.tx-mais) .tp-degrau.lugar-2 .tp-bloco { height: 42%; }
 .tp-card:has(.tx-mais) .tp-degrau.lugar-3 .tp-bloco { height: 32%; }
 .tp-card:has(.tx-mais) .tp-medalha { width: 5.6vh; height: 5.6vh; top: -2.8vh; }
+
+/* Municípios: lista de "demais" em uma coluna, um abaixo do outro */
+.tp-card .tp-lista { grid-template-columns: 1fr; grid-auto-rows: auto; column-gap: 0; overflow-y: auto; overflow-x: hidden; padding-right: 6px; align-content: start; scrollbar-width: thin; scrollbar-color: #6db04a #e4ece0; }
+.tp-card .tp-lista li button { padding: 1.4vh 0; height: auto; }
