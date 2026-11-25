@@ -1,4 +1,3 @@
-import { cache } from "react";
 import postgres from "postgres";
 
 declare global {
@@ -14,7 +13,7 @@ function criar() {
     max: 2, // cada servidor da Vercel usa poucas conexões: o pooler do Supabase atende muitos servidores ao mesmo tempo
     idle_timeout: 10, // devolve ao pooler a conexão ociosa logo, em vez de segurá-la
     max_lifetime: 300, // renova conexões velhas (evita ficar com uma pendurada)
-    connect_timeout: 10,
+    connect_timeout: 5,
     connection: { search_path: "exposicao_cearense" },
   });
 }
@@ -49,10 +48,10 @@ function descartarConexoes() {
   if (velho) velho.end({ timeout: 5 }).catch(() => {}); // espera até 5 s as consultas em andamento (não derruba as que estão boas)
 }
 
-export async function tentar<T>(fn: () => Promise<T>, limiteMs = 7000): Promise<T> {
+export async function tentar<T>(fn: () => Promise<T>, limiteMs = 4000): Promise<T> {
   const uma = () =>
     new Promise<T>((ok, erro) => {
-      // Uma consulta normal leva milissegundos; se passar do limite (7 s por padrão) a conexão travou: desiste e tenta de novo em outra.
+      // Uma consulta normal leva milissegundos; se passar do limite (4 s por padrão) a conexão travou (quase sempre é conexão velha, de servidor congelado): desiste e tenta de novo em outra.
       const relogio = setTimeout(() => erro(Object.assign(new Error("consulta parada"), { code: "TEMPO_APP" })), limiteMs);
       fn().then(
         (v) => { clearTimeout(relogio); ok(v); },
@@ -101,7 +100,7 @@ export type Votacao = {
   cidades_so_presentes: boolean;
 };
 
-async function lerVotacaoSemCache(): Promise<Votacao> {
+export async function lerVotacao(): Promise<Votacao> {
   // Abre ou fecha a avaliação se chegou um horário programado no Painel.
   // Só chama a função (que faz UPDATE na linha única da votação) quando há horário vencido; um SELECT simples nunca
   // espera trava de linha. Se mesmo assim falhar (ex.: tempo esgotado), a página abre com o estado atual.
@@ -125,9 +124,6 @@ async function lerVotacaoSemCache(): Promise<Votacao> {
     }
   );
 }
-
-/** Lê o estado da votação. Dentro de uma mesma requisição só consulta o banco uma vez (antes eram 2 a 3 vezes: sessão + página/ação). */
-export const lerVotacao = cache(lerVotacaoSemCache);
 
 /** O expositor teve a presença marcada no evento do ciclo ativo? */
 export async function estaPresente(produtorId: string): Promise<boolean> {
