@@ -92,14 +92,6 @@ export default async function Indicadores() {
           <strong>{votacao.cidades_aberta ? "Votação dos municípios aberta" : "Votação dos municípios encerrada"}</strong>
           <span>Atualizado às {horaAgora}</span>
         </div>
-        <section className="ind-kpis" aria-label="Indicadores gerais">
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{votantes}</strong><small>Expositores que votaram</small></div>
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="trofeu" tamanho={20} /></span><strong>{totalVotos}</strong><small>Votos nos municípios</small></div>
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{presentes}</strong><small>Presentes no evento</small></div>
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{totalAval}</strong><small>Avaliações das etapas</small></div>
-          <div className="ind-kpi ind-kpi-destaque"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{produtores}</strong><small>Participantes em todas as etapas do Circuito</small></div>
-        </section>
-
         {proxima && (
           <section className="ind-prox">
             <div className="ind-prox-dias"><strong>{diasFaltam}</strong><small>{diasFaltam === 1 ? "dia" : "dias"}</small></div>
@@ -111,20 +103,69 @@ export default async function Indicadores() {
           </section>
         )}
 
+        <div className="ind-bloco">
+          <span className="ind-bloco-ic"><Icone nome="checkCirculo" tamanho={22} /></span>
+          <div><small>Circuito {anoCircuito}</small><h2>Avaliação das etapas</h2></div>
+        </div>
+        <section className="ind-kpis ind-kpis-2" aria-label="Indicadores da avaliação das etapas">
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{produtores}</strong><small>Participantes das etapas</small></div>
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{totalAval}</strong><small>Avaliações enviadas</small></div>
+        </section>
+        <section className="ind-card">
+          <h2><span className="ind-ic p"><Icone nome="trofeu" tamanho={16} /></span>Etapas mais bem avaliadas</h2>
+          {avaliadas.length === 0 && <p className="ind-vazio">Aguardando avaliações.</p>}
+          <ol className="ind-lista">
+            {avaliadas.map((e, i) => (
+              <li key={e.exposicao_id}>
+                <span className={`ind-medalha ${medalha[i]}`}>{e.posicao}º</span>
+                <div className="ind-item">
+                  <div className="ind-linha"><strong>{nomeCurto(e.nome)}</strong><span>{formatarMedia(e.media_produtor)}</span></div>
+                  <small className="ind-sub">{e.questionarios} {e.questionarios === 1 ? "avaliação" : "avaliações"}</small>
+                </div>
+              </li>
+            ))}
+          </ol>
+          {etapas.length > avaliadas.length && (
+            <details className="ind-mais">
+              <summary>Ver demais etapas ({etapas.length - avaliadas.length})</summary>
+              <ol className="ind-lista">
+                {etapas.filter((e) => !avaliadas.includes(e)).map((e) => (
+                  <li key={e.exposicao_id}>
+                    <span className="ind-medalha">{e.media_produtor === null ? "–" : `${e.posicao}º`}</span>
+                    <div className="ind-item">
+                      <div className="ind-linha"><strong>{nomeCurto(e.nome)}</strong><span>{formatarMedia(e.media_produtor)}</span></div>
+                      <small className="ind-sub">{e.media_produtor === null ? "Aguardando avaliações" : `${e.questionarios} ${e.questionarios === 1 ? "avaliação" : "avaliações"}`}</small>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
+        </section>
+
         <section className="ind-card ind-card-mapa">
-          <h2><span className="ind-ic p"><Icone nome="local" tamanho={16} /></span>Mapa do Circuito</h2>
+          <h2><span className="ind-ic p"><Icone nome="local" tamanho={16} /></span>Mapa das etapas</h2>
           <MapaCircuito etapas={mapa} />
           <p className="ind-dica">Toque num marcador para ver os dados da etapa. Use dois dedos para aproximar.</p>
         </section>
 
+        <div className="ind-bloco ind-bloco-2">
+          <span className="ind-bloco-ic"><Icone nome="trofeu" tamanho={22} /></span>
+          <div><small>Circuito {ano}</small><h2>Votação dos municípios</h2></div>
+        </div>
+        <section className="ind-kpis ind-kpis-3" aria-label="Indicadores da votação dos municípios">
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{presentes}</strong><small>Expositores presentes</small></div>
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{votantes}</strong><small>Já votaram</small></div>
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="trofeu" tamanho={20} /></span><strong>{totalVotos}</strong><small>Votos registrados</small></div>
+        </section>
         <section className="ind-card">
-          <h2>Participação na votação</h2>
-          <div className="ind-meta"><strong>{pct.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%</strong><span>{votantes} de {elegiveis} expositores aptos</span></div>
+          <h2><span className="ind-ic p"><Icone nome="checkCirculo" tamanho={16} /></span>Adesão à votação</h2>
+          <div className="ind-meta"><strong>{pct.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%</strong><span>{votantes} de {elegiveis} expositores aptos já votaram</span></div>
           <div className="ind-trilho"><div className="ind-preench" style={{ width: `${pct}%` }} /></div>
         </section>
 
         <section className="ind-card">
-          <h2><span className="ind-ic p"><Icone nome="trofeu" tamanho={16} /></span>Municípios — classificados</h2>
+          <h2><span className="ind-ic p"><Icone nome="trofeu" tamanho={16} /></span>Municípios classificados</h2>
           {podio.length === 0 && <p className="ind-vazio">Ainda não há votos.</p>}
           <ol className="ind-lista">
             {podio.map((r, i) => (
@@ -157,38 +198,6 @@ export default async function Indicadores() {
                     <div className="ind-item">
                       <div className="ind-linha"><strong>{r.municipio}</strong><span>{votosTxt(r.votos)} <small>({pts(r.pontos)} pts)</small></span></div>
                       <div className="ind-barra"><i style={{ width: `${(r.votos / maxVotos) * 100}%` }} /></div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </details>
-          )}
-        </section>
-
-        <section className="ind-card">
-          <h2><span className="ind-ic p"><Icone nome="trofeu" tamanho={16} /></span>Etapas mais bem avaliadas</h2>
-          {avaliadas.length === 0 && <p className="ind-vazio">Aguardando avaliações.</p>}
-          <ol className="ind-lista">
-            {avaliadas.map((e, i) => (
-              <li key={e.exposicao_id}>
-                <span className={`ind-medalha ${medalha[i]}`}>{e.posicao}º</span>
-                <div className="ind-item">
-                  <div className="ind-linha"><strong>{nomeCurto(e.nome)}</strong><span>{formatarMedia(e.media_produtor)}</span></div>
-                  <small className="ind-sub">{e.questionarios} {e.questionarios === 1 ? "avaliação" : "avaliações"}</small>
-                </div>
-              </li>
-            ))}
-          </ol>
-          {etapas.length > avaliadas.length && (
-            <details className="ind-mais">
-              <summary>Ver demais etapas ({etapas.length - avaliadas.length})</summary>
-              <ol className="ind-lista">
-                {etapas.filter((e) => !avaliadas.includes(e)).map((e) => (
-                  <li key={e.exposicao_id}>
-                    <span className="ind-medalha">{e.media_produtor === null ? "–" : `${e.posicao}º`}</span>
-                    <div className="ind-item">
-                      <div className="ind-linha"><strong>{nomeCurto(e.nome)}</strong><span>{formatarMedia(e.media_produtor)}</span></div>
-                      <small className="ind-sub">{e.media_produtor === null ? "Aguardando avaliações" : `${e.questionarios} ${e.questionarios === 1 ? "avaliação" : "avaliações"}`}</small>
                     </div>
                   </li>
                 ))}

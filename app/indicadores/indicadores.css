@@ -99,3 +99,20 @@
 .ind-comp button { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 14px; border: 0; border-radius: 14px; font: inherit; font-weight: 800; font-size: 0.92rem; cursor: pointer; }
 .ind-comp-zap { background: #25a244; color: #fff; box-shadow: 0 6px 16px rgba(37, 162, 68, 0.35); }
 .ind-comp-copiar { background: #fff; color: #155a2c; box-shadow: 0 4px 12px rgba(18, 61, 34, 0.12); }
+
+/* ---- Blocos: Avaliação das etapas / Votação dos municípios ---- */
+.ind-bloco { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 14px 16px; border-radius: 20px; background: linear-gradient(120deg, #123d22 0%, #1d6a35 70%, #3f9a45 100%); color: #fff; box-shadow: 0 8px 22px rgba(18, 61, 34, 0.22); position: relative; overflow: hidden; }
+.ind-bloco::after { content: ""; position: absolute; right: -28px; top: -34px; width: 120px; height: 120px; border-radius: 50%; background: rgba(124, 194, 66, 0.28); }
+.ind-bloco-2 { background: linear-gradient(120deg, #7a4a00 0%, #b8741a 65%, #e0a43a 100%); box-shadow: 0 8px 22px rgba(122, 74, 0, 0.25); }
+.ind-bloco-2::after { background: rgba(255, 233, 160, 0.25); }
+.ind-bloco-ic { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: rgba(255, 255, 255, 0.18); position: relative; z-index: 1; }
+.ind-bloco > div { position: relative; z-index: 1; display: grid; gap: 1px; }
+.ind-bloco small { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255, 255, 255, 0.82); }
+.ind-bloco h2 { margin: 0; font-size: 1.28rem; font-weight: 900; line-height: 1.15; color: #fff; }
+.ind-kpis-3 { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ind-kpis-3 .ind-kpi { padding: 12px 10px; }
+.ind-kpis-3 .ind-kpi strong { font-size: 1.7rem; }
+.ind-kpis-3 .ind-kpi small { font-size: 0.64rem; }
+.ind-kpis-3 .ind-ic { width: 30px; height: 30px; }
+.ind-bloco-2 ~ .ind-kpis .ind-ic { background: #b8741a; }
+.ind-bloco-2 ~ .ind-kpis .ind-kpi strong { color: #7a4a00; }
