@@ -73,3 +73,23 @@
 .ind-kpi-destaque strong { color: #fff; font-size: 2.4rem; }
 .ind-kpi-destaque small { color: #d8efc9; }
 .mapa-etapa-txt { fill: #1d6a35; font-weight: 800; }
+
+/* ---- Situação, próxima etapa e linha de corte ---- */
+.ind-status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 11px 14px; border-radius: 16px; background: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.12); font-size: 0.9rem; }
+.ind-status i { flex: none; width: 11px; height: 11px; border-radius: 50%; background: #2e9e48; box-shadow: 0 0 0 4px rgba(46, 158, 72, 0.22); animation: ind-pulso 1.8s infinite; }
+.ind-status.fechada i { background: #c62828; box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.18); animation: none; }
+.ind-status strong { font-weight: 900; color: #123d22; }
+.ind-status span { margin-left: auto; font-size: 0.74rem; color: #5f6e60; }
+@keyframes ind-pulso { 50% { box-shadow: 0 0 0 7px rgba(46, 158, 72, 0.05); } }
+.ind-prox { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 20px; background: linear-gradient(135deg, #14522a, #2e7d3e); color: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.18); }
+.ind-prox-dias { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px; background: rgba(255, 255, 255, 0.16); }
+.ind-prox-dias strong { font-size: 1.9rem; font-weight: 900; line-height: 1; }
+.ind-prox-dias small { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; color: #d8efc9; }
+.ind-prox-txt { display: grid; gap: 1px; min-width: 0; }
+.ind-prox-txt small { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #b8e08f; }
+.ind-prox-txt strong { font-size: 1.02rem; font-weight: 900; line-height: 1.2; }
+.ind-prox-txt span { font-size: 0.82rem; color: #d8efc9; }
+.ind-corte { display: flex; align-items: center; gap: 10px; margin: 16px 0 6px; color: #c62828; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em; }
+.ind-corte::before, .ind-corte::after { content: ""; flex: 1; border-top: 2px dashed #c62828; }
+.ind-corte-nota { margin: 0; text-align: center; font-size: 0.8rem; color: #4d5a4d; }
+.ind-corte-nota b { color: #123d22; }

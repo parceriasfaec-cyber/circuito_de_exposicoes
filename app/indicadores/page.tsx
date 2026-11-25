@@ -65,6 +65,14 @@ export default async function Indicadores() {
   const avaliadas = etapas.filter((e) => e.media_produtor !== null).slice(0, 3);
   const totalAval = etapas.reduce((s, e) => s + e.questionarios, 0);
   const anoCircuito = ciclo?.ano ?? ano - 1; // ano do circuito em andamento (o "ano" acima é o do próximo circuito)
+  const horaAgora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Fortaleza" });
+  // Próxima etapa: a que ainda não começou (a mais próxima); mostra quantos dias faltam.
+  const proxima = linhasMapa.find((l) => iso(l.data_inicio) > hoje);
+  const diasFaltam = proxima ? Math.round((Date.parse(iso(proxima.data_inicio)) - Date.parse(hoje)) / 86400000) : 0;
+  // Linha de corte: diferença entre o último classificado e o primeiro fora.
+  const ultimoClass = podio[podio.length - 1];
+  const primeiroFora = ranking.find((r) => !podio.includes(r));
+  const dif = ultimoClass && primeiroFora ? ultimoClass.votos - primeiroFora.votos : null;
   const medalha = ["ouro", "prata", "bronze"];
 
   return (
@@ -79,6 +87,11 @@ export default async function Indicadores() {
       </header>
 
       <main className="ind-corpo">
+        <div className={`ind-status ${votacao.cidades_aberta ? "aberta" : "fechada"}`}>
+          <i aria-hidden="true" />
+          <strong>{votacao.cidades_aberta ? "Votação dos municípios aberta" : "Votação dos municípios encerrada"}</strong>
+          <span>Atualizado às {horaAgora}</span>
+        </div>
         <section className="ind-kpis" aria-label="Indicadores gerais">
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{votantes}</strong><small>Expositores que votaram</small></div>
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="trofeu" tamanho={20} /></span><strong>{totalVotos}</strong><small>Votos nos municípios</small></div>
@@ -86,6 +99,17 @@ export default async function Indicadores() {
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{totalAval}</strong><small>Avaliações das etapas</small></div>
           <div className="ind-kpi ind-kpi-destaque"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{produtores}</strong><small>Participantes em todas as etapas do Circuito</small></div>
         </section>
+
+        {proxima && (
+          <section className="ind-prox">
+            <div className="ind-prox-dias"><strong>{diasFaltam}</strong><small>{diasFaltam === 1 ? "dia" : "dias"}</small></div>
+            <div className="ind-prox-txt">
+              <small>Próxima etapa</small>
+              <strong>{nomeCurto(proxima.nome)}</strong>
+              <span>{proxima.municipio} · {iso(proxima.data_inicio) === iso(proxima.data_fim) ? dm(proxima.data_inicio) : `${dm(proxima.data_inicio)} a ${dm(proxima.data_fim)}`}</span>
+            </div>
+          </section>
+        )}
 
         <section className="ind-card ind-card-mapa">
           <h2><span className="ind-ic p"><Icone nome="local" tamanho={16} /></span>Mapa do Circuito</h2>
@@ -113,6 +137,16 @@ export default async function Indicadores() {
               </li>
             ))}
           </ol>
+          {podio.length > 0 && (
+            <div className="ind-corte"><span>Linha de corte · Circuito {ano}</span></div>
+          )}
+          {dif !== null && ultimoClass && primeiroFora && (
+            <p className="ind-corte-nota">
+              {dif > 0
+                ? <>{ultimoClass.municipio} está <b>{dif} {dif === 1 ? "voto" : "votos"}</b> à frente de {primeiroFora.municipio}, o primeiro fora da linha.</>
+                : <>{ultimoClass.municipio} e {primeiroFora.municipio} estão <b>empatados em votos</b>; o desempate considera os pontos.</>}
+            </p>
+          )}
           {ranking.length > podio.length && (
             <details className="ind-mais">
               <summary>Ver demais municípios ({ranking.length - podio.length})</summary>
