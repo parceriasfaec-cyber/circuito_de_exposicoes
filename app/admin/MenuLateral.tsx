@@ -23,21 +23,21 @@ const grupos: Grupo[] = [
     ],
   },
   {
-    id: "avaliacoes", titulo: "Avaliações", icone: "check",
+    id: "avaliacoes", titulo: "Avaliações", icone: "prancheta",
     itens: [
-      { href: "/admin/horario", rotulo: "Horário da avaliação", icone: "calendario" },
+      { href: "/admin/horario", rotulo: "Horário da Avaliação", icone: "relogio" },
       { href: "/admin/perguntas", rotulo: "Perguntas", icone: "documento" },
-      { href: "/admin/diagnostico", rotulo: "Etapa em último lugar", icone: "alerta" },
-      { href: "/ranking-exposicoes", rotulo: "Ranking das avaliações", icone: "grafico", novaAba: true },
+      { href: "/admin/diagnostico", rotulo: "Resultado das Etapas", icone: "grafico" },
+      { href: "/ranking-exposicoes", rotulo: "Ranking das Avaliações", icone: "estrela", novaAba: true },
     ],
   },
   {
-    id: "votacao", titulo: "Votação dos Municípios", icone: "grafico",
+    id: "votacao", titulo: "Votação dos Municípios", icone: "urna",
     itens: [
-      { href: "/admin/proximo", rotulo: "Painel de votação", icone: "grafico", exato: true },
-      { href: "/admin/proximo/credenciados", rotulo: "Credenciados", icone: "local" },
-      { href: "/admin/proximo/prazos", rotulo: "Prazos do credenciamento", icone: "calendario" },
-      { href: "/ranking", rotulo: "Ranking dos municípios", icone: "trofeu", novaAba: true },
+      { href: "/admin/proximo", rotulo: "Painel de Votação", icone: "grafico", exato: true },
+      { href: "/admin/proximo/credenciados", rotulo: "Credenciados", icone: "escudo" },
+      { href: "/admin/proximo/prazos", rotulo: "Prazos do Credenciamento", icone: "calendario" },
+      { href: "/ranking", rotulo: "Ranking dos Municípios", icone: "estrela", novaAba: true },
     ],
   },
   {
