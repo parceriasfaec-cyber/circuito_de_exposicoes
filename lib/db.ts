@@ -1,3 +1,4 @@
+import { cache } from "react";
 import postgres from "postgres";
 
 declare global {
@@ -100,7 +101,7 @@ export type Votacao = {
   cidades_so_presentes: boolean;
 };
 
-export async function lerVotacao(): Promise<Votacao> {
+async function lerVotacaoSemCache(): Promise<Votacao> {
   // Abre ou fecha a avaliação se chegou um horário programado no Painel.
   // Só chama a função (que faz UPDATE na linha única da votação) quando há horário vencido; um SELECT simples nunca
   // espera trava de linha. Se mesmo assim falhar (ex.: tempo esgotado), a página abre com o estado atual.
@@ -124,6 +125,9 @@ export async function lerVotacao(): Promise<Votacao> {
     }
   );
 }
+
+/** Lê o estado da votação. Dentro de uma mesma requisição só consulta o banco uma vez (antes eram 2 a 3 vezes: sessão + página/ação). */
+export const lerVotacao = cache(lerVotacaoSemCache);
 
 /** O expositor teve a presença marcada no evento do ciclo ativo? */
 export async function estaPresente(produtorId: string): Promise<boolean> {
