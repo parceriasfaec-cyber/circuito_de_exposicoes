@@ -31,6 +31,7 @@ export default function RankingPodio({
 }) {
   const router = useRouter();
   const [aberto, setAberto] = useState<string | null>(null);
+  const [verResto, setVerResto] = useState(false); // as demais cidades só aparecem quando a pessoa clica
   const escolhida = ranking.find((r) => r.credenciamento_id === aberto) ?? null;
   const deles = listaVotantes.filter((v) => v.credenciamento_id === aberto);
 
@@ -70,6 +71,7 @@ export default function RankingPodio({
         </h2>
         {!aberta && <p className="tp-aviso">A votação está fechada. Os números são os registrados até agora.</p>}
 
+        {!verResto && (
         <div className={`tp-podio n${ordem.length}`}>
           {ordem.length === 0 && <p className="tp-vazio">Ainda não há votos.</p>}
           {ordem.map((r) => {
@@ -88,8 +90,18 @@ export default function RankingPodio({
           })}
         </div>
 
-        <div className="tp-corte"><span>Linha de corte · Circuito {ano}</span></div>
+        )}
 
+        {!verResto && <div className="tp-corte"><span>Linha de corte · Circuito {ano}</span></div>}
+
+        {resto.length > 0 && (
+          <button type="button" className={`tx-mais${verResto ? " aberto" : ""}`} onClick={() => setVerResto((v) => !v)} aria-expanded={verResto}>
+            {verResto ? "Voltar ao pódio" : `Ver demais municípios (${resto.length})`}
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </button>
+        )}
+
+        {verResto && (
         <ol className="tp-lista">
           {resto.map((r) => (
             <li key={r.credenciamento_id}>
@@ -106,6 +118,7 @@ export default function RankingPodio({
             </li>
           ))}
         </ol>
+        )}
       </section>
 
       <aside className="tp-card tp-lado">
