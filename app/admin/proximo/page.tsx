@@ -126,7 +126,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
               </div>
             </div>
             {votacaoCidades ? (
-              <button className="botao vc2-principal" form="form-encerrar"><span className="vc-quadrado" aria-hidden="true" /> Encerrar votação</button>
+              <button className="botao vc2-principal" form="form-encerrar"><span className="vc-quadrado" aria-hidden="true" /> Bloquear votação</button>
             ) : (
               <button className="botao vc2-principal" form="form-quem">▶ Liberar votação</button>
             )}
@@ -178,7 +178,7 @@ export default async function PainelProximoAno({ searchParams }: { searchParams:
             ) : (
               <RankingCidades ranking={resultado.ranking} vagas={resultado.vagas} porPagina={10} votantes={votantes} />
             )}
-            <p className="vc2-nota">Desempate: mais pontos na frente. Cada voto vale de 1,0 a 1,9 conforme as exposições de quem votou.</p>
+            <p className="vc2-nota">Desempate: 1º mais votos; 2º mais pontos (cada voto vale de 1,0 a 1,9 conforme as exposições de quem votou); 3º votos de produtores com mais exposições. Se ainda empatar, a organização decide.</p>
           </div>
         </div>
       </section>
