@@ -3192,3 +3192,12 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .btn-atualizar:disabled { cursor: default; }
 .btn-atualizar.girando svg { animation: girar-atualizar .8s linear infinite; }
 @keyframes girar-atualizar { to { transform: rotate(360deg); } }
+
+/* Desempate no rodapé do telão: lista numerada, fácil de ler */
+.tx-desempate { text-align: left; display: grid; gap: 0.5vh; padding: 0.9vh 1.6vw; }
+.tx-desempate p { margin: 0; }
+.tx-desempate-titulo { font-size: clamp(0.7rem, 1.5vh, 0.95rem); text-align: center; }
+.tx-desempate-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4vh 1.2vw; font-size: clamp(0.66rem, 1.4vh, 0.9rem); }
+.tx-desempate-lista li { display: inline-flex; align-items: center; gap: 0.45em; }
+.tx-desempate-lista b { flex: none; display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; border-radius: 50%; background: #155a2c; color: #fff; font-size: 0.9em; }
+.tx-desempate-fim { font-size: clamp(0.62rem, 1.3vh, 0.85rem); text-align: center; color: #5a6a5f; }

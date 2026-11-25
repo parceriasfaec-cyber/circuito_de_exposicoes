@@ -181,11 +181,19 @@ export default async function RankingExposicoes() {
           </ul>
         </section>
 
-        <p className="tx-nota">
-          <strong>Como é o desempate:</strong> se duas etapas tiverem a mesma média, vence a que tiver a maior nota em
-          1º Infraestrutura dos animais (P2) · 2º Apoio aos tratadores (P5) · 3º Atendimento (P9) · 4º Bem-estar dos animais (P3) · 5º Alimentação e água (P4) · 6º Maior peso das avaliações (quem participou de mais exposições no ciclo pesa mais: 1,0 até 1 exposição; 1 + nº de exposições ÷ 10 para quem tem mais) · 7º Maior número de avaliações.
-          A seguinte só vale se a anterior também empatar; se ainda assim empatar, a organização decide.
-        </p>
+        <div className="tx-nota tx-desempate">
+          <p className="tx-desempate-titulo"><strong>Como é o desempate:</strong> se duas etapas tiverem a mesma média, vence a que tiver, nesta ordem:</p>
+          <ol className="tx-desempate-lista">
+            <li><b>1</b> Maior nota em Infraestrutura dos animais</li>
+            <li><b>2</b> Apoio aos tratadores</li>
+            <li><b>3</b> Atendimento</li>
+            <li><b>4</b> Bem-estar dos animais</li>
+            <li><b>5</b> Alimentação e água</li>
+            <li><b>6</b> Maior peso das avaliações (quem participou de mais exposições pesa mais)</li>
+            <li><b>7</b> Maior número de avaliações</li>
+          </ol>
+          <p className="tx-desempate-fim">Cada critério só vale se o anterior também empatar. Se ainda assim empatar, a organização decide.</p>
+        </div>
       </div>
       </AvaliadoresProvider>
     </PaginaPublica>

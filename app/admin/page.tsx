@@ -192,7 +192,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                           if (!d) return null;
                           return (
                             <div className="desempate-linha">
-                              {d === "aval" ? "Desempate: maior número de avaliações" : d === "total" ? "Empate total: mesmas notas e mesmo número de avaliações" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
+                              {d === "aval" ? "Desempate: peso e número de avaliações" : d === "total" ? "Empate total: mesmas notas, mesmo peso e mesmo número de avaliações" : <>Desempate: P{d.pergunta} ({formatarMedia(d.nota)})</>}
                             </div>
                           );
                         })()}
@@ -207,7 +207,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <span className="ranking-nota-i" aria-hidden="true">i</span>
             <span>
               <strong>Pontos</strong> = soma das notas. <strong>Média</strong> = pontos ÷ expositores que avaliaram (de 10 a 50).
-              No empate, vence a maior média na pergunta 2, depois na 5, na 9, na 3 e na 4.
+              No empate, vence a maior média na pergunta 2, depois na 5, na 9, na 3 e na 4; depois o maior peso das avaliações (quem participou de mais exposições no ciclo pesa mais: 1,0 até 1 exposição; 1 + nº de exposições ÷ 10 para quem tem mais) e, por fim, o maior número de avaliações.
             </span>
           </p>
         </section>
