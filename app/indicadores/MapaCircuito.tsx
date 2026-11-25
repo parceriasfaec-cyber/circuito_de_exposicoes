@@ -74,7 +74,7 @@ export default function MapaCircuito({ etapas }: { etapas: EtapaMapa[] }) {
       >
         <rect x={-200} y={-200} width={W + 400} height={H + 400} className="mapa-mar" />
         {Object.entries(MAPA_CEARA.vizinhos).map(([sigla, v]) => (
-          <g key={sigla}><path d={v.d} className="mapa-viz" /><text x={v.x} y={v.y} className="mapa-viz-txt" style={{ fontSize: 26 * k }}>{sigla}</text></g>
+          <g key={sigla}><path d={v.d} className="mapa-viz" /><text x={v.x} y={v.y} className="mapa-viz-txt" style={{ fontSize: 32 * k }}>{sigla}</text></g>
         ))}
         <path d={MAPA_CEARA.estado} className="mapa-estado" />
         <path d={MAPA_CEARA.municipios} className="mapa-mun" />
@@ -86,10 +86,11 @@ export default function MapaCircuito({ etapas }: { etapas: EtapaMapa[] }) {
             onClick={() => { if (!gesto.current.moveu) setSel(p.id === sel ? null : p.id); }} role="button" tabIndex={0} aria-label={`${p.n}. ${p.municipio}`}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setSel(p.id); }}
           >
-            {p.atual && <circle r={20 * k} className="mapa-anel" style={{ strokeWidth: 4 * k }} />}
-            <circle r={14 * k} className="mapa-bolha" />
-            <text className="mapa-num" style={{ fontSize: 15 * k }} dy={5.2 * k}>{p.n}</text>
-            <text className="mapa-nome" style={{ fontSize: 17 * k, strokeWidth: 4 * k }} dy={34 * k}>{p.municipio}</text>
+            {p.atual && <circle r={29 * k} className="mapa-anel" style={{ strokeWidth: 5 * k }} />}
+            <circle r={20 * k} className="mapa-bolha" />
+            <text className="mapa-num" style={{ fontSize: 23 * k }} dy={8 * k}>{p.n}</text>
+            <text className="mapa-nome mapa-etapa-txt" style={{ fontSize: 22 * k, strokeWidth: 6 * k }} dy={46 * k}>{p.n}ª etapa</text>
+            <text className="mapa-nome" style={{ fontSize: 27 * k, strokeWidth: 7 * k }} dy={74 * k}>{p.municipio}</text>
           </g>
         ))}
       </svg>
@@ -103,7 +104,7 @@ export default function MapaCircuito({ etapas }: { etapas: EtapaMapa[] }) {
       {escolhida && (
         <div className="mapa-painel" role="dialog" aria-label={`Etapa ${escolhida.nome}`}>
           <button type="button" className="mapa-fechar" onClick={() => setSel(null)} aria-label="Fechar">×</button>
-          <span className="mapa-etapa">{escolhida.atual ? "Etapa atual" : `Etapa ${escolhida.n}`}</span>
+          <span className="mapa-etapa">{escolhida.n}ª etapa{escolhida.atual ? " · atual" : ""}</span>
           <h3>{escolhida.nome}</h3>
           <p className="mapa-sub">{escolhida.municipio} · {escolhida.periodo}</p>
           <div className="mapa-dados">
