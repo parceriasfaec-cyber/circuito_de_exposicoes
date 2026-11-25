@@ -3111,3 +3111,15 @@ html:has(.tx)::-webkit-scrollbar, body:has(.tx)::-webkit-scrollbar { display: no
 .tx-card:has(.tx-mais) .lugar-2 .tx-bloco { height: 42%; }
 .tx-card:has(.tx-mais) .lugar-3 .tx-bloco { height: 32%; }
 .tx-card:has(.tx-mais) .tx-medalha { width: 5.6vh; height: 5.6vh; top: -2.8vh; font-size: clamp(1rem, 2.4vh, 1.6rem); }
+
+/* Municípios: pódio ocupa todo o espaço e o botão fica embaixo */
+.tp-card:has(.tx-mais) .tp-podio { flex: 1 1 auto; height: auto; min-height: 34vh; margin-bottom: 1.6vh; }
+.tp-card:has(.tx-mais) .tp-corte { flex: none; }
+.tp-card .tx-mais { margin-top: auto; margin-bottom: 1vh; padding: 0.8vh 10px; flex: none; }
+.tp-card:has(.tx-mais) .tp-podio-nome { font-size: clamp(1.5rem, 4.6vh, 3.2rem); }
+.tp-card:has(.tx-mais) .tp-degrau.lugar-1 .tp-podio-nome { font-size: clamp(1.8rem, 5.6vh, 3.8rem); }
+.tp-card:has(.tx-mais) .tp-podio-votos { font-size: clamp(1.2rem, 3.4vh, 2.2rem); }
+.tp-card:has(.tx-mais) .tp-degrau.lugar-1 .tp-bloco { height: 56%; }
+.tp-card:has(.tx-mais) .tp-degrau.lugar-2 .tp-bloco { height: 42%; }
+.tp-card:has(.tx-mais) .tp-degrau.lugar-3 .tp-bloco { height: 32%; }
+.tp-card:has(.tx-mais) .tp-medalha { width: 5.6vh; height: 5.6vh; top: -2.8vh; }
