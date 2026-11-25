@@ -6,6 +6,7 @@ import { cacheCurto, lerVotacaoCache, sql, tentar } from "@/lib/db";
 import { formatarMedia } from "@/lib/escala";
 import { dadosRankingCidades } from "@/lib/rankingCidades";
 import { nomeCurto } from "@/lib/texto";
+import Compartilhar from "./Compartilhar";
 import MapaCircuito, { type EtapaMapa } from "./MapaCircuito";
 import "./indicadores.css";
 
@@ -195,6 +196,8 @@ export default async function Indicadores() {
             </details>
           )}
         </section>
+
+        <Compartilhar titulo={`Circuito Cearense de Exposição ${anoCircuito}`} />
 
         <footer className="ind-rodape">Sistema FAEC/SENAR · Atualiza automaticamente</footer>
       </main>
