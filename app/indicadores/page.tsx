@@ -8,6 +8,7 @@ import { dadosRankingCidades } from "@/lib/rankingCidades";
 import { nomeCurto } from "@/lib/texto";
 import Compartilhar from "./Compartilhar";
 import MapaCircuito, { type EtapaMapa } from "./MapaCircuito";
+import { MAPA_CEARA } from "@/lib/mapaCeara";
 import "./indicadores.css";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,24 @@ const iso = (d: Date) => new Date(d).toISOString().slice(0, 10);
 const pts = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const votosTxt = (n: number) => `${n} ${n === 1 ? "voto" : "votos"}`;
 
+/* eslint-disable @next/next/no-img-element */
+const OndaVerde = () => (
+  <svg className="ind-onda" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="ondaA" x1="0" x2="1"><stop offset="0" stopColor="#e3f3d6" /><stop offset="1" stopColor="#b9e08f" /></linearGradient>
+      <linearGradient id="ondaB" x1="0" x2="1"><stop offset="0" stopColor="#f0f9e8" /><stop offset="1" stopColor="#a6d97a" /></linearGradient>
+    </defs>
+    <path d="M0 34 C70 8 140 8 210 30 C280 52 340 44 400 14 L400 60 L0 60 Z" fill="url(#ondaA)" />
+    <path d="M0 46 C80 24 150 30 220 44 C290 58 350 52 400 34 L400 60 L0 60 Z" fill="url(#ondaB)" opacity="0.9" />
+  </svg>
+);
+
+const Prancheta = () => <img className="ind-ilus" src="/marcas/ilus-prancheta.png" alt="" aria-hidden="true" />;
+const Pavilhao = () => <img className="ind-ilus ind-ilus-larga" src="/marcas/ilus-pavilhao.png" alt="" aria-hidden="true" />;
+const MapaFundo = () => (
+  <svg className="ind-ilus ind-ilus-mapa" viewBox="0 0 1000 1154" aria-hidden="true"><path d={MAPA_CEARA.estado} fill="#dcefd0" stroke="#c9e2b8" strokeWidth="8" strokeLinejoin="round" /></svg>
+);
+
 /** Painel de indicadores para o celular: página aberta, somente totais (sem nomes de participantes). */
 export default async function Indicadores() {
   const ano = await anoCredenciamento();
@@ -28,7 +47,7 @@ export default async function Indicadores() {
   const { ciclo } = await cicloEscolhido(undefined);
   const cid = ciclo?.id ?? "00000000-0000-0000-0000-000000000000";
 
-  const [cidades, etapas, linhasMapa, [{ produtores }]] = await Promise.all([
+  const [cidades, etapas, linhasMapa, [{ produtores }], [municipios], listaMunic, [{ avaliaram }]] = await Promise.all([
     dadosRankingCidades(ano, votacao),
     cacheCurto(`ind-etapas:${cid}`, 8000, () => tentar(() => sql()<Etapa[]>`
       select exposicao_id, posicao::int, nome, questionarios::int, media_produtor::float
@@ -43,6 +62,18 @@ export default async function Indicadores() {
     cacheCurto(`ind-prod:${cid}`, 8000, () => tentar(() => sql()<{ produtores: number }[]>`
       select count(distinct pa.produtor_id)::int produtores
       from participacoes pa join exposicoes e on e.id = pa.exposicao_id where e.ciclo_id = ${cid}`)),
+    // Municípios credenciados para o próximo circuito e quantos já fizeram a apresentação.
+    cacheCurto(`ind-munic:${ano}`, 8000, () => tentar(() => sql()<{ credenciados: number; apresentaram: number }[]>`
+      select count(*)::int credenciados, (count(*) filter (where apresentou))::int apresentaram
+      from credenciamentos where ano = ${ano}`)),
+    // Nomes dos municípios credenciados (ordem alfabética).
+    cacheCurto(`ind-nomes-munic:${ano}`, 8000, () => tentar(() => sql()<{ nome: string }[]>`
+      select m.nome from credenciamentos c join municipios m on m.codigo = c.municipio_codigo
+      where c.ano = ${ano} order by m.nome`)),
+    // Expositores distintos que já avaliaram alguma etapa do circuito.
+    cacheCurto(`ind-avaliaram:${cid}`, 8000, () => tentar(() => sql()<{ avaliaram: number }[]>`
+      select count(distinct a.produtor_id)::int avaliaram
+      from avaliacoes a join exposicoes e on e.id = a.exposicao_id where e.ciclo_id = ${cid}`)),
   ]);
 
   // Etapa "atual": a que está acontecendo hoje; se nenhuma, a última que já terminou.
@@ -87,11 +118,21 @@ export default async function Indicadores() {
       </header>
 
       <main className="ind-corpo">
-        <div className={`ind-status ${votacao.cidades_aberta ? "aberta" : "fechada"}`}>
-          <i aria-hidden="true" />
-          <strong>{votacao.cidades_aberta ? "Votação dos municípios aberta" : "Votação dos municípios encerrada"}</strong>
-          <span>Atualizado às {horaAgora}</span>
-        </div>
+        <section className="ind-kpis ind-kpis-2 ind-kpis-m ind-kpis-top" aria-label="Participantes das etapas e municípios credenciados">
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{produtores}</strong><small>Participantes das etapas</small><OndaVerde /></div>
+          <details className="ind-kpi ind-kpi-det">
+            <summary>
+              <MapaFundo />
+              <span className="ind-ic"><Icone nome="local" tamanho={20} /></span>
+              <strong>{municipios?.credenciados ?? 0}</strong>
+              <small>Total de municípios credenciados</small>
+              {listaMunic.length > 0 && <em className="ind-ver">Ver quais são</em>}
+            </summary>
+            {listaMunic.length > 0 && <div className="ind-chips">{listaMunic.map((m) => <span key={m.nome}>{m.nome}</span>)}</div>}
+          </details>
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="estrela" tamanho={20} /></span><strong>{presentes}</strong><small>Expositores presentes no evento</small><Pavilhao /></div>
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{avaliaram}</strong><small>Expositores que avaliaram as etapas</small><Prancheta /></div>
+        </section>
         {proxima && (
           <section className="ind-prox">
             <div className="ind-prox-dias"><strong>{diasFaltam}</strong><small>{diasFaltam === 1 ? "dia" : "dias"}</small></div>
@@ -104,12 +145,12 @@ export default async function Indicadores() {
         )}
 
         <div className="ind-bloco">
-          <span className="ind-bloco-ic"><Icone nome="checkCirculo" tamanho={22} /></span>
+          <span className="ind-bloco-ic ouro"><Icone nome="trofeu" tamanho={38} /></span>
           <div><small>Circuito {anoCircuito}</small><h2>Avaliação das etapas</h2></div>
         </div>
-        <section className="ind-kpis ind-kpis-2" aria-label="Indicadores da avaliação das etapas">
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{produtores}</strong><small>Participantes das etapas</small></div>
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{totalAval}</strong><small>Avaliações enviadas</small></div>
+        <section className="ind-kpis ind-kpis-aval" style={{ gridTemplateColumns: "1fr" }} aria-label="Indicadores da avaliação das etapas">
+          <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><small>Avaliações enviadas</small><strong>{totalAval}</strong>
+            <Prancheta /></div>
         </section>
         <section className="ind-card">
           <h2><span className="ind-ic p"><Icone nome="trofeu" tamanho={16} /></span>Etapas mais bem avaliadas</h2>
@@ -153,8 +194,12 @@ export default async function Indicadores() {
           <span className="ind-bloco-ic"><Icone nome="trofeu" tamanho={22} /></span>
           <div><small>Circuito {ano}</small><h2>Votação dos municípios</h2></div>
         </div>
-        <section className="ind-kpis ind-kpis-3" aria-label="Indicadores da votação dos municípios">
-          <div className="ind-kpi"><span className="ind-ic"><Icone nome="usuarios" tamanho={20} /></span><strong>{presentes}</strong><small>Expositores presentes</small></div>
+        <div className={`ind-status ind-status-disc ${votacao.cidades_aberta ? "aberta" : "fechada"}`}>
+          <i aria-hidden="true" />
+          <strong>{votacao.cidades_aberta ? "Votação dos municípios aberta" : "Votação dos municípios encerrada"}</strong>
+          <span className="ind-hora"><Icone nome="relogio" tamanho={16} />Atualizado às {horaAgora}</span>
+        </div>
+        <section className="ind-kpis ind-kpis-2 ind-kpis-m" aria-label="Indicadores da votação dos municípios">
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="checkCirculo" tamanho={20} /></span><strong>{votantes}</strong><small>Já votaram</small></div>
           <div className="ind-kpi"><span className="ind-ic"><Icone nome="trofeu" tamanho={20} /></span><strong>{totalVotos}</strong><small>Votos registrados</small></div>
         </section>

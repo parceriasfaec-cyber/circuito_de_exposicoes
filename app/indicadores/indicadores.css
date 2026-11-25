@@ -8,7 +8,7 @@
 .ind-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ind-kpi { display: grid; gap: 2px; padding: 14px; border-radius: 18px; background: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.12); }
 .ind-kpi strong { font-size: 2rem; font-weight: 900; line-height: 1.05; color: #155a2c; }
-.ind-kpi small { font-size: 0.74rem; font-weight: 700; color: #4d5a4d; text-transform: uppercase; letter-spacing: 0.02em; }
+.ind-kpi small { font-size: 0.86rem; font-weight: 700; color: #4d5a4d; }
 .ind-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #1d5e2c; color: #fff; margin-bottom: 6px; }
 .ind-ic.p { display: inline-grid; width: 28px; height: 28px; margin: 0 8px 0 0; vertical-align: middle; }
 .ind-card { padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.12); }
@@ -112,7 +112,82 @@
 .ind-kpis-3 { grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .ind-kpis-3 .ind-kpi { padding: 12px 10px; }
 .ind-kpis-3 .ind-kpi strong { font-size: 1.7rem; }
-.ind-kpis-3 .ind-kpi small { font-size: 0.64rem; }
+.ind-kpis-3 .ind-kpi small { font-size: 0.74rem; }
 .ind-kpis-3 .ind-ic { width: 30px; height: 30px; }
-.ind-bloco-2 ~ .ind-kpis .ind-ic { background: #b8741a; }
-.ind-bloco-2 ~ .ind-kpis .ind-kpi strong { color: #7a4a00; }
+.ind-kpis-m .ind-ic { background: #b8741a; }
+.ind-kpis-m .ind-kpi strong { color: #7a4a00; }
+
+/* ============ Cartões de números (topo e votação) ============ */
+.ind-kpis-m { gap: 10px; }
+.ind-kpi { position: relative; overflow: hidden; padding: 12px; min-height: 96px; border-radius: 18px; background: #fff; box-shadow: 0 6px 18px rgba(18, 61, 34, 0.12);
+  display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic lab" "num num" "ver ver"; column-gap: 10px; row-gap: 2px; align-content: start; }
+.ind-kpi > *:not(.ind-ilus):not(.ind-onda), .ind-kpi-det summary > *:not(.ind-ilus):not(.ind-onda) { position: relative; z-index: 1; }
+.ind-kpi .ind-ic, .ind-kpi-det summary .ind-ic { grid-area: ic; width: 34px; height: 34px; margin: 0; background: linear-gradient(145deg, #2f8a3e, #145a2a); }
+.ind-kpi small, .ind-kpi-det summary small { grid-area: lab; align-self: center; padding-left: 10px; border-left: 2px solid #dbe6db; font-size: 0.78rem; font-weight: 800; line-height: 1.15; color: #34433a; }
+.ind-kpi strong, .ind-kpi-det summary strong { grid-area: num; text-align: center; font-size: 2.3rem; font-weight: 900; line-height: 1.05; color: #0f3a1c; margin-top: 4px; }
+/* cartão que abre (lista de municípios) */
+.ind-kpi-det { display: block; }
+.ind-kpi-det summary { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic lab" "num num" "ver ver"; column-gap: 10px; row-gap: 2px; cursor: pointer; list-style: none; outline: none; -webkit-tap-highlight-color: transparent; }
+.ind-kpi-det summary::-webkit-details-marker { display: none; }
+.ind-ver { grid-area: ver; justify-self: center; margin-top: 4px; padding: 3px 12px; border-radius: 99px; background: #e3f1d8; color: #1d6a35; font-style: normal; font-size: 0.7rem; font-weight: 800; }
+.ind-ver::after { content: " ▾"; }
+.ind-kpi-det[open] .ind-ver::after { content: " ▴"; }
+.ind-kpi-det[open] { grid-column: 1 / -1; }
+.ind-kpis-m:has(.ind-kpi-det[open]) > .ind-kpi:first-child { grid-column: 1 / -1; }
+.ind-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; position: relative; z-index: 1; }
+.ind-chips span { padding: 4px 12px; border-radius: 99px; background: #eef7e6; color: #1d6a35; font-size: 0.84rem; font-weight: 700; }
+/* ilustrações: sempre no canto de baixo à direita, sem cobrir o texto */
+.ind-ilus { position: absolute; z-index: 0; pointer-events: none; height: auto; object-fit: contain; right: 8px; bottom: 6px; width: 46px; opacity: 0.95; }
+.ind-ilus-larga { right: 0; bottom: 0; width: 44%; max-width: 140px; opacity: 0.9; }
+.ind-ilus-mapa { right: 6px; bottom: 6px; width: auto; height: 62%; }
+/* topo em verde; votação em âmbar */
+.ind-kpis-top .ind-kpi { background: #fff radial-gradient(130% 70% at 100% 130%, rgba(124, 194, 66, 0.22), transparent 62%); }
+.ind-kpis-m:not(.ind-kpis-top) .ind-ic { background: #b8741a; }
+.ind-kpis-m:not(.ind-kpis-top) .ind-kpi strong { color: #7a4a00; }
+/* cartão "Avaliações enviadas" (largura toda, mesmo estilo) */
+.ind-kpis-aval .ind-kpi { min-height: 0; }
+.ind-kpis-aval .ind-kpi strong { text-align: left; padding-left: 4px; }
+.ind-kpis-aval .ind-ilus { width: 52px; top: 50%; bottom: auto; transform: translateY(-50%); right: 16px; }
+
+/* ============ Faixas ============ */
+.ind-bloco { padding: 10px 14px; margin-top: 4px; gap: 10px; }
+.ind-bloco-ic { width: 38px; height: 38px; }
+.ind-bloco-ic.ouro { background: transparent; color: #f6c52b; width: 42px; height: 42px; }
+.ind-bloco h2 { font-size: 1.12rem; }
+.ind-bloco small { font-size: 0.64rem; }
+.ind-corpo { gap: 10px; }
+
+/* ============ Aviso da votação (discreto) e hora ============ */
+.ind-hora { display: inline-flex; align-items: center; gap: 5px; }
+.ind-status-disc { padding: 7px 12px; font-size: 0.8rem; box-shadow: none; background: transparent; border: 1px dashed #cfdccf; }
+.ind-status-disc strong { font-size: 0.82rem; font-weight: 700; }
+.ind-status-disc span { font-size: 0.72rem; }
+
+/* garante que as ilustrações nunca entram no fluxo nem esticam o cartão */
+.ind-kpi .ind-ilus, .ind-kpi-det summary .ind-ilus { position: absolute; z-index: 0; max-width: 46%; max-height: 80%; }
+.ind-kpi .ind-ilus-mapa, .ind-kpi-det summary .ind-ilus-mapa { max-width: 40%; height: 62%; width: auto; }
+
+/* Cartões do topo maiores e mapa limpo (silhueta do Ceará) */
+.ind-kpis-top .ind-kpi { min-height: 124px; padding: 14px; }
+.ind-kpis-top .ind-kpi strong { font-size: 2.7rem; margin-top: 6px; }
+.ind-kpis-top .ind-kpi small { font-size: 0.82rem; }
+.ind-kpi .ind-ilus-mapa, .ind-kpi-det summary .ind-ilus-mapa { width: auto; height: 78%; max-width: 46%; max-height: none; right: 8px; bottom: 8px; opacity: 1; }
+.ind-kpis-top .ind-ilus-larga { max-width: 150px; }
+.ind-kpis-top .ind-ilus:not(.ind-ilus-larga):not(.ind-ilus-mapa) { width: 56px; }
+
+/* Mapa mais para baixo; prancheta mais para cima */
+.ind-kpi .ind-ilus-mapa, .ind-kpi-det summary .ind-ilus-mapa { bottom: -6px; height: 74%; }
+.ind-kpis-top .ind-ilus:not(.ind-ilus-larga):not(.ind-ilus-mapa) { bottom: 26px; right: 12px; }
+
+/* Garantias finais (valem sobre regras antigas) */
+.ind-kpis-top .ind-kpi strong { color: #0f3a1c !important; }
+.ind-kpis-top .ind-kpi .ind-ilus-larga { right: 10px !important; bottom: 10px !important; width: 40% !important; max-width: 130px !important; }
+.ind-kpis-top .ind-kpi .ind-ilus:not(.ind-ilus-larga):not(.ind-ilus-mapa) { bottom: 34px !important; right: 14px !important; width: 58px !important; }
+.ind-kpis-top .ind-kpi .ind-ilus-mapa { bottom: -8px !important; right: 10px !important; height: 70% !important; }
+.ind-kpis-top .ind-kpi .ind-ilus-mapa { height: 58% !important; right: 8px !important; bottom: 4px !important; }
+.ind-kpi-det .ind-ver { margin-right: 44px; }
+
+/* Onda verde no rodapé do cartão "Participantes das etapas" */
+.ind-onda { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 44px; z-index: 0; pointer-events: none; }
+
+.ind-kpi > .ind-onda { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 46px; z-index: 0; }
