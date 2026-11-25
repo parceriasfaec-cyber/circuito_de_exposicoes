@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Icone from "@/components/Icone";
 import Paginacao, { paginar } from "@/components/Paginacao";
 import { CAMPOS_BUSCA, casaBusca, documentoCompleto, type CampoBusca } from "@/lib/texto";
@@ -37,8 +37,10 @@ const POR_PAGINA = 20;
 export default function MarcarPresenca({ cicloId, expositores: doServidor, avalInicial = "todos" }: { cicloId: string; expositores: Expositor[]; avalInicial?: FiltroAval }) {
   // Cópia local: a linha, o contador e os filtros mudam na hora, sem recarregar a página.
   const [expositores, setExpositores] = useState(doServidor);
+  // O que foi mudado aqui (clique de presença) vale mais do que uma lista antiga que chegue do servidor depois.
+  const locais = useRef<Record<string, Partial<Expositor>>>({});
+  const comLocais = (lista: Expositor[]) => lista.map((x) => (locais.current[x.id] ? { ...x, ...locais.current[x.id] } : x));
   const router = useRouter();
-  const [atualizando, iniciarAtualizar] = useTransition();
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const editandoRef = useRef<string | null>(null);
   const [destaqueId, setDestaqueId] = useState<string | null>(null);
@@ -51,7 +53,7 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
     return () => { clearTimeout(t0); clearTimeout(t1); };
   }, [destaqueId]);
   // Atualiza a lista com o que veio do servidor (depois de salvar o cadastro na janela).
-  useEffect(() => { setExpositores(doServidor); }, [doServidor]);
+  useEffect(() => { setExpositores(comLocais(doServidor)); }, [doServidor]); // eslint-disable-line react-hooks/exhaustive-deps
   // A janela de edição avisa quando o cadastro é salvo: fecha e recarrega os dados, mantendo a busca.
   useEffect(() => {
     function aoReceber(ev: MessageEvent) {
@@ -65,7 +67,6 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
     window.addEventListener("keydown", aoTecla);
     return () => { window.removeEventListener("message", aoReceber); window.removeEventListener("keydown", aoTecla); };
   }, [router]);
-  useEffect(() => setExpositores(doServidor), [doServidor]);
   const [busca, setBusca] = useState("");
   const [campoBusca, setCampoBusca] = useState<CampoBusca>("todos");
   const [filtro, setFiltro] = useState<Filtro>("todos");
@@ -89,8 +90,10 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
   const avaliaram = expositores.filter(avaliou).length;
   const { atual, itens: daPagina } = paginar(visiveis, pagina, POR_PAGINA);
 
-  const atualizar = (id: string, dados: Partial<Expositor>) =>
+  const atualizar = (id: string, dados: Partial<Expositor>) => {
+    locais.current[id] = { ...locais.current[id], ...dados };
     setExpositores((lista) => lista.map((x) => (x.id === id ? { ...x, ...dados } : x)));
+  };
   const ocupar = (id: string, sim: boolean) =>
     setSalvando((s) => {
       const n = new Set(s);
@@ -132,12 +135,15 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
     }
     if (!confirm(`Tirar a presença de ${tirar} expositor${tirar > 1 ? "es" : ""}?${fixos ? ` ${fixos} já avali${fixos > 1 ? "aram" : "ou"} ou vot${fixos > 1 ? "aram" : "ou"} nos municípios e continua${fixos > 1 ? "m" : ""} presente${fixos > 1 ? "s" : ""}.` : ""}`)) return;
     const antes = expositores;
+    const locaisAntes = { ...locais.current };
     setErro(null);
+    for (const x of expositores) if (!presencaFixa(x)) locais.current[x.id] = { ...locais.current[x.id], presente: false, hora: null, marcado_em: null };
     setExpositores((lista) => lista.map((x) => (presencaFixa(x) ? x : { ...x, presente: false, hora: null, marcado_em: null })));
     try {
       const r = await desmarcarTodasPresencas(cicloId);
       if (!r.ok) throw new Error();
     } catch {
+      locais.current = locaisAntes;
       setExpositores(antes);
       setErro("Não foi possível desmarcar. Confira a internet e tente de novo.");
     }
@@ -194,9 +200,6 @@ export default function MarcarPresenca({ cicloId, expositores: doServidor, avalI
             <button key={c.id} type="button" className={`campo-busca${campoBusca === c.id ? " ativo" : ""}`} aria-pressed={campoBusca === c.id} onClick={() => { setCampoBusca(c.id); setPagina(0); }}>{c.rotulo}</button>
           ))}
         </div>
-        <button type="button" className={`btn-atualizar${atualizando ? " girando" : ""}`} onClick={() => iniciarAtualizar(() => router.refresh())} disabled={atualizando} title="Atualizar a lista" aria-label="Atualizar a lista">
-          <Icone nome="atualizar" tamanho={18} />
-        </button>
         {presentes > 0 && (
           <button type="button" className="filtro desmarcar-todos" onClick={desmarcarTodos}>Desmarcar todos</button>
         )}
